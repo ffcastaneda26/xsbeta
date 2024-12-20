@@ -120,8 +120,8 @@ class UserResource extends Resource
                         ->multiple()
                         ->translateLabel()
                         ->preload()
-                        ->required(fn($state, $record) => $record ? false : true)
-                        ->visible(fn($state, $record) => $record ? false : true),
+                        ->required(fn($state, $record) => $record ? false : true),
+                        // ->visible(fn($state, $record) => $record ? false : true),
                     Select::make('permissions')
                         ->label('Permisos')
                         ->multiple()

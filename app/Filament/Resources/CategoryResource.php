@@ -67,7 +67,8 @@ class CategoryResource extends Resource
                     ->translateLabel()
                     ->sortable()
                     ->searchable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                    ->translateLabel(),
             ])
             ->filters([
                 //

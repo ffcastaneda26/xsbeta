@@ -21,11 +21,11 @@ return new class extends Migration
             $table->string('subtitle')->nullable()->default(null)->comment('Subtítulo');
             $table->foreignIdFor(Type::class)->comment('Tipo');
             $table->foreignIdFor(Category::class)->comment('Categoría');
-            $table->date('date')->comment('Fecha');
+            $table->timestamp('date')->comment('Fecha');
             $table->unsignedBigInteger('author_id')->comment('Autor');
-            $table->mediumText('intro')->nullable()->default(null)->comment('Introducción');
+            $table->mediumText('introduction')->nullable()->default(null)->comment('Introducción');
             $table->mediumText('description')->nullable()->default(null)->comment('Descripción');
-            $table->boolean('acive')->default(0)->comment('¿Activo?');
+            $table->boolean('active')->default(0)->comment('¿Activo?');
             $table->string('image')->nullable()->default(null)->comment('Imagen');
             $table->timestamps();
             // Llave de autor a usuarios

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,14 +19,15 @@ class Blog extends Model
         'author_id',
         'intro',
         'description',
-        'acive',
+        'active',
         'image',
     ];
 
     protected function casts(): array
     {
         return [
-            'date' => 'Y-m-d',
+             'created_at' => 'datetime:Y-m-d',
+             'date' => 'datetime:Y-m-d',
         ];
     }
 

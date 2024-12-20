@@ -27,11 +27,16 @@ class DatabaseSeeder extends Seeder
             'users',
             'roles',
             'permissions',
+            'blogs',
+            'types',
+            'categories',
         ]);
 
         $this->call(RoleAndPermissionSeeder::class);
         $this->call(UsersTableSeeder::class);
-
+        $this->call(TypeSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(BlogSeeder::class);
     }
 
     protected function truncateTables(array $tables) {
