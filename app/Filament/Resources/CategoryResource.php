@@ -54,7 +54,7 @@ class CategoryResource extends Resource
                     ->maxLength(100),
                 FileUpload::make('image')
                     ->translateLabel()
-                    ->directory('types')
+                    ->directory('categories')
                     ->preserveFilenames(),
             ]);
     }
