@@ -54,6 +54,7 @@ class BlogResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\Group::make()->schema([
                     Forms\Components\TextInput::make('title')
                         ->required()
@@ -62,53 +63,60 @@ class BlogResource extends Resource
                         ->columnSpanFull()
                         ->live(onBlur: true)
                         ->unique(ignoreRecord: true)
-                        ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                    ,
-                    Forms\Components\TextInput::make('slug')
-                        ->required()
-                        ->maxLength(255)
-                        ->unique(ignoreRecord: true)
-                        ->readOnly(),
+                        ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
                     Forms\Components\TextInput::make('subtitle')
                         ->translateLabel()
                         ->maxLength(255),
-                    Forms\Components\Select::make('type_id')
-                        ->relationship('type', 'name')
+                    Forms\Components\FileUpload::make('image')
+                        ->image()
                         ->translateLabel()
-                        ->required(),
-                    Forms\Components\Select::make('category_id')
-                        ->relationship('category', 'name')
-                        ->translateLabel()
-                        ->required(),
-                ])->columns(2),
+                        ->directory('blogs')
+                        ->preserveFilenames(),
+                ])->columns(1),
 
                 Forms\Components\Group::make()->schema([
-
-                    Forms\Components\DatePicker::make('date')
-                        ->translateLabel()
-                        ->required()
-                        ->default(now()),
-                    Forms\Components\Select::make('author_id')
-                        ->relationship('author', 'name')
-                        ->label(__('Author'))
-                        ->required(),
-                    Forms\Components\Toggle::make('active')
-                        ->required()
-                        ->default(true),
-                    Forms\Components\Textarea::make('introduction')
-                        ->label(__('Introduction'))
-                        ->rows(4)
-                        ->columnSpanFull(),
-                ])->columns(3),
+                    Forms\Components\Grid::make()->schema([
+                        Forms\Components\DatePicker::make('date')
+                            ->translateLabel()
+                            ->required()
+                            ->default(now()),
+                        Forms\Components\Select::make('author_id')
+                            ->relationship('author', 'name')
+                            ->label(__('Author'))
+                            ->columnSpan(2)
+                            ->required(),
+                        Forms\Components\Toggle::make('active')
+                            ->required()
+                            ->default(true),
+                        Forms\Components\Select::make('type_id')
+                            ->relationship('type', 'name')
+                            ->translateLabel()
+                            ->columnSpan(2)
+                            ->required(),
+                        Forms\Components\Select::make('category_id')
+                            ->relationship('category', 'name')
+                            ->translateLabel()
+                            ->columnSpan(2)
+                            ->required(),
+                            Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->readOnly()
+                            ->columnSpanFull()
+                            ->visible(true),
+                    ])->columns(4),
+                ]),
+                Forms\Components\TextInput::make('introduction')
+                    ->label(__('Introduction'))
+                    ->maxLength(255)
+                    ->columnSpanFull(),
                 Forms\Components\MarkdownEditor::make('description')
                     ->required()
-                    ->translateLabel(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
                     ->translateLabel()
-                    ->directory('blogs')
-                    ->preserveFilenames(),
-
+                    ->columnSpanFull()
+                    ->maxHeight('100px'),
             ])->columns(2);
     }
 
@@ -116,23 +124,11 @@ class BlogResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->translateLabel(),
                 Tables\Columns\TextColumn::make('title')
                     ->translateLabel()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('subtitle')
-                    ->translateLabel()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('type.name')
-                    ->translateLabel()
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('category.name')
-                    ->translateLabel()
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->translateLabel()
                     ->date()
@@ -142,34 +138,25 @@ class BlogResource extends Resource
                     ->translateLabel()
                     ->translateLabel()
                     ->sortable(),
-
-                Tables\Columns\ImageColumn::make('image')
-                    ->translateLabel(),
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('introduction')
-                    ->translateLabel()
-                    ->sortable()
-                    ->limit(50),
-                Tables\Columns\TextColumn::make('description')
-                    ->translateLabel()
-                    ->sortable()
-                    ->limit(50)
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('subtitle')->translateLabel()->searchable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('type.name')->translateLabel()->numeric()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('category.name')->translateLabel()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('active')->boolean()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('introduction')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('description')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 

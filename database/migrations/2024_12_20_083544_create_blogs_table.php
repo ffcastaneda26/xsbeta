@@ -28,6 +28,7 @@ return new class extends Migration
             $table->boolean('active')->default(0)->comment('¿Activo?');
             $table->string('image')->nullable()->default(null)->comment('Imagen');
             $table->timestamps();
+            $table->softDeletes('deleted_at', precision: 0);
             // Llave de autor a usuarios
             $table->foreign('author_id')->references('id')->on('users');
 

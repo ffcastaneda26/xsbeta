@@ -121,7 +121,7 @@ class UserResource extends Resource
                         ->translateLabel()
                         ->preload()
                         ->required(fn($state, $record) => $record ? false : true),
-                        // ->visible(fn($state, $record) => $record ? false : true),
+                    // ->visible(fn($state, $record) => $record ? false : true),
                     Select::make('permissions')
                         ->label('Permisos')
                         ->multiple()
@@ -139,12 +139,6 @@ class UserResource extends Resource
                     ->translateLabel()
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('email')->label(__('email'))
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('roles.name')->label('Roles')
-                    ->sortable()
-                    ->searchable(),
                 IconColumn::make('active')->translateLabel()->boolean(),
 
             ])
@@ -156,8 +150,11 @@ class UserResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 
