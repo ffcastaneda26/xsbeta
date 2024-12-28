@@ -5,18 +5,19 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\Blog;
 use Filament\Tables;
+use Faker\Core\Color;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
+use BladeUI\Icons\Components\Icon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\BlogResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\BlogResource\RelationManagers;
-use BladeUI\Icons\Components\Icon;
-use Faker\Core\Color;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BlogResource extends Resource
 {
@@ -74,7 +75,11 @@ class BlogResource extends Resource
                         ->image()
                         ->translateLabel()
                         ->directory('/uploads/blogs')
-                        ->preserveFilenames(),
+                        ->preserveFilenames()
+                        ->getUploadedFileNameForStorageUsing(
+                            fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                                ->prepend('blog-'),
+                        ),
                 ])->columns(1),
 
                 Forms\Components\Group::make()->schema([
