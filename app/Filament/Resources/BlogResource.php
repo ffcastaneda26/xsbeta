@@ -73,7 +73,7 @@ class BlogResource extends Resource
                     Forms\Components\FileUpload::make('image')
                         ->image()
                         ->translateLabel()
-                        ->directory('blogs')
+                        ->directory('/uploads/blogs')
                         ->preserveFilenames(),
                 ])->columns(1),
 
@@ -175,5 +175,10 @@ class BlogResource extends Resource
             'create' => Pages\CreateBlog::route('/create'),
             'edit' => Pages\EditBlog::route('/{record}/edit'),
         ];
+    }
+
+    public static function getPathImage($title)
+    {
+        return '/uploads/blogs/' . Str::slug($title);
     }
 }
