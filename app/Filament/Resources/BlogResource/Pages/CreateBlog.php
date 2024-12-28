@@ -13,4 +13,11 @@ class CreateBlog extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['slug'] = str()::slug($data['title']);
+        return $data;
+    }
+
 }

@@ -8,6 +8,7 @@ use App\Models\Category;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
@@ -24,7 +25,10 @@ class CategoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
     protected static ?int $navigationSort = 21;
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->hasrole('Super Admin') || Auth::user()->hasrole('Administrador');
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -74,11 +78,9 @@ class CategoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->hiddenlabel(true)->color('warning')->tooltip(__('Edit')),
+                Tables\Actions\ViewAction::make()->hiddenlabel(true)->color('primary')->tooltip(__('View')),
+                Tables\Actions\DeleteAction::make()->hiddenlabel(true)->color('danger')->tooltip(__('Delete')),
             ]);
     }
 

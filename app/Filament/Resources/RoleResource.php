@@ -27,6 +27,10 @@ class RoleResource extends Resource
     protected static ?int $navigationSort = 11;
     // protected static ?string $cluster = Security::class;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->hasrole('Super Admin') || Auth::user()->hasrole('Administrador');
+    }
     public static function getNavigationGroup(): string
     {
         return __('Security');
@@ -109,11 +113,9 @@ class RoleResource extends Resource
                             ->preload(),
             ])
             ->actions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->hiddenlabel(true)->color('warning')->tooltip(__('Edit')),
+                Tables\Actions\ViewAction::make()->hiddenlabel(true)->color('primary')->tooltip(__('View')),
+                Tables\Actions\DeleteAction::make()->hiddenlabel(true)->color('danger')->tooltip(__('Delete')),
             ]);
     }
 

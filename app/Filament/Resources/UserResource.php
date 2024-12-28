@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Actions\Action;
 
 class UserResource extends Resource
 {
@@ -31,6 +32,10 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->hasrole('Super Admin') || Auth::user()->hasrole('Administrador');
+    }
     public static function getModelLabel(): string
     {
         return __('User');
@@ -72,6 +77,7 @@ class UserResource extends Resource
             return parent::getEloquentQuery();
         }
 
+
         return parent::getEloquentQuery()
             ->whereHas('roles', function ($query) {
                 $query->where('name', 'not like', '%super%');
@@ -87,7 +93,7 @@ class UserResource extends Resource
                     Section::make()->schema([
                         TextInput::make('name')
                             ->required()
-                            ->minLength(10)
+                            ->minLength(5)
                             ->maxLength(100)
                             ->translateLabel(),
                         TextInput::make('email')
@@ -95,7 +101,7 @@ class UserResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->translateLabel()
                             ->maxLength(100)
-                            ->minLength(10),
+                            ->minLength(5),
                         TextInput::make('password')
                             ->password()
                             ->revealable()
@@ -139,7 +145,8 @@ class UserResource extends Resource
                     ->translateLabel()
                     ->sortable()
                     ->searchable(),
-                IconColumn::make('active')->translateLabel()->boolean(),
+                IconColumn::make('active')->translateLabel()->boolean()->icon('heroicon-o-check'),
+
 
             ])
             ->filters([
@@ -150,11 +157,9 @@ class UserResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->hiddenlabel(true)->color('warning')->tooltip(__('Edit')),
+                Tables\Actions\ViewAction::make()->hiddenlabel(true)->color('primary')->tooltip(__('View')),
+                Tables\Actions\DeleteAction::make()->hiddenlabel(true)->color('danger')->tooltip(__('Delete')),
             ]);
     }
 

@@ -17,7 +17,7 @@ class Blog extends Model
         'category_id',
         'date',
         'author_id',
-        'intro',
+        'introduction',
         'description',
         'active',
         'image',

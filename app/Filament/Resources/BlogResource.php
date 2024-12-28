@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\BlogResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\BlogResource\RelationManagers;
+use BladeUI\Icons\Components\Icon;
+use Faker\Core\Color;
 
 class BlogResource extends Resource
 {
@@ -99,24 +101,19 @@ class BlogResource extends Resource
                             ->translateLabel()
                             ->columnSpan(2)
                             ->required(),
-                            Forms\Components\TextInput::make('slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->readOnly()
-                            ->columnSpanFull()
-                            ->visible(true),
                     ])->columns(4),
                 ]),
-                Forms\Components\TextInput::make('introduction')
+                Forms\Components\Textarea::make('introduction')
                     ->label(__('Introduction'))
+                    ->rows(4)
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\MarkdownEditor::make('description')
                     ->required()
                     ->translateLabel()
                     ->columnSpanFull()
-                    ->maxHeight('100px'),
+                    ->minHeight('500px'),
+
             ])->columns(2);
     }
 
@@ -138,13 +135,14 @@ class BlogResource extends Resource
                     ->translateLabel()
                     ->translateLabel()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('active')->boolean()->translateLabel()->icon('heroicon-s-check' ),
                 Tables\Columns\TextColumn::make('subtitle')->translateLabel()->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('type.name')->translateLabel()->numeric()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('category.name')->translateLabel()->sortable()->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('active')->boolean()->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('introduction')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('description')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -152,11 +150,9 @@ class BlogResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->hiddenlabel(true)->color('warning')->tooltip(__('Edit')),
+                Tables\Actions\ViewAction::make()->hiddenlabel(true)->color('primary')->tooltip(__('View')),
+                Tables\Actions\DeleteAction::make()->hiddenlabel(true)->color('danger')->tooltip(__('Delete')),
             ]);
     }
 

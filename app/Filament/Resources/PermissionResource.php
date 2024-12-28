@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -24,6 +25,11 @@ class PermissionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-check';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
     protected static ?int $navigationSort = 13;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->hasrole('Super Admin') || Auth::user()->hasrole('Administrador');
+    }
     public static function getNavigationGroup(): string
     {
         return __('Security');
@@ -56,22 +62,22 @@ class PermissionResource extends Resource
         return $form
             ->schema([
                 Group::make()
-                ->schema([
-                    TextInput::make('name')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->minLength(5)
-                        ->translateLabel(),
-                    Select::make('roles')
-                        ->multiple()
-                        ->relationship(titleAttribute:'name')
-                        ->preload()
-                        ->createOptionForm([
-                            TextInput::make('name')
-                                ->required()
-                                ->unique()
-                        ]),
-                ])->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->minLength(5)
+                            ->translateLabel(),
+                        Select::make('roles')
+                            ->multiple()
+                            ->relationship(titleAttribute: 'name')
+                            ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->unique()
+                            ]),
+                    ])->columns(2)
             ]);
     }
 
@@ -90,17 +96,15 @@ class PermissionResource extends Resource
                     ->searchable()
                     ->preload(),
                 SelectFilter::make(__('Roles'))
-                        ->relationship('roles', 'name')
-                        ->translateLabel()
-                        ->searchable()
-                        ->preload(),
+                    ->relationship('roles', 'name')
+                    ->translateLabel()
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->hiddenlabel(true)->color('warning')->tooltip(__('Edit')),
+                Tables\Actions\ViewAction::make()->hiddenlabel(true)->color('primary')->tooltip(__('View')),
+                Tables\Actions\DeleteAction::make()->hiddenlabel(true)->color('danger')->tooltip(__('Delete')),
             ]);
     }
 
