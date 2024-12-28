@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\BlogResource\Pages;
 
-use App\Filament\Resources\BlogResource;
 use Filament\Actions;
+use Illuminate\Support\Str;
+use App\Filament\Resources\BlogResource;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 
 class CreateBlog extends CreateRecord
 {
@@ -16,7 +18,10 @@ class CreateBlog extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['slug'] = str()::slug($data['title']);
+        $data['slug'] = Str::slug($data['title']);
+        if(!Auth::user()->hasRole('Administrador') && !Auth::user()->hasRole('Super Admin')){
+            $data['author_id'] = Auth::user()->id;
+        }
         return $data;
     }
 

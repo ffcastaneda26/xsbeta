@@ -63,9 +63,9 @@ class BlogResource extends Resource
                         ->translateLabel()
                         ->maxLength(255)
                         ->columnSpanFull()
-                        ->live(onBlur: true)
-                        ->unique(ignoreRecord: true)
-                        ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                        // ->live(onBlur: true)
+                        ->unique(ignoreRecord: true),
+                        // ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                     Forms\Components\TextInput::make('subtitle')
                         ->translateLabel()
@@ -87,9 +87,12 @@ class BlogResource extends Resource
                             ->relationship('author', 'name')
                             ->label(__('Author'))
                             ->columnSpan(2)
-                            ->required(),
+                            ->visible(fn() => Auth::user()->hasrole('Administrador') || Auth::user()->hasrole('Super Admin'))
+                            ->required(fn() => Auth::user()->hasrole('Administrador') || Auth::user()->hasrole('Super Admin')),
+
                         Forms\Components\Toggle::make('active')
                             ->required()
+                            ->columnStart(fn() => Auth::user()->hasrole('Administrador') || Auth::user()->hasrole('Super Admin') ? 0 : 4)
                             ->default(true),
                         Forms\Components\Select::make('type_id')
                             ->relationship('type', 'name')
@@ -101,7 +104,9 @@ class BlogResource extends Resource
                             ->translateLabel()
                             ->columnSpan(2)
                             ->required(),
-                    ])->columns(4),
+                    ])->columns(4)
+                    // ->visible(fn() => !Auth::user()->hasrole('Administrador')),
+
                 ]),
                 Forms\Components\Textarea::make('introduction')
                     ->label(__('Introduction'))
@@ -129,7 +134,7 @@ class BlogResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->translateLabel()
                     ->date()
-                    ->since()
+                    // ->since()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('author.name')
                     ->translateLabel()
@@ -143,7 +148,7 @@ class BlogResource extends Resource
                 Tables\Columns\TextColumn::make('introduction')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('description')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
                 // Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->since()->translateLabel(),
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
