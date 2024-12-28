@@ -17,7 +17,7 @@ class BlogSeeder extends Seeder
 
 
         $sql="INSERT INTO blogs  VALUES
-            (1, 'Primer Blog', 'primer-blog', 'Subtítulo', 1, 1, '2024-12-20 10:02:00', 2, 'Introduccion ', '	Descripcion general del blog', 1, 'blogs/blog1.jpg', '2024-12-20 16:45:27', '2024-12-20 16:50:26',null);";
+            (1, 'Primer Blog', 'primer-blog', 'Subtítulo', 1, 1, '2024-12-20 10:02:00', 2, 'Introduccion ', '	Descripcion general del blog', 1, 'uploads/blogs/primer-blog_blog1.jpg', '2024-12-20 16:45:27', '2024-12-20 16:50:26',null);";
 
 
          DB::update($sql);

@@ -5,8 +5,6 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use App\Models\Blog;
 use Filament\Tables;
-use Faker\Core\Color;
-use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -17,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\BlogResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\BlogResource\RelationManagers;
+use Filament\Forms\Get;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class BlogResource extends Resource
@@ -64,9 +63,7 @@ class BlogResource extends Resource
                         ->translateLabel()
                         ->maxLength(255)
                         ->columnSpanFull()
-                        // ->live(onBlur: true)
                         ->unique(ignoreRecord: true),
-                        // ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                     Forms\Components\TextInput::make('subtitle')
                         ->translateLabel()
@@ -77,8 +74,9 @@ class BlogResource extends Resource
                         ->directory('/uploads/blogs')
                         ->preserveFilenames()
                         ->getUploadedFileNameForStorageUsing(
-                            fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
-                                ->prepend('blog-'),
+                            function (Get $get,TemporaryUploadedFile $file){
+                                return Self::getGetSlugTitle($get('title')).'_'.$file->getClientOriginalName();
+                            }
                         ),
                 ])->columns(1),
 
@@ -92,6 +90,7 @@ class BlogResource extends Resource
                             ->relationship('author', 'name')
                             ->label(__('Author'))
                             ->columnSpan(2)
+                            ->translateLabel()
                             ->visible(fn() => Auth::user()->hasrole('Administrador') || Auth::user()->hasrole('Super Admin'))
                             ->required(fn() => Auth::user()->hasrole('Administrador') || Auth::user()->hasrole('Super Admin')),
 
@@ -123,7 +122,6 @@ class BlogResource extends Resource
                     ->translateLabel()
                     ->columnSpanFull()
                     ->minHeight('500px'),
-
             ])->columns(2);
     }
 
@@ -138,8 +136,7 @@ class BlogResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date')
                     ->translateLabel()
-                    ->date()
-                    // ->since()
+                    ->date('d/M/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('author.name')
                     ->translateLabel()
@@ -152,7 +149,6 @@ class BlogResource extends Resource
 
                 Tables\Columns\TextColumn::make('introduction')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('description')->translateLabel()->sortable()->limit(50)->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('slug')->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->since()->translateLabel(),
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -182,8 +178,8 @@ class BlogResource extends Resource
         ];
     }
 
-    public static function getPathImage($title)
+    public static function getGetSlugTitle($title)
     {
-        return '/uploads/blogs/' . Str::slug($title);
+        return  Str::slug($title);
     }
 }
