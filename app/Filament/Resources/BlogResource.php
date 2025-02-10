@@ -50,7 +50,6 @@ class BlogResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->orderBy('created_at', 'desc');
-
     }
     public static function form(Form $form): Form
     {
@@ -74,8 +73,8 @@ class BlogResource extends Resource
                         ->directory('/uploads/blogs')
                         ->preserveFilenames()
                         ->getUploadedFileNameForStorageUsing(
-                            function (Get $get,TemporaryUploadedFile $file){
-                                return Self::getGetSlugTitle($get('title')).'_'.$file->getClientOriginalName();
+                            function (Get $get, TemporaryUploadedFile $file) {
+                                return Self::getGetSlugTitle($get('title')) . '_' . $file->getClientOriginalName();
                             }
                         ),
                 ])->columns(1),
@@ -114,14 +113,17 @@ class BlogResource extends Resource
                 ]),
                 Forms\Components\Textarea::make('introduction')
                     ->label(__('Introduction'))
-                    ->rows(4)
+                    ->rows(3)
                     ->maxLength(255)
+                    ->extraAttributes(['stype'=> 'overflow-y:scroll;'])
                     ->columnSpanFull(),
                 Forms\Components\MarkdownEditor::make('description')
                     ->required()
                     ->translateLabel()
                     ->columnSpanFull()
-                    ->minHeight('500px'),
+                    ->maxHeight('96px')
+                    ->extraAttributes(['stype'=> 'overflow-y:scroll;']),
+
             ])->columns(2);
     }
 
@@ -142,7 +144,7 @@ class BlogResource extends Resource
                     ->translateLabel()
                     ->translateLabel()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('active')->boolean()->translateLabel()->icon('heroicon-s-check' ),
+                Tables\Columns\IconColumn::make('active')->boolean()->translateLabel()->icon('heroicon-s-check'),
                 Tables\Columns\TextColumn::make('subtitle')->translateLabel()->searchable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('type.name')->translateLabel()->numeric()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('category.name')->translateLabel()->sortable()->toggleable(isToggledHiddenByDefault: true),
