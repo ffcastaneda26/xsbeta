@@ -50,20 +50,20 @@ class CompanyResource extends Resource
         return __('Catalogs');
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        if (Auth::user()->hasRole('Administrador')) {
-            return parent::getEloquentQuery();
-        }
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     if (Auth::user()->hasRole('Administrador')) {
+    //         return parent::getEloquentQuery();
+    //     }
 
-        if (Auth::user()->companies->count() && Auth::user()->hasRole(env('APP_ROL_TO_SUSCRIPTOR', 'Suscriptor'))) {
-            return parent::getEloquentQuery()
-                ->where('id', Auth::user()->companies->first()->id);
-        }
+    //     if (Auth::user()->companies->count() && Auth::user()->hasRole(env('APP_ROL_TO_SUSCRIPTOR', 'Suscriptor'))) {
+    //         return parent::getEloquentQuery()
+    //             ->where('id', Auth::user()->companies->first()->id);
+    //     }
 
-        return parent::getEloquentQuery()->where('id', '<', 1);
+    //     return parent::getEloquentQuery()->where('id', '<', 1);
 
-    }
+    // }
 
     public static function form(Form $form): Form
     {

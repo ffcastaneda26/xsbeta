@@ -2,16 +2,25 @@
 
 namespace App\Models;
 
+use Auth;
+use Filament\Panel;
+
+use Laravel\Jetstream\HasTeams;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Collection;
+
+use Laravel\Jetstream\HasProfilePhoto;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Models\Contracts\FilamentUser;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail,HasTenants,FilamentUser
 {
     use HasApiTokens;
 
@@ -67,4 +76,44 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+
+
+        if (Auth::check()) {
+            if(!$this->active){
+                Auth::logout();
+                redirect('/');
+            }
+        }
+
+        if(!$this->active){
+            return false;
+        }
+
+        if ($panel->getId() === 'admin') {
+            return Auth::user()->email === 'admin@contuvo.com';
+        }
+
+
+        return false;
+    }
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_user');
+    }
+
+    public function getTenants(Panel $panel): array|Collection
+    {
+        return $this->companies;
+    }
+
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->companies->contains($tenant);
+    }
+
 }
