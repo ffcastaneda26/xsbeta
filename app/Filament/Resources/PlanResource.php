@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\PlanTypeEnum;
 use Filament\Forms;
 use App\Models\Plan;
 use Filament\Tables;
@@ -65,14 +66,12 @@ class PlanResource extends Resource
                         ->translateLabel()
                         ->maxLength(10)
                         ->default('USD'),
-                    // Forms\Components\TextInput::make('bill_interval')
-                    //     ->required()
-                    //     ->translateLabel(),
-                    Forms\Components\Select::make('bill_interval')
+
+                    Forms\Components\Select::make('plan_type')
                         ->required()
                         ->translateLabel()
                         ->options(
-                            collect(\App\Enums\IntervalPlanEnum::cases())->mapWithKeys(fn($case) => [
+                            collect(PlanTypeEnum::cases())->mapWithKeys(fn($case) => [
                                 $case->value => $case->getLabel()
                             ])->toArray()
                         ),
@@ -127,7 +126,7 @@ class PlanResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->translateLabel(),
-                Tables\Columns\TextColumn::make('bill_interval')
+                Tables\Columns\TextColumn::make('plan_type')
                     ->searchable()
                     ->sortable()
                     ->translateLabel(),
