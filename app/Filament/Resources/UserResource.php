@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\CompaniesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -51,36 +52,36 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Forms\Components\Group::make()->schema([
-                 Forms\Components\Section::make()->schema([
-                     Forms\Components\TextInput::make('name')
-                        ->required()
-                        ->minLength(length: 5)
-                        ->maxLength(100)
-                        ->translateLabel(),
-                     Forms\Components\TextInput::make('email')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->translateLabel()
-                        ->maxLength(100)
-                        ->minLength(5),
-                     Forms\Components\TextInput::make('password')
-                        ->password()
-                        ->revealable()
-                        ->translateLabel()
-                        ->maxLength(30)
-                        ->minLength(8)
-                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                        ->dehydrated(fn($state) => filled($state))
-                        ->required(fn(string $context): bool => $context === 'create'),
-                     Forms\Components\Toggle::make('active'),
-                ])->columns(2),
+            ->schema([
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\Section::make()->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->minLength(length: 5)
+                            ->maxLength(100)
+                            ->translateLabel(),
+                        Forms\Components\TextInput::make('email')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->translateLabel()
+                            ->maxLength(100)
+                            ->minLength(5),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->revealable()
+                            ->translateLabel()
+                            ->maxLength(30)
+                            ->minLength(8)
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(string $context): bool => $context === 'create'),
+                        Forms\Components\Toggle::make('active'),
+                    ])->columns(2),
 
 
-            ]),
+                ]),
 
-        ]);
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -99,7 +100,7 @@ class UserResource extends Resource
                 Tables\Columns\IconColumn::make('active')
                     ->boolean()
                     ->translateLabel(),
-                    Tables\Columns\TextColumn::make('companies')
+                Tables\Columns\TextColumn::make('companies')
                     ->label('Empresas')
                     ->getStateUsing(function (User $record): string {
                         return $record->companies->pluck('name')->implode('<br>');
@@ -142,6 +143,7 @@ class UserResource extends Resource
     {
         return [
             CompaniesRelationManager::class,
+            RolesRelationManager::class,
         ];
     }
 

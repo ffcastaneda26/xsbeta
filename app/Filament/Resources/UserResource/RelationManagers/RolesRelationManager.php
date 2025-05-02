@@ -8,18 +8,11 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CompaniesRelationManager extends RelationManager
+class RolesRelationManager extends RelationManager
 {
-    protected static string $relationship = 'companies';
-
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
-    {
-        return __('Companies');
-    }
-
+    protected static string $relationship = 'roles';
 
     public function form(Form $form): Form
     {
@@ -38,7 +31,7 @@ class CompaniesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->translateLabel(),
+                ->label(__('Role')),
             ])
             ->filters([
                 //
