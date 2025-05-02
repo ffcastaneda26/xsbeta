@@ -98,7 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
         }
 
         if ($panel->getId() === 'company') {
-            return $this->companies->count($tenant);
+            return $this->companies->count();
         }
 
         return false;
