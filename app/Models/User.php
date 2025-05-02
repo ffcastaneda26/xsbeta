@@ -19,10 +19,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements MustVerifyEmail,HasTenants,FilamentUser
+class User extends Authenticatable implements MustVerifyEmail, HasTenants, FilamentUser
 {
     use HasApiTokens;
+    use HasRoles;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -80,16 +82,14 @@ class User extends Authenticatable implements MustVerifyEmail,HasTenants,Filamen
 
     public function canAccessPanel(Panel $panel): bool
     {
-
-
         if (Auth::check()) {
-            if(!$this->active){
+            if (!$this->active) {
                 Auth::logout();
                 redirect('/');
             }
         }
 
-        if(!$this->active){
+        if (!$this->active) {
             return false;
         }
 
@@ -97,6 +97,9 @@ class User extends Authenticatable implements MustVerifyEmail,HasTenants,Filamen
             return Auth::user()->email === 'admin@contuvo.com';
         }
 
+        if ($panel->getId() === 'company') {
+            return $this->companies->count();
+        }
 
         return false;
     }
