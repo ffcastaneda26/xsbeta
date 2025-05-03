@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Console\ObserverMakeCommand;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 #[ObserverMakeCommand([CompanyObserver::class])]
 class Company extends Model
@@ -53,15 +55,15 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'company_user');
     }
 
-    // public function roles(): HasMany
-    // {
-    //     return $this->hasMany(Role::class);
-    // }
+    public function roles(): HasMany
+    {
+        return $this->hasMany(related: Role::class);
+    }
 
-    // public function permissions(): HasMany
-    // {
-    //     return $this->hasMany(Permission::class);
-    // }
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(Permission::class);
+    }
 
     public function country(): BelongsTo
     {
