@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
-use App\Observers\CompanyObserver;
 use HashContext;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Console\ObserverMakeCommand;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Observers\CompanyObserver;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Console\ObserverMakeCommand;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 
 #[ObserverMakeCommand([CompanyObserver::class])]
 class Company extends Model
