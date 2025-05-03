@@ -80,17 +80,30 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
     }
 
 
-    public function canAccessPanel(Panel $panel): bool
+    /**
+     * Valida si se puede ingresar a los paneles
+     * +---+------------------------------------------------------------+
+     * | 1 | Usuario Autenticado                                        |
+     * | 2 | Usuario esté activo                                        |
+     * | 3 | Al panel 'admin' si el correo es: admin@contuvo.com        |
+     * | 4 | Al panel 'company' si el usuario tiene empresas asociadas  |
+     * +---+------------------------------------------------------------+
+     * @param \Filament\Panel $panel
+     * @return bool
+     */
+
+    //  TODO: Configurar de otra manera el control no con datos fijos
+     public function canAccessPanel(Panel $panel): bool
     {
+        if(!Auth::check()){
+            redirect('/');
+        }
+
         if (Auth::check()) {
             if (!$this->active) {
                 Auth::logout();
                 redirect('/');
             }
-        }
-
-        if (!$this->active) {
-            return false;
         }
 
         if ($panel->getId() === 'admin') {
@@ -112,7 +125,6 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
     {
         return $this->companies;
     }
-
 
     public function canAccessTenant(Model $tenant): bool
     {
