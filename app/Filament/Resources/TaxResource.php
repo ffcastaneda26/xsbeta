@@ -24,7 +24,7 @@ class TaxResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('Taxes');
+        return __('Taxes x Country');
     }
 
     public static function getPluralLabel(): ?string
