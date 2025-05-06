@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Excellsus\Traits\UserTrait;
 use Auth;
 use Filament\Panel;
 
@@ -32,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    Use UserTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -121,6 +123,10 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
         return $this->belongsToMany(Company::class, 'company_user');
     }
 
+    public function company(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class, 'company_user');
+    }
     public function getTenants(Panel $panel): array|Collection
     {
         return $this->companies;

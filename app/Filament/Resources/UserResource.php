@@ -7,6 +7,8 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\CompaniesRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\User;
+use Auth;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,11 +20,20 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
 {
+
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?int $navigationSort = 1;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (Auth::user()->isAdministrator()) {
+            return true;
+        }
+
+        return Auth::user()->companies->contains(Filament::getTenant());
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -43,11 +54,33 @@ class UserResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
+        $tenant = Filament::getTenant();
+
+        if ($tenant) {
+            return static::getModel()::whereHas('companies',function(Builder $query) use($tenant){
+                $query->where('companies.id', $tenant->id);
+            })->count();
+        }
+
         return static::getModel()::count();
     }
     public static function getNavigationGroup(): string
     {
         return __('Security');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $tenant = Filament::getTenant();
+
+        if ($tenant) {
+            $query->whereHas('companies', function (Builder $query) use ($tenant) {
+                $query->where('companies.id', $tenant->id);
+            });
+        }
+
+        return $query;
     }
     public static function form(Form $form): Form
     {
@@ -86,48 +119,61 @@ class UserResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->translateLabel(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->sortable()
-                    ->translateLabel(),
+        // Obtener el tenant actual
+        $tenant = Filament::getTenant();
 
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean()
-                    ->translateLabel(),
-                Tables\Columns\TextColumn::make('companies')
-                    ->label('Empresas')
-                    ->getStateUsing(function (User $record): string {
-                        return $record->companies->pluck('name')->implode('<br>');
-                    })
-                    ->html()
-                    ->sortable()
-                    ->searchable()
-                    ->wrap(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('two_factor_confirmed_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
+        // Definir las columnas base
+        $columns = [
+            Tables\Columns\TextColumn::make('name')
+                ->searchable()
+                ->sortable()
+                ->translateLabel(),
+            Tables\Columns\TextColumn::make('email')
+                ->searchable()
+                ->sortable()
+                ->translateLabel(),
+            Tables\Columns\IconColumn::make('active')
+                ->boolean()
+                ->translateLabel(),
+            Tables\Columns\TextColumn::make('email_verified_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('two_factor_confirmed_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('created_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+            Tables\Columns\TextColumn::make('updated_at')
+                ->dateTime()
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+        ];
+
+        // Agregar la columna 'companies' solo si NO hay un tenant
+        if (!$tenant) {
+            $columns[] = Tables\Columns\TextColumn::make('companies')
+                ->label('Empresas')
+                ->getStateUsing(function (User $record): string {
+                    return $record->companies->pluck('name')->implode('<br>');
+                })
+                ->html()
+                ->sortable()
+                ->searchable()
+                ->wrap();
+        }
+
+        return $table
+            ->columns($columns)
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('company_id')
+                    ->relationship('companies', 'name')
+                    ->preload()
+                    ->translateLabel()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
