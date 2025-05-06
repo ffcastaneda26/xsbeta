@@ -281,15 +281,18 @@ class CompanyResource extends Resource
                 Tables\Columns\TextColumn::make('address')
                     ->searchable()
                     ->sortable()
-                    ->translateLabel()->toggleable(isToggledHiddenByDefault: true),
+                    ->translateLabel()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('num_ext')
                     ->searchable()
                     ->sortable()
-                    ->translateLabel()->toggleable(isToggledHiddenByDefault: true),
+                    ->translateLabel()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('num_int')
                     ->searchable()
                     ->sortable()
-                    ->translateLabel()->toggleable(isToggledHiddenByDefault: true),
+                    ->translateLabel()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('country_id')
                     ->numeric()
                     ->sortable()->toggleable(isToggledHiddenByDefault: true),

@@ -29,7 +29,7 @@ class CompanyPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Green,
             ])
-            ->tenant(Company::class,ownershipRelationship:'companies')
+            ->tenant(Company::class,ownershipRelationship:'company')
             // ->topNavigation()
             ->brandName(__('Company Administrator Panel'))
             ->discoverResources(in: app_path('Filament/Company/Resources'), for: 'App\\Filament\\Company\\Resources')
