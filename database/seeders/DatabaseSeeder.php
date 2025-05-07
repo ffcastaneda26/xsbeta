@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             'taxes',
             'suscriptions',
             'plans',
+            'account_types'
         ]);
         $this->command->info('Talas Trucadas');
 
@@ -37,6 +38,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             TimeZoneSeeder::class,
             TaxSeeder::class,
+            AccountTypeSeeder::class,
             PlanSeeder::class,
             CompanySeeder::class,
         ]);
