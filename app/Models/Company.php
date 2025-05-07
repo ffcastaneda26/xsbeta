@@ -57,6 +57,10 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'company_user');
     }
 
+    public function accountingAccounts(): HasMany
+    {
+        return $this->hasMany(AccountingAccount::class);
+    }
     public function roles(): HasMany
     {
         return $this->hasMany(related: Role::class);

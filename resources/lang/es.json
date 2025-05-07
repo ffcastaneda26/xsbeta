@@ -284,5 +284,13 @@
    "Account Type": "Tipo de Cuenta",
    "Account Types Catalog has been created": "Catálogo de Tipos de Cuenta ha sido creado",
    "Filling Out the Account Type Catalog": "Llenando Catálogo de Tipos de Cuenta",
+   "Accounting Accounts": "Cuentas Contables",
+   "Accounting Account": "Cuenta Contable",
+   "Account type": "Tipo de Cuenta",
+   "Account structure is incorrect": "Estructura de la cuenta es incorrecta",
+   "The account code is required.": "Código de cuenta es requerido",
+   "Account code must follow structure:": "El código de cuenta debe seguir la estructura:",
+
+
     "Ok": "Aceptar"
 }
