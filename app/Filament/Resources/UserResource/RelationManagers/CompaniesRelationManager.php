@@ -44,7 +44,20 @@ class CompaniesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\AttachAction::make()
+                    ->recordSelect(function () {
+                        return Forms\Components\Select::make('recordId')
+                            ->label(__('Company'))
+                            ->options(function () {
+                                return \App\Models\Company::where('active', 1)
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+                            })
+                            ->searchable();
+                    })
+                    ->visible(function () {
+                        return \App\Models\Company::where('active', 1)->exists();
+                    }),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make()->button(),

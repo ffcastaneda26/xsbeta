@@ -32,6 +32,6 @@ class EditCompany extends EditRecord
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return __('The changes to your store have been saved successfully');
+        return __('The changes to your company have been saved successfully');
     }
 }

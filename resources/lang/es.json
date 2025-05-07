@@ -278,5 +278,7 @@
     "Company id": "Empresa",
     "Role id":"Rol",
     "Taxes x Country": "Impuestos x País",
+    "Accounting Account Structure": "Estructura Cuenta Contable",
+    "The account structure must consist of numbers from 1 to 9 separated by hyphens, e.g., 999-99-999-9999, and cannot start or end with a hyphen.": "La estructura de la cuenta debe constar de números del 1 al 9 separados por guiones, por ejemplo, 3-2-3-4, y no puede comenzar ni terminar con un guion.",
     "Ok": "Aceptar"
 }

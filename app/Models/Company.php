@@ -25,6 +25,7 @@ class Company extends Model
         'tax_id',
         'url_company',
         'email',
+        'account_structure',
         'phone',
         'address',
         'num_ext',

@@ -94,6 +94,17 @@ class CompanyResource extends Resource
                                         ->label(__('Url Company (without spaces)'))
                                         ->maxLength(50)
                                         ->required(),
+                                    // TODO:: Una vez que tenga cuentas contables debe ser "disabled"
+                                    Forms\Components\TextInput::make('account_structure')
+                                        ->nullable()
+                                        ->label(__('Accounting Account Structure'))
+                                        ->maxLength(50)
+                                        ->columnSpanFull()
+                                        ->regex('/^[1-9]+(-[1-9]+)*$/')
+                                        ->validationMessages([
+                                            'regex' => __('The account structure must consist of numbers from 1 to 9 separated by hyphens, e.g., 999-99-999-9999, and cannot start or end with a hyphen.'),
+                                        ])
+                                        ->hint('Segmentos y longitud de los mismos separados por guiones, por ejemplo: 3-2-3-4 indica que las cuentas serán 999-99-999-9999'),
                                 ])->columns(2),
                                 // Columna derecha: email, phone, active
                                 Forms\Components\Group::make()->schema([
@@ -127,7 +138,7 @@ class CompanyResource extends Resource
                                         ->searchable()
                                         ->loadingMessage(__('Loading countries...'))
                                         ->afterStateUpdated(fn(Set $set) => $set('state_id', null)),
-                                        // ->helperText(new HtmlString(__('If the list does not appear, please reload the page'))),
+                                    // ->helperText(new HtmlString(__('If the list does not appear, please reload the page'))),
                                     Forms\Components\Select::make('state_id')
                                         ->translateLabel()
                                         ->required()
@@ -163,21 +174,21 @@ class CompanyResource extends Resource
                                         ->translateLabel()
                                         ->label(function (Get $get) {
                                             $countryId = $get('country_id');
-                                            $tax = $countryId ? \App\Models\Tax::where('country_id', $countryId)->first() : null;
+                                            $tax = $countryId ? Tax::where('country_id', $countryId)->first() : null;
                                             return $tax ? $tax->name : __('Tax (Disabled)');
                                         })
                                         ->required(function (Get $get) {
                                             $countryId = $get('country_id');
-                                            return $countryId && \App\Models\Tax::where('country_id', $countryId)->exists();
+                                            return $countryId && Tax::where('country_id', $countryId)->exists();
                                         })
                                         ->disabled(function (Get $get) {
                                             $countryId = $get('country_id');
-                                            return !$countryId || !\App\Models\Tax::where('country_id', $countryId)->exists();
+                                            return !$countryId || !Tax::where('country_id', $countryId)->exists();
                                         })
                                         ->unique(ignoreRecord: true)
                                         ->rules(function (Get $get) {
                                             $countryId = $get('country_id');
-                                            $tax = $countryId ? \App\Models\Tax::where('country_id', $countryId)->first() : null;
+                                            $tax = $countryId ? Tax::where('country_id', $countryId)->first() : null;
                                             $rules = [];
 
                                             if ($tax) {
