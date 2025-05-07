@@ -17,14 +17,14 @@ class DatabaseSeeder extends Seeder
 
         $this->command->warn(PHP_EOL . __('Truncando Tablas'));
         $this->truncateTables([
-            // 'user_roles',
-            // 'role_permissions',
-            // 'user_permissions',
-            // 'company_user',
+            'user_roles',
+            'role_permissions',
+            'user_permissions',
+            'company_user',
             'users',
-            // 'roles',
-            // 'permissions',
-            // 'companies',
+            'roles',
+            'permissions',
+            'companies',
             'time_zones',
             'taxes',
             'suscriptions',
@@ -33,12 +33,12 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Talas Trucadas');
 
 
-
         $this->call([
             AdminUserSeeder::class,
             TimeZoneSeeder::class,
             TaxSeeder::class,
             PlanSeeder::class,
+            CompanySeeder::class,
         ]);
     }
 

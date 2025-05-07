@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('url_company',50)->unique()->comment('Url para la empresa');
             $table->string('tax_id',20)->unique()->comment('RFC');
             $table->string('email')->nullable()->default(null)->comment('Correo Electrónico');
+            $table->string('account_structure',50)->nullable()->default(null)->comment('Estructur de cuenta contable');
             $table->string('phone',15)->nullable()->default(null)->comment('Teléfono');
             $table->string('address',80)->nullable()->default(null)->comment('Dirección calle');
             $table->string('num_ext',6)->nullable()->default(null)->comment('Número Exterior');
