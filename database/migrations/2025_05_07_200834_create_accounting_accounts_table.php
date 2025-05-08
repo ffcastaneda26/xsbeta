@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\AccountingAccount;
 use App\Models\AccountType;
 use App\Models\Company;
 use Illuminate\Database\Migrations\Migration;
@@ -17,11 +18,14 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Company::class)->comment('Empresa');
             $table->foreignIdFor(AccountType::class)->comment('Tipo de cuenta');
+            $table->unsignedBigInteger('parent_id')->nullable()->comment('Cuenta padre');
             $table->string('code')->unique()->comment('Cuenta contable');
             $table->string('name',100)->comment('Nombre de la cuenta');
             $table->mediumText('description')->nullable()->comment('Descripción de la cuenta');
             $table->boolean('active')->default(true);
             $table->timestamps();
+            // Llave foránea
+            $table->foreign('parent_id')->references('id')->on('accounting_accounts')->onDelete('set null');
         });
     }
 

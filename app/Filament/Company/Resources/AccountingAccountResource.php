@@ -14,7 +14,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 
 class AccountingAccountResource extends Resource
 {
@@ -24,7 +23,6 @@ class AccountingAccountResource extends Resource
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
     protected static ?int $navigationSort = 21;
 
-
     public static function getNavigationLabel(): string
     {
         return __('Accounting Accounts');
@@ -33,8 +31,8 @@ class AccountingAccountResource extends Resource
     public static function getPluralLabel(): ?string
     {
         return __('Accounting Accounts');
-
     }
+
     public static function getModelLabel(): string
     {
         return __('Accounting Account');
@@ -45,7 +43,6 @@ class AccountingAccountResource extends Resource
         return __('Catalogs');
     }
 
-
     public static function form(Form $form): Form
     {
         return $form
@@ -55,11 +52,23 @@ class AccountingAccountResource extends Resource
                         ->relationship('accountType', 'name')
                         ->required()
                         ->translateLabel(),
-
+                    Forms\Components\Select::make('parent_id')
+                        ->label(__('Parent Account'))
+                        ->relationship(
+                            name: 'parent',
+                            titleAttribute: 'name',
+                            modifyQueryUsing: fn(Builder $query) => $query->where('company_id', Filament::getTenant()->id)
+                                ->whereRaw('code LIKE ?', ['%-000'])
+                        )
+                        ->nullable()
+                        ->reactive()
+                        ->translateLabel(),
                     Forms\Components\TextInput::make('code')
                         ->required()
                         ->translateLabel()
                         ->reactive()
+                        // TODO:: Validar que solo esté duplicado para la misma empresa
+                        ->unique(ignoreRecord: true)
                         ->rules([
                             'required',
                             function () {
@@ -71,7 +80,9 @@ class AccountingAccountResource extends Resource
                                             ->title(__('Account structure is incorrect'))
                                             ->danger()
                                             ->send();
+                                        return;
                                     }
+
                                 };
                             },
                         ])
@@ -98,9 +109,7 @@ class AccountingAccountResource extends Resource
                     Forms\Components\RichEditor::make('description')
                         ->translateLabel()
                         ->columnSpanFull(),
-
-               ]),
-
+                ]),
             ]);
     }
 
@@ -111,6 +120,11 @@ class AccountingAccountResource extends Resource
                 Tables\Columns\TextColumn::make('code')->sortable()->searchable()->translateLabel(),
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable()->translateLabel(),
                 Tables\Columns\TextColumn::make('accountType.name')->sortable()->translateLabel(),
+                Tables\Columns\TextColumn::make('parent.name')
+                    ->label(__('Parent Account'))
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
                 Tables\Columns\IconColumn::make('active')
                     ->boolean()
                     ->translateLabel(),
@@ -125,7 +139,6 @@ class AccountingAccountResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-
 
     public static function getRelations(): array
     {
@@ -142,6 +155,7 @@ class AccountingAccountResource extends Resource
             'edit' => Pages\EditAccountingAccount::route('/{record}/edit'),
         ];
     }
+
     protected static function validateAccountStructure(string $code, string $structure): bool
     {
         $segments = explode('-', $structure);
@@ -189,5 +203,4 @@ class AccountingAccountResource extends Resource
         }, $segments);
         return implode('-', $formattedSegments);
     }
-
 }

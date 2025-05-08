@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AccountingAccount extends Model
 {
@@ -18,7 +20,8 @@ class AccountingAccount extends Model
         'code',
         'name',
         'description',
-        'active'
+        'active',
+        'parent_id'
     ];
 
 
@@ -48,5 +51,16 @@ class AccountingAccount extends Model
     public function accountType()
     {
         return $this->belongsTo(AccountType::class);
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(AccountingAccount::class,'parent_id');
+    }
+
+    public function childs(): HasMany
+    {
+
+       return $this->hasMany(AccountingAccount::class,'parent_id');
     }
 }

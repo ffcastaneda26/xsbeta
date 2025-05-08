@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class CompaniesRelationManager extends RelationManager
 {
@@ -56,7 +57,7 @@ class CompaniesRelationManager extends RelationManager
                             ->searchable();
                     })
                     ->visible(function () {
-                        return \App\Models\Company::where('active', 1)->exists();
+                        return \App\Models\Company::where('active', 1)->exists() && Auth::user()->isAdministrator();
                     }),
             ])
             ->actions([

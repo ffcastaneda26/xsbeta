@@ -290,7 +290,12 @@
    "Account structure is incorrect": "Estructura de la cuenta es incorrecta",
    "The account code is required.": "Código de cuenta es requerido",
    "Account code must follow structure:": "El código de cuenta debe seguir la estructura:",
-
-
+   "Parent Account": "Cuenta Padre",
+   "The first segment cannot be all zeros": "El primer segmento no pueden ser solo ceros",
+   "If a segment is all zeros, the next segment must be non-zero": "Si un segmento es todo ceros, el siguiente segmento debe ser distinto de cero",
+   "Child account code must match parent code up to parent level": "Child account code must match parent code up to parent level",
+   "Invalid parent-child code structure": "Estructura de código padre-hijo no válida",
+   "Role successfully linked": "Rol asingado satisfactoriamente",
+   "There are no roles to link": "No No hay roles que vincular",
     "Ok": "Aceptar"
 }

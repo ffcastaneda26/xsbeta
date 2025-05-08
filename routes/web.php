@@ -1,9 +1,21 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/probar',function(){
+    $user = User::find(2)->with();
+    dd($user->roles);
+});
+
 Route::get('/', function () {
-    return view('welcome');
+
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    } else {
+        return view('welcome');
+    }
 });
 
 Route::middleware([
@@ -12,6 +24,17 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
+
+        if(Auth::user()->isAdministrator()){
+            return redirect()->to('/admin');
+        }
+
+
+        if(Auth::user()->isCompanyManager()){
+            return redirect()->to('/company');
+        }
+
+
         return view('dashboard');
     })->name('dashboard');
 });
