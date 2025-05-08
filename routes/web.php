@@ -4,10 +4,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/probar',function(){
-    $user = User::find(2)->with();
-    dd($user->roles);
-});
 
 Route::get('/', function () {
 

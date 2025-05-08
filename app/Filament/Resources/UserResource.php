@@ -2,21 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Filament\Resources\UserResource\RelationManagers\CompaniesRelationManager;
-use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
-use App\Models\User;
-use Auth;
-use Filament\Facades\Filament;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
 use Hash;
+use Filament\Forms;
+use App\Models\User;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\CompaniesRelationManager;
 
 class UserResource extends Resource
 {
@@ -28,9 +28,11 @@ class UserResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        if (Auth::user()->isAdministrator()) {
-            return true;
+
+        if (filament()->getCurrentPanel()->getId() === 'admin') {
+           return true;
         }
+
 
         return Auth::user()->companies->contains(Filament::getTenant());
     }
@@ -69,14 +71,16 @@ class UserResource extends Resource
         return __('Security');
     }
 
+
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery();
-        $tenant = Filament::getTenant();
 
-        if ($tenant) {
-            $query->whereHas('companies', function (Builder $query) use ($tenant) {
-                $query->where('companies.id', $tenant->id);
+        // Detectar si estamos en el panel CompanyPanelProvider
+        if (filament()->getCurrentPanel()->getId() === 'company') {
+            $tenant = filament()->getTenant();
+            $query->whereHas('companies', function (Builder $subQuery) use ($tenant) {
+                $subQuery->where('companies.id', $tenant->id);
             });
         }
 
