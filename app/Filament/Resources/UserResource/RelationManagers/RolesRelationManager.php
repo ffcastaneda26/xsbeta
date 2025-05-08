@@ -143,7 +143,7 @@ class RolesRelationManager extends RelationManager
                     ->preloadRecordSelect();
             } else {
                 $headerActions[] = Tables\Actions\Action::make('no_roles')
-                    ->label(__('No hay roles que asociar en la empresa'))
+                    ->label(__('There are no roles to associate in the company'))
                     ->disabled();
             }
         }

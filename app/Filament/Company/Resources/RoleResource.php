@@ -5,6 +5,7 @@ namespace App\Filament\Company\Resources;
 use App\Filament\Company\Resources\RoleResource\Pages;
 use App\Filament\Company\Resources\RoleResource\RelationManagers;
 use App\Models\Role;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -42,6 +43,16 @@ class RoleResource extends Resource
         return __('Roles');
     }
 
+    public static function getNavigationBadge(): ?string
+{
+    $count = Role::count();
+    return $count > 0 ? (string) $count : '0';
+}
+
+public static function getNavigationBadgeColor(): ?string
+{
+    return Role::count() > 0 ? 'primary' : 'danger';
+}
     public static function form(Form $form): Form
     {
         return $form
