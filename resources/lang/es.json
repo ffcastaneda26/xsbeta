@@ -297,5 +297,6 @@
    "Invalid parent-child code structure": "Estructura de código padre-hijo no válida",
    "Role successfully linked": "Rol asingado satisfactoriamente",
    "There are no roles to link": "No No hay roles que vincular",
+   "There are no roles to associate in the company": "No hay roles que asociar en la empresa",
     "Ok": "Aceptar"
 }

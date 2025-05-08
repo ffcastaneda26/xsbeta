@@ -26,8 +26,14 @@ class Role extends SpatieRole
 
         static::addGlobalScope('tenant', function ($builder) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
-                $builder->where('company_id', filament()->getTenant()->id);
+                // $builder->where('company_id', filament()->getTenant()->id);
+                $builder->where('roles.company_id', filament()->getTenant()->id);
             }
         });
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_roles', 'model_id', 'role_id');
     }
 }

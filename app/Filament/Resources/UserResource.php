@@ -90,34 +90,37 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make()->schema([
+                    Forms\Components\Group::make()->schema([
                         Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->minLength(length: 5)
-                            ->maxLength(100)
-                            ->translateLabel(),
-                        Forms\Components\TextInput::make('email')
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->translateLabel()
-                            ->maxLength(100)
-                            ->minLength(5),
-                        Forms\Components\TextInput::make('password')
-                            ->password()
-                            ->revealable()
-                            ->translateLabel()
-                            ->maxLength(30)
-                            ->minLength(8)
-                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                            ->dehydrated(fn($state) => filled($state))
-                            ->required(fn(string $context): bool => $context === 'create'),
-                        Forms\Components\Toggle::make('active'),
-                    ])->columns(2),
-
-
+                        ->required()
+                        ->minLength(length: 5)
+                        ->maxLength(100)
+                        ->translateLabel(),
+                    Forms\Components\TextInput::make('email')
+                        ->required()
+                        ->unique(ignoreRecord: true)
+                        ->translateLabel()
+                        ->maxLength(100)
+                        ->minLength(5),
+                    ]),
                 ]),
 
+
+                Forms\Components\Group::make()->schema([
+
+                    Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->revealable()
+                    ->translateLabel()
+                    ->maxLength(30)
+                    ->minLength(8)
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create'),
+                Forms\Components\Toggle::make('active'),
+                ]),
             ]);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use App\Models\Role;
+use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -123,7 +124,7 @@ class RolesRelationManager extends RelationManager
                     ->recordSelect(function () use ($roles) {
                         return Forms\Components\Select::make('recordId')
                             ->label(__('Role'))
-                            ->options($roles)
+                           ->options($roles) // Corregir: pasar $roles directamente, no como [$roles]
                             ->required()
                             ->searchable();
                     })
@@ -132,8 +133,11 @@ class RolesRelationManager extends RelationManager
                         $user = $this->getOwnerRecord();
                         $roleId = $data['recordId'];
                         $tenant = Filament::getTenant();
-                        // Attach the role with tenant's company_id as a pivot attribute
-                        $user->roles()->attach($roleId, ['company_id' => $tenant->id]);
+                        // Attach the role with tenant's company_id as a pivot attribute, bypassing tenant scope
+                        $user->roles()->attach($roleId, [
+                            'company_id' => $tenant->id,
+                            'model_type' => User::class, // Especificar el model_type
+                        ]);
                         static::roleAssigned();
                     })
                     ->preloadRecordSelect();
