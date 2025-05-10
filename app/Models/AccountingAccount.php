@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AccountingAccount extends Model
 {
+
+    protected $table = "accounting_accounts";
+
     protected $fillable = [
         'company_id',
         'account_subtype_id',

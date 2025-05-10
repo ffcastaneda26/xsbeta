@@ -283,7 +283,15 @@
    "Account Types": "Tipos de De Cuenta",
    "Account Type": "Tipo de Cuenta",
    "Account Types Catalog has been created": "Catálogo de Tipos de Cuenta ha sido creado",
+   "Account Sub Types Catalog has been created": "Catálogo de Subtipos de Cuenta ha sido creado",
+
    "Filling Out the Account Type Catalog": "Llenando Catálogo de Tipos de Cuenta",
+   "Filling Out the Account Sub Types Catalog": "Llenando Catálogo de Subtipos de Cuenta",
+   "Filling Out the Account Categorpies Catalog": "Llenando Catálogo de Categorías de Cuenta",
+   "Account Categories Catalog has been created": "Catálogo de Categorías de Cuenta ha sido creado",
+
+
+
    "Accounting Accounts": "Cuentas Contables",
    "Accounting Account": "Cuenta Contable",
    "Account type": "Tipo de Cuenta",
@@ -298,5 +306,7 @@
    "Role successfully linked": "Rol asingado satisfactoriamente",
    "There are no roles to link": "No No hay roles que vincular",
    "There are no roles to associate in the company": "No hay roles que asociar en la empresa",
+   "Truncating Tables": "Inicializando Tablas",
+   "Tables have been initialized": "Tablas han sido inicializadas",
     "Ok": "Aceptar"
 }

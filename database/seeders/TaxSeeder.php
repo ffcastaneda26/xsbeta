@@ -31,9 +31,9 @@ class TaxSeeder extends Seeder
             [
                 'country_code' => 'CL',
                 'name' => 'RUT',
-                'min_length' => 10,
-                'max_length' => 10,
-                'regex' => '^\d{7,8}-[\dK]$',
+                'min_length' => 12,
+                'max_length' => 13,
+                'regex' => '^(?:(\d{1,2})(\.)(\d{3})(\.)(\d{3})-([\dkK])|(\d{7,8})-([\dkK])|(\d{7,8})([\dkK]))$',
                 'description' => '8 dígitos + dígito verificador (0-9 o K), con guión',
             ],
             [

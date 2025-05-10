@@ -14,7 +14,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('accounting_account', function (Blueprint $table) {
+        Schema::create('accounting_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->constrained()->onDelete('cascade')->comment('Empresa');
             $table->foreignIdFor(AccountType::class)->constrained()->onDelete('cascade')->comment('Tipo');
@@ -33,6 +33,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounting_account');
+        Schema::dropIfExists('accounting_accounts');
     }
 };

@@ -15,36 +15,43 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        $this->command->warn(PHP_EOL . __('Truncando Tablas'));
+        $this->command->warn(PHP_EOL . __('Truncating Tables'));
         $this->truncateTables([
             'user_roles',
             'role_permissions',
             'user_permissions',
             'company_user',
+            'accounting_accounts',
+            'accounting_single_accounts',
+            'accounting_categories',
+            'account_subtypes',
+            'account_types',
             'users',
             'roles',
             'permissions',
-            'companies',
             'time_zones',
             'taxes',
             'suscriptions',
             'plans',
-            'account_types'
+            'companies',
         ]);
-        $this->command->info('Talas Trucadas');
+        $this->command->info(__('Tables have been initialized'));
 
 
         $this->call([
             AdminUserSeeder::class,
             TimeZoneSeeder::class,
             TaxSeeder::class,
-            AccountTypeSeeder::class,
             PlanSeeder::class,
             CompanySeeder::class,
+            AccountTypeSeeder::class,
+            AccountSubTypeSeeder::class,
+            AccountingCategorySeeder::class,
         ]);
     }
 
-    protected function truncateTables(array $tables) {
+    protected function truncateTables(array $tables)
+    {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0;'); // Desactivamos la revisión de claves foráneas
         foreach ($tables as $table) {
             DB::table($table)->truncate();

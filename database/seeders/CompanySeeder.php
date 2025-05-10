@@ -15,15 +15,14 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         $this->command->warn(PHP_EOL . __('Creating') . ' ' . __('Company') . ' ' .  __('Contuvo Sistema de Contabilidad'));
-        DB::table('company_user')->truncate();
-        DB::table('companies')->truncate();
+
 
         $company = Company::create([
-            'name' => 'Contuvo Sistema de Contabilidad',
-            'short' => 'contuvo',
-            'slug' => 'contuvo_sistema_de_contabilidad',
-            'url_company' => 'contuvo',
-            'tax_id' => '12345678-K',
+            'name' => 'Empresa de Prueba',
+            'short' => 'Empresa Prueba',
+            'slug' => 'empresa_prueba',
+            'url_company' => 'empresa_prueba',
+            'tax_id' => '77.755.210-4',
             'phone' => '5555555555',
             'address' => 'Calle de la Compañia',
             'num_ext' => '123',
@@ -37,6 +36,6 @@ class CompanySeeder extends Seeder
             'user_id' => 1,
         ]);
 
-        $this->command->info('Company created');
+        $this->command->info(__('Company created'));
     }
 }
