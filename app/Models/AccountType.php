@@ -2,22 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AccountType extends Model
 {
-    protected $table = 'account_types';
-    public $timestamps = false;
+    /** @use HasFactory<\Database\Factories\AccountTypeFactory> */
+    use HasFactory;
+    protected $fillable = ['company_id', 'name', 'description'];
 
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    public function accountingAccounts(): HasMany
+    public function company(): BelongsTo
     {
-        return $this->hasMany(AccountingAccount::class);
+        return $this->belongsTo(Company::class);
     }
 
+    public function subtypes(): HasMany
+    {
+        return $this->hasMany(AccountSubtype::class);
+    }
 }

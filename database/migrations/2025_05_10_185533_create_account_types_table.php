@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Company;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +14,10 @@ return new class extends Migration
     {
         Schema::create('account_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100)->comment('Tipo de cuenta');
-            $table->mediumText('description')->nullable()->comment('Descripción');
+            $table->foreignIdFor(Company::class)->constrained()->onDelete('cascade')->comment('Empresa');
+            $table->string('name')->comment('Nombre del tipo de cuenta');
+            $table->text('description')->nullable()->comment('Descripción');
+            $table->timestamps();
         });
     }
 
