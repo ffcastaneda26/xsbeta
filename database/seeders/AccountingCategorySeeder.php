@@ -25,7 +25,6 @@ class AccountingCategorySeeder extends Seeder
             'Fact. Electrónica',
             'Presupuesto',
             'Flujo Caja',
-
         ];
 
         foreach ($records as $record) {

@@ -79,9 +79,6 @@ class AccountingSingleAccountResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('company.name')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('account_type.name')
                     ->numeric()
                     ->sortable(),

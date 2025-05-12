@@ -9,8 +9,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class AccountingCategory extends Model
 {
      protected $table = 'accounting_categories';
-    protected $fillable = ['company_id', 'name'];
+    protected $fillable = ['company_id', 'name','description'];
 
+        protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($subtype) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                $subtype->company_id = filament()->getTenant()->id;
+            }
+        });
+
+        static::addGlobalScope('tenant', function ($builder) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                $builder->where('accounting_categories.company_id', filament()->getTenant()->id);
+            }
+        });
+    }
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
