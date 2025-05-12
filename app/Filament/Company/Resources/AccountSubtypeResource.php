@@ -85,7 +85,11 @@ class AccountSubtypeResource extends Resource
                     ->limit(50),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('account_type_id')
+                    ->relationship('type', 'name')
+                    ->preload()
+                    ->translateLabel()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->button(),

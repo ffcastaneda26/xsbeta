@@ -43,7 +43,7 @@ class SubtypesRelationManager extends RelationManager
                     ->limit(50),
             ])
             ->filters([
-                //
+
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()

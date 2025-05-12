@@ -33,7 +33,15 @@ class AccountSubtype extends Model
 
     public function accountType(): BelongsTo
     {
-        return $this->belongsTo(AccountType::class);
+        return $this->belongsTo(AccountType::class,'account_type_id');
+    }
+    public function Type(): BelongsTo
+    {
+        return $this->belongsTo(AccountType::class,'account_type_id');
+    }
+        public function account_type(): BelongsTo
+    {
+       return $this->belongsTo(AccountType::class,'account_type_id');
     }
 
     public function accounts(): HasMany
