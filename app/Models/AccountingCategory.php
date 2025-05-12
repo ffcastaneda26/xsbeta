@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AccountingCategory extends Model
 {
+     protected $table = 'accounting_categories';
     protected $fillable = ['company_id', 'name'];
 
     public function company(): BelongsTo

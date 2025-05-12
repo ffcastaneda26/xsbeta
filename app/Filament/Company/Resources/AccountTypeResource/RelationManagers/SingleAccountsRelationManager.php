@@ -11,13 +11,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SubtypesRelationManager extends RelationManager
+class SingleAccountsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'subtypes';
-
+    protected static string $relationship = 'singleAccounts';
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return __('Subtypes');
+        return __('Single Accounts');
     }
 
     public function form(Form $form): Form
@@ -26,8 +25,11 @@ class SubtypesRelationManager extends RelationManager
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->translateLabel()
-                    ->maxLength(100),
+                    ->maxLength(255)
+                    ->translateLabel(),
+                Forms\Components\TextInput::make('code')
+                    ->maxLength(255)
+                    ->translateLabel(),
                 Forms\Components\RichEditor::make('description')
                     ->translateLabel()
                     ->columnSpanFull(),
@@ -37,29 +39,28 @@ class SubtypesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->heading(__('Subtypes'))
+            ->heading(__('Single Accounts'))
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->translateLabel()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->translateLabel()
-                    ->html()
-                    ->limit(50),
+                Tables\Columns\TextColumn::make('name'),
             ])
             ->filters([
-
+                //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->modalHeading(__('Create New Account Subtype'))
-                    ->label(__('Create Subtype'))
+                    ->modalHeading(__('Create New Single Account'))
+                    ->label(__('Create Single Account'))
                     ->button(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->button(),
                 Tables\Actions\DeleteAction::make()->button(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }

@@ -289,6 +289,9 @@
     "Create New Account Subtype": "Crear Nuevo Subtipo",
     "Create Subtype": "Crear Subtipo",
     "Account type id": "Tipo",
+    "Create New Single Account": "Crear Nueva Cuenta Única",
+
+
     "Account Types Catalog has been created": "Catálogo de Tipos de Cuenta ha sido creado",
     "Account Sub Types Catalog has been created": "Catálogo de Subtipos de Cuenta ha sido creado",
     "Filling Out the Account Type Catalog": "Llenando Catálogo de Tipos de Cuenta",
@@ -299,7 +302,7 @@
     "Single Accounts": "Cuentas Únicas",
     "Single Account": "Cuenta única",
     "Create Single Account": "Crear Cuenta Única",
-    "Crear New Sigle Account": "Crear Nueva Cuenta Única",
+    "Crear New Single Account": "Crear Nueva Cuenta Única",
     "Accounting Accounts": "Cuentas Contables",
     "Accounting Account": "Cuenta Contable",
     "Account type": "Tipo de Cuenta",

@@ -68,9 +68,9 @@ class AccountingSingleAccountResource extends Resource
                         ->translateLabel(),
 
                 ]),
-             Forms\Components\RichEditor::make('description')
-                        ->translateLabel()
-                        ->columnSpanFull(),
+                Forms\Components\RichEditor::make('description')
+                    ->translateLabel()
+                    ->columnSpanFull(),
 
             ]);
     }

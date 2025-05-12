@@ -4,6 +4,7 @@ namespace App\Filament\Company\Resources;
 
 use App\Filament\Company\Resources\AccountTypeResource\Pages;
 use App\Filament\Company\Resources\AccountTypeResource\RelationManagers;
+use App\Filament\Company\Resources\AccountTypeResource\RelationManagers\SingleAccountsRelationManager;
 use App\Filament\Company\Resources\AccountTypeResource\RelationManagers\SubtypesRelationManager;
 use App\Models\AccountType;
 use Filament\Forms;
@@ -81,6 +82,7 @@ class AccountTypeResource extends Resource
     {
         return [
             SubtypesRelationManager::class,
+            SingleAccountsRelationManager::class,
         ];
     }
 
