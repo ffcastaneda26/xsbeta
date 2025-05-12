@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -14,7 +15,7 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->warn(PHP_EOL . __('Creating') . ' ' . __('Company') . ' ' .  __('Contuvo Sistema de Contabilidad'));
+        $this->command->warn(PHP_EOL . __('Creating') . ' ' . __('Test') . ' '. __('Company') . ' ' .  __('Contuvo Sistema de Contabilidad'));
 
 
         $company = Company::create([
@@ -37,5 +38,16 @@ class CompanySeeder extends Seeder
         ]);
 
         $this->command->info(__('Company created'));
+
+        $this->command->warn(PHP_EOL . __('Creating Test User to Test Company'));
+
+        $user = User::factory()->withPersonalTeam()->create([
+            'name' => 'Administrador Empresa de Prueba',
+            'email' => 'admin_empresa1@contuvo.com',
+            "password" => bcrypt("password"),
+        ]);
+
+        $user->companies()->attach($company->id);
+
     }
 }

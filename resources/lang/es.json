@@ -308,5 +308,8 @@
    "There are no roles to associate in the company": "No hay roles que asociar en la empresa",
    "Truncating Tables": "Inicializando Tablas",
    "Tables have been initialized": "Tablas han sido inicializadas",
+   "Creating Test User to Test Company": "Creando usuario de prueba para empresa de prueba",
+   "Test": "Prueba",
+   "Test user assigned to the test company": "Usuario de prueba asignado a la empresa de prueba",
     "Ok": "Aceptar"
 }

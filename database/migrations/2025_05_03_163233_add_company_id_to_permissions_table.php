@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('permissions', function (Blueprint $table) {
-            $table->foreignIdFor(Company::class)->nullable()->comment('Empresa');
+            $table->foreignIdFor(Company::class)->nullable()->after('id')->comment('Empresa');
         });
     }
 
