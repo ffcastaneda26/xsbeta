@@ -284,6 +284,10 @@
    "Account Type": "Tipo de Cuenta",
    "Accoount Subtypes": "Subtipos de Cuenta",
    "Accoount Subtype": "Subtipo de Cuenta",
+   "Subtypes": "Subtipos",
+   "Subtype": "Subtipo",
+   "Create New Account Subtype": "Crear Nuevo Subtipo",
+   "Create Subtype": "Crear Subtipo",
 
    "Account Types Catalog has been created": "Catálogo de Tipos de Cuenta ha sido creado",
    "Account Sub Types Catalog has been created": "Catálogo de Subtipos de Cuenta ha sido creado",

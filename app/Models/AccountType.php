@@ -41,4 +41,5 @@ class AccountType extends Model
     }
 
 
+
 }

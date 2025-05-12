@@ -118,4 +118,9 @@ class Company extends Model
     {
         return $query->where('url_company', $url_company);
     }
+
+    public function accountSubtypes(): HasMany
+    {
+        return $this->hasMany(AccountSubType::class);
+    }
 }
