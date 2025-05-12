@@ -21,7 +21,7 @@ class AccountingAccountResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 23;
+    protected static ?int $navigationSort = 29;
 
     public static function getNavigationLabel(): string
     {
@@ -40,7 +40,7 @@ class AccountingAccountResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('Catalogs');
+        return __('To Resolve');
     }
 
     public static function form(Form $form): Form
@@ -121,7 +121,7 @@ class AccountingAccountResource extends Resource
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable()->translateLabel(),
                 Tables\Columns\TextColumn::make('accountType.name')->sortable()->translateLabel(),
                 Tables\Columns\TextColumn::make('parent.name')
-                    ->label(__('Parent Account'))
+
                     ->sortable()
                     ->searchable()
                     ->translateLabel(),

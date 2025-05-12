@@ -123,4 +123,9 @@ class Company extends Model
     {
         return $this->hasMany(AccountSubType::class);
     }
+
+    public function accountingSingleAccounts(): HasMany
+    {
+        return $this->hasMany(AccountingSingleAccount::class);
+    }
 }
