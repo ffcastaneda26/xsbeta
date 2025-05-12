@@ -21,7 +21,7 @@ class AccountingAccountResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 23;
 
     public static function getNavigationLabel(): string
     {

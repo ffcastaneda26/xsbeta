@@ -13,6 +13,23 @@ class AccountType extends Model
     use HasFactory;
     protected $fillable = ['company_id', 'name', 'description'];
 
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($role) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                $role->company_id = filament()->getTenant()->id;
+            }
+        });
+
+        static::addGlobalScope('tenant', function ($builder) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                $builder->where('account_types.company_id', filament()->getTenant()->id);
+            }
+        });
+    }
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
@@ -22,4 +39,6 @@ class AccountType extends Model
     {
         return $this->hasMany(AccountSubtype::class);
     }
+
+
 }

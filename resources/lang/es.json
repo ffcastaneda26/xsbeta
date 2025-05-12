@@ -280,8 +280,11 @@
     "Taxes x Country": "Impuestos x País",
     "Accounting Account Structure": "Estructura Cuenta Contable",
     "The account structure must consist of numbers from 1 to 9 separated by hyphens, e.g., 999-99-999-9999, and cannot start or end with a hyphen.": "La estructura de la cuenta debe constar de números del 1 al 9 separados por guiones, por ejemplo, 3-2-3-4, y no puede comenzar ni terminar con un guion.",
-   "Account Types": "Tipos de De Cuenta",
+   "Account Types": "Tipos de Cuenta",
    "Account Type": "Tipo de Cuenta",
+   "Accoount Subtypes": "Subtipos de Cuenta",
+   "Accoount Subtype": "Subtipo de Cuenta",
+
    "Account Types Catalog has been created": "Catálogo de Tipos de Cuenta ha sido creado",
    "Account Sub Types Catalog has been created": "Catálogo de Subtipos de Cuenta ha sido creado",
 
