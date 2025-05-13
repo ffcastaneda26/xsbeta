@@ -353,6 +353,7 @@
     "Accounting single account id": "Cuenta Única",
     "Ledger": "Mayor",
     "Code already exists": "Código ya Existe",
+    "Account Subtype": "Subtipo de Cuenta",
 
     "Ok": "Aceptar"
 }

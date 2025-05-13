@@ -1,0 +1,6 @@
+.filament-forms-checkbox-list-component {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem; /* Espaciado entre checkboxes */
+    flex-wrap: wrap; /* Permite que los checkboxes se ajusten si no caben en una línea */
+}

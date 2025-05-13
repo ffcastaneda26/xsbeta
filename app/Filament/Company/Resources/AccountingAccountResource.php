@@ -12,6 +12,7 @@ use App\Rules\AccountStructureRule;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -46,6 +47,7 @@ class AccountingAccountResource extends Resource
     {
         return $form
             ->schema([
+
                 Forms\Components\Grid::make(2) // Grid de 6 columnas
                     ->schema([
                         Forms\Components\Group::make()->schema([
@@ -143,29 +145,34 @@ class AccountingAccountResource extends Resource
 
                         ]),
                     ]),
-                Forms\Components\Grid::make(4) // Grid de 6 columnas
-                    ->schema([
-                        Forms\Components\CheckboxList::make('categories')
-                            ->label(__('Belongs To'))
-                            ->relationship('categories', 'name')
-                            ->options(function () {
-                                return AccountingCategory::query()->pluck('name', 'id');
-                            })
-                            ->nullable()
-                            ->disabled(function (callable $get) {
-                                return !($get('account_type_id') && $get('account_subtype_id') && $get('code') && $get('name'));
-                            }),
 
+                // Categorías a las que pertenece
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\CheckboxList::make('categories')
+                        ->label(__('Belongs To'))
+                        ->relationship('categories', 'name')
+                        ->options(function () {
+                            return AccountingCategory::query()->pluck('name', 'id');
+                        })
+                        ->nullable()
+                        ->disabled(function (callable $get) {
+                            return !($get('account_type_id') && $get('account_subtype_id') && $get('code') && $get('name'));
+                        })
+                        ->extraAttributes(['class' => 'flex flex-row gap-4 flex-wrap']),
+                ])->columnSpanFull(),
+
+                Forms\Components\Grid::make(3) // Grid de 6 columnas
+                    ->schema([
                         Forms\Components\Select::make('accounting_single_account_id')
                             ->translateLabel()
                             ->options(function () {
                                 return AccountingSingleAccount::query()->pluck('name', 'id');
                             })
                             ->nullable()
+                            ->inlineLabel()
                             ->disabled(function (callable $get) {
                                 return !($get('account_type_id') && $get('account_subtype_id') && $get('code') && $get('name'));
                             }),
-
                         Forms\Components\Toggle::make('is_analysis_code')
                             ->label(__('Is Analysis Code'))
                             ->default(false)
@@ -185,6 +192,7 @@ class AccountingAccountResource extends Resource
                         //     ]),
                     ]),
 
+
                 Forms\Components\Group::make()->schema([
                     Forms\Components\RichEditor::make('description')
                         ->translateLabel()
@@ -203,6 +211,7 @@ class AccountingAccountResource extends Resource
 
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -238,12 +247,49 @@ class AccountingAccountResource extends Resource
 
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('account_type_id')
-                    ->label(__('Account Type'))
-                    ->options(AccountType::query()->pluck('name', 'id')),
-                Tables\Filters\SelectFilter::make('account_subtype_id')
-                    ->label(__('Account Subtype'))
-                    ->options(AccountSubtype::query()->pluck('name', 'id')),
+                Tables\Filters\Filter::make('account_type_and_subtype')
+                    ->form([
+                        Forms\Components\Select::make('account_type_id')
+                            ->label(__('Account Type'))
+                            ->options(AccountType::query()->pluck('name', 'id'))
+                            ->live(),
+                        Forms\Components\Select::make('account_subtype_id')
+                            ->label(__('Account Subtype'))
+                            ->options(function (callable $get) {
+                                $accountTypeId = $get('account_type_id');
+                                if (!$accountTypeId) {
+                                    return [];
+                                }
+                                return AccountSubtype::query()
+                                    ->where('account_type_id', $accountTypeId)
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+                            })
+                            ->visible(fn (callable $get): bool => (bool) $get('account_type_id'))
+                            ->live(), // Use live() for dynamic updates
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        // Apply the account_type_id filter
+                        if (!empty($data['account_type_id'])) {
+                            $query->where('account_type_id', $data['account_type_id']);
+                        }
+                        // Apply the account_subtype_id filter
+                        if (!empty($data['account_subtype_id'])) {
+                            $query->where('account_subtype_id', $data['account_subtype_id']);
+                        }
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if (!empty($data['account_type_id'])) {
+                            $accountType = AccountType::find($data['account_type_id']);
+                            $indicators[] = __('Account Type') . ': ' . ($accountType->name ?? 'Unknown');
+                        }
+                        if (!empty($data['account_subtype_id'])) {
+                            $accountSubtype = AccountSubtype::find($data['account_subtype_id']);
+                            $indicators[] = __('Account Subtype') . ': ' . ($accountSubtype->name ?? 'Unknown');
+                        }
+                        return $indicators;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->button(),
