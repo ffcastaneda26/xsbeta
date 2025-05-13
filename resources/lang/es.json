@@ -338,6 +338,7 @@
     "Executing: php artisan filament:optimize":"Ejecutando: php artisan filament:optimize",
     "Executing: php artisan filament:optimize-clear":"Ejecutando: php artisan filament:optimize-clear",
     "All optimization commands executed successfully!": "¡Todos los comandos de optimización se ejecutaron correctamente!",
-
+    "A subtype with that code already exists for this account type.": "Ya existe un subtipo con ese código para este tipo de cuenta",
+    "The name must start with two digits, a space, and then the description.": "El nombre debe comenzar con dos dígitos, un espacio y luego la descripción.",
     "Ok": "Aceptar"
 }
