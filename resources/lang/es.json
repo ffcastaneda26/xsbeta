@@ -328,5 +328,16 @@
     "Creating Plan/Chart of Accounts": "Creando Plan/Catálogo de Cuentas",
     "Chart/Catalog of Accounts has been created": "Plan/Catálogo de Cuentas ha sido creado",
     "Account subtype id": "Subtipo",
+    "Running migration reset and seed commands...": "Ejecutando comandos de reinicio de migración y de inicialización..",
+    "Executing: php artisan migrate:rollback": "Ejecutando: php artisan migration:rollback",
+    "Executing: php artisan migrate --seed":"Ejecutando: php artisan migration --seed",
+    "Migration rollback and seeding completed successfully!":"¡La reversión de la migración y la inicialización se completaron correctamente!",
+    "Running all optimization commands...": "Ejecutando todos los comandos de optimización...",
+    "Executing: php artisan optimize":"Ejecutando: php artisan optimize",
+    "Executing: php artisan optimize:clear":"Ejecutando: php artisan:clear",
+    "Executing: php artisan filament:optimize":"Ejecutando: php artisan filament:optimize",
+    "Executing: php artisan filament:optimize-clear":"Ejecutando: php artisan filament:optimize-clear",
+    "All optimization commands executed successfully!": "¡Todos los comandos de optimización se ejecutaron correctamente!",
+
     "Ok": "Aceptar"
 }
