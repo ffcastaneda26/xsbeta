@@ -9,6 +9,7 @@ use App\Models\AccountSubtype;
 use App\Models\AccountingCategory;
 use App\Models\AccountingSingleAccount;
 use App\Rules\AccountStructureRule;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -163,16 +164,35 @@ class AccountingAccountResource extends Resource
 
                 Forms\Components\Grid::make(3) // Grid de 6 columnas
                     ->schema([
+                        // Forms\Components\Select::make('accounting_single_account_id')
+                        //     ->translateLabel()
+                        //     ->options(function () {
+                        //         return AccountingSingleAccount::query()->pluck('name', 'id');
+                        //     })
+                        //     ->nullable()
+                        //     ->inlineLabel()
+                        //     ->disabled(function (callable $get) {
+                        //         return !($get('account_type_id') && $get('account_subtype_id') && $get('code') && $get('name'));
+                        //     }),
                         Forms\Components\Select::make('accounting_single_account_id')
                             ->translateLabel()
-                            ->options(function () {
-                                return AccountingSingleAccount::query()->pluck('name', 'id');
+                            ->options(function (callable $get) {
+                                $accountTypeId = $get('account_type_id');
+                                if (!$accountTypeId) {
+                                    return [];
+                                }
+
+                                return AccountingSingleAccount::where('account_type_id', $accountTypeId)
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+
                             })
                             ->nullable()
                             ->inlineLabel()
                             ->disabled(function (callable $get) {
                                 return !($get('account_type_id') && $get('account_subtype_id') && $get('code') && $get('name'));
-                            }),
+                            })
+                            ->reactive(),
                         Forms\Components\Toggle::make('is_analysis_code')
                             ->label(__('Is Analysis Code'))
                             ->default(false)
@@ -265,7 +285,7 @@ class AccountingAccountResource extends Resource
                                     ->pluck('name', 'id')
                                     ->toArray();
                             })
-                            ->visible(fn (callable $get): bool => (bool) $get('account_type_id'))
+                            ->visible(fn(callable $get): bool => (bool) $get('account_type_id'))
                             ->live(), // Use live() for dynamic updates
                     ])
                     ->query(function (Builder $query, array $data) {
