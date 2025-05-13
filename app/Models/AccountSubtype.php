@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AccountSubtype extends Model
 {
-    protected $fillable = ['company_id', 'account_type_id', 'name', 'description'];
+    protected $table = 'account_subtypes';
+
+    protected $fillable = ['company_id', 'account_type_id','code', 'name', 'description'];
 
     protected static function boot()
     {

@@ -20,9 +20,11 @@ return new class extends Migration {
             $table->foreignIdFor(AccountType::class)->constrained()->onDelete('cascade')->comment('Tipo');
             $table->foreignIdFor(AccountSubType::class)->constrained()->onDelete('cascade')->comment('Sub Tipo');
             $table->foreignIdFor(AccountingSingleAccount::class)->nullable()->constrained()->onDelete('set null')->comment('Cuenta Única');
-            $table->string('code',50)->unique();
-            $table->string('name',100)->comment('Nombre de la Cuenta');
+            $table->string('code', 15)->comment('Código de cuenta');
+            $table->string('ledger_account',20)->nullable()->comment('Cuenta de mayor');
+            $table->string('name', 100)->comment('Nombre de la Cuenta');
             $table->text('description')->nullable()->comment('Descripción');
+
             $table->boolean('is_analysis_code')->default(false);
             $table->boolean('is_cost_center_required')->default(false);
             $table->unsignedBigInteger('parent_id')->nullable()->default(null)->comment('Cuenta padre');
