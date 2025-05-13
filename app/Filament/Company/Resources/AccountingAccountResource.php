@@ -22,9 +22,11 @@ class AccountingAccountResource extends Resource
 {
     protected static ?string $model = AccountingAccount::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
     protected static ?string $tenantOwnershipRelationshipName = 'company';
+
+    protected static ?int $navigationSort = 36;
 
     public static function getLabel(): ?string
     {
@@ -36,6 +38,10 @@ class AccountingAccountResource extends Resource
         return __('Accounting Accounts');
     }
 
+    public static function getNavigationGroup(): string
+    {
+        return __('Catalogs');
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -125,7 +131,7 @@ class AccountingAccountResource extends Resource
                                         ->maxLength(255)
                                         ->columnSpan(3)
                                         ->disabled(function (callable $get) {
-                                            return !($get('account_type_id') && $get('account_subtype_id') );
+                                            return !($get('account_type_id') && $get('account_subtype_id'));
                                         }),
                                     Forms\Components\TextInput::make('ledger_account')
                                         ->label(__('Ledger'))
