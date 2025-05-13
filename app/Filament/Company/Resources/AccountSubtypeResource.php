@@ -137,7 +137,7 @@ class AccountSubtypeResource extends Resource
                     ->searchable()
                     ->html()
                     ->limit(50)
-                     ->toggleable(isToggledHiddenByDefault: true),
+
 
 
             ])
