@@ -13,13 +13,18 @@ class AccountingAccount extends Model
 
     protected $fillable = [
         'company_id',
+        'account_type_id',
         'account_subtype_id',
         'accounting_single_account_id',
         'code',
+        'name',
         'description',
         'is_analysis_code',
         'is_cost_center_required',
+        'parent_id',
     ];
+
+
 
     protected $casts = [
         'is_analysis_code' => 'boolean',
@@ -29,6 +34,11 @@ class AccountingAccount extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(AccountType::class, 'account_type_id');
     }
 
     public function subtype(): BelongsTo
@@ -45,4 +55,5 @@ class AccountingAccount extends Model
     {
         return $this->belongsToMany(AccountingCategory::class, 'accounting_account_category');
     }
+
 }

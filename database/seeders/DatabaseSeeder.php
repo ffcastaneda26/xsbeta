@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
             AccountTypeSeeder::class,
             AccountSubTypeSeeder::class,
             AccountingCategorySeeder::class,
+            AccountingAccountSeeder::class,
         ]);
     }
 

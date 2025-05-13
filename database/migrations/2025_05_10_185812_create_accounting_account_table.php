@@ -21,9 +21,13 @@ return new class extends Migration {
             $table->foreignIdFor(AccountSubType::class)->constrained()->onDelete('cascade')->comment('Sub Tipo');
             $table->foreignIdFor(AccountingSingleAccount::class)->nullable()->constrained()->onDelete('set null')->comment('Cuenta Única');
             $table->string('code',50)->unique();
-            $table->string('description');
+            $table->string('name',100)->comment('Nombre de la Cuenta');
+            $table->text('description')->nullable()->comment('Descripción');
             $table->boolean('is_analysis_code')->default(false);
             $table->boolean('is_cost_center_required')->default(false);
+            $table->unsignedBigInteger('parent_id')->nullable()->default(null)->comment('Cuenta padre');
+            $table->foreign('parent_id')->references('id')->on('accounting_accounts')->onDelete('set null');
+
             $table->timestamps();
         });
     }

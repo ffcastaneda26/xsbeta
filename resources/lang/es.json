@@ -325,5 +325,8 @@
     "Categories": "Categorías",
     "Category": "Categoría",
     "Belongs To": "Pertenece a",
+    "Creating Plan/Chart of Accounts": "Creando Plan/Catálogo de Cuentas",
+    "Chart/Catalog of Accounts has been created": "Plan/Catálogo de Cuentas ha sido creado",
+    "Account subtype id": "Subtipo",
     "Ok": "Aceptar"
 }

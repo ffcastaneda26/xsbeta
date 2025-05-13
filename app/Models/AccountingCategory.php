@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class AccountingCategory extends Model
 {
-     protected $table = 'accounting_categories';
-    protected $fillable = ['company_id', 'name','description'];
+    protected $table = 'accounting_categories';
+    protected $fillable = ['company_id', 'name', 'description'];
 
-        protected static function boot()
+    protected static function boot()
     {
         parent::boot();
 
@@ -36,4 +36,6 @@ class AccountingCategory extends Model
     {
         return $this->belongsToMany(AccountingAccount::class, 'accounting_account_category');
     }
+
+
 }

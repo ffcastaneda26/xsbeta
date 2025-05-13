@@ -52,15 +52,28 @@ class AccountingAccount extends Model
     {
         return $this->belongsTo(AccountType::class);
     }
+    public function type()
+    {
+        return $this->belongsTo(AccountType::class, 'account_type_id');
+    }
 
+    public function subtype()
+    {
+        return $this->belongsTo(AccountSubType::class, 'account_subtype_id');
+    }
+
+        public function singleaccount()
+    {
+        return $this->belongsTo(AccountingSingleAccount::class, 'accounting_single_account_id');
+    }
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(AccountingAccount::class,'parent_id');
+        return $this->belongsTo(AccountingAccount::class, 'parent_id');
     }
 
     public function childs(): HasMany
     {
 
-       return $this->hasMany(AccountingAccount::class,'parent_id');
+        return $this->hasMany(AccountingAccount::class, 'parent_id');
     }
 }
