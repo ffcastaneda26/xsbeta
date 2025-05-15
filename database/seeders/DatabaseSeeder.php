@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             'accounting_categories',
             'account_subtypes',
             'account_types',
+            'transaction_statuses',
             'users',
             'roles',
             'permissions',
@@ -48,6 +49,7 @@ class DatabaseSeeder extends Seeder
             AccountSubTypeSeeder::class,
             AccountingCategorySeeder::class,
             AccountingAccountSeeder::class,
+            TransactionStatusSeeder::class,
         ]);
     }
 

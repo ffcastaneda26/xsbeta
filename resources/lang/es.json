@@ -290,15 +290,12 @@
     "Create Subtype": "Crear Subtipo",
     "Account type id": "Tipo",
     "Create New Single Account": "Crear Nueva Cuenta Única",
-
-
     "Account Types Catalog has been created": "Catálogo de Tipos de Cuenta ha sido creado",
     "Account Sub Types Catalog has been created": "Catálogo de Subtipos de Cuenta ha sido creado",
     "Filling Out the Account Type Catalog": "Llenando Catálogo de Tipos de Cuenta",
     "Filling Out the Account Sub Types Catalog": "Llenando Catálogo de Subtipos de Cuenta",
     "Filling Out the Account Categorpies Catalog": "Llenando Catálogo de Categorías de Cuenta",
     "Account Categories Catalog has been created": "Catálogo de Categorías de Cuenta ha sido creado",
-
     "Single Accounts": "Cuentas Únicas",
     "Single Account": "Cuenta única",
     "Create Single Account": "Crear Cuenta Única",
@@ -330,13 +327,13 @@
     "Account subtype id": "Subtipo",
     "Running migration reset and seed commands...": "Ejecutando comandos de reinicio de migración y de inicialización..",
     "Executing: php artisan migrate:rollback": "Ejecutando: php artisan migration:rollback",
-    "Executing: php artisan migrate --seed":"Ejecutando: php artisan migration --seed",
-    "Migration rollback and seeding completed successfully!":"¡La reversión de la migración y la inicialización se completaron correctamente!",
+    "Executing: php artisan migrate --seed": "Ejecutando: php artisan migration --seed",
+    "Migration rollback and seeding completed successfully!": "¡La reversión de la migración y la inicialización se completaron correctamente!",
     "Running all optimization commands...": "Ejecutando todos los comandos de optimización...",
-    "Executing: php artisan optimize":"Ejecutando: php artisan optimize",
-    "Executing: php artisan optimize:clear":"Ejecutando: php artisan:clear",
-    "Executing: php artisan filament:optimize":"Ejecutando: php artisan filament:optimize",
-    "Executing: php artisan filament:optimize-clear":"Ejecutando: php artisan filament:optimize-clear",
+    "Executing: php artisan optimize": "Ejecutando: php artisan optimize",
+    "Executing: php artisan optimize:clear": "Ejecutando: php artisan:clear",
+    "Executing: php artisan filament:optimize": "Ejecutando: php artisan filament:optimize",
+    "Executing: php artisan filament:optimize-clear": "Ejecutando: php artisan filament:optimize-clear",
     "All optimization commands executed successfully!": "¡Todos los comandos de optimización se ejecutaron correctamente!",
     "A subtype with that code already exists for this account type.": "Ya existe un subtipo con ese código para este tipo de cuenta",
     "The name must start with two digits, a space, and then the description.": "El nombre debe comenzar con dos dígitos, un espacio y luego la descripción.",
@@ -354,6 +351,7 @@
     "Ledger": "Mayor",
     "Code already exists": "Código ya Existe",
     "Account Subtype": "Subtipo de Cuenta",
-
+    "Transaction statements": "Estados de Transacciones",
+    "Transaction status": "Estado de Transacción",
     "Ok": "Aceptar"
 }
