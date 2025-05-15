@@ -59,7 +59,7 @@ class AccountingAccount extends Model
 
     public function subtype(): BelongsTo
     {
-        return $this->belongsTo(AccountSubtype::class, 'account_subtype_id');
+        return $this->belongsTo(AccountSubType::class, 'account_subtype_id');
     }
 
     public function singleAccount(): BelongsTo
@@ -76,6 +76,4 @@ class AccountingAccount extends Model
     {
         return $this->belongsTo(AccountingAccount::class, 'parent_id');
     }
-
-
 }

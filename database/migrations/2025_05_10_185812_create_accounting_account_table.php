@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->foreignIdFor(AccountSubType::class)->constrained()->onDelete('cascade')->comment('Sub Tipo');
             $table->foreignIdFor(AccountingSingleAccount::class)->nullable()->constrained()->onDelete('set null')->comment('Cuenta Única');
             $table->string('code', 15)->comment('Código de cuenta');
-            $table->string('ledger_account',20)->nullable()->comment('Cuenta de mayor');
+            $table->string('ledger_account', 20)->nullable()->comment('Cuenta de mayor');
             $table->string('name', 100)->comment('Nombre de la Cuenta');
             $table->text('description')->nullable()->comment('Descripción');
 
