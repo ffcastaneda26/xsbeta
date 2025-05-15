@@ -4,25 +4,26 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
-        Schema::table('cities', function (Blueprint $table) {
-            //
+        Schema::create('countries', function (Blueprint $table) {
+            // Tabla creada sin columnas
+        });
+
+        Schema::create('states', function (Blueprint $table) {
+            // Tabla creada sin columnas
+        });
+
+        Schema::create('cities', function (Blueprint $table) {
+            // Tabla creada sin columnas
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('cities', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('countries');
+        Schema::dropIfExists('states');
+        Schema::dropIfExists('cities');
     }
 };
