@@ -28,6 +28,7 @@ class AccountSubType extends Model
             }
         });
     }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
@@ -41,6 +42,7 @@ class AccountSubType extends Model
     {
         return $this->belongsTo(AccountType::class, 'account_type_id');
     }
+
     public function account_type(): BelongsTo
     {
         return $this->belongsTo(AccountType::class, 'account_type_id');
