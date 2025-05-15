@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountSubtype>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AccountSubType>
  */
 class AccountSubtypeFactory extends Factory
 {

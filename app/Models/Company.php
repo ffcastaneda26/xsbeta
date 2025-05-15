@@ -102,7 +102,6 @@ class Company extends Model
         if ($user) {
             $this->users()->attach($user->id);
         }
-
     }
     public function setUrlCompanyAttribute($value)
     {

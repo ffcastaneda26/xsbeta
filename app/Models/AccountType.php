@@ -37,7 +37,7 @@ class AccountType extends Model
 
     public function subtypes(): HasMany
     {
-        return $this->hasMany(AccountSubtype::class);
+        return $this->hasMany(AccountSubType::class);
     }
 
     public function accountingSingleAccounts(): HasMany

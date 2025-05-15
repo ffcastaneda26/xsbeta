@@ -5,7 +5,7 @@ namespace App\Filament\Company\Resources;
 use App\Filament\Company\Resources\AccountingAccountResource\Pages;
 use App\Models\AccountingAccount;
 use App\Models\AccountType;
-use App\Models\AccountSubtype;
+use App\Models\AccountSubType;
 use App\Models\AccountingCategory;
 use App\Models\AccountingSingleAccount;
 use App\Rules\AccountStructureRule;
@@ -70,7 +70,7 @@ class AccountingAccountResource extends Resource
                                             if (!$accountTypeId) {
                                                 return [];
                                             }
-                                            return AccountSubtype::where('account_type_id', $accountTypeId)
+                                            return AccountSubType::where('account_type_id', $accountTypeId)
                                                 ->pluck('name', 'id');
                                         })
                                         ->required()
@@ -101,7 +101,7 @@ class AccountingAccountResource extends Resource
                                             $accountTypeId = $get('account_type_id');
                                             $accountSubtypeId = $get('account_subtype_id');
                                             if ($accountTypeId && $accountSubtypeId && $state) {
-                                                $subtype = AccountSubtype::find($accountSubtypeId);
+                                                $subtype = AccountSubType::find($accountSubtypeId);
                                                 $ledger = sprintf(
                                                     '%s%s%s',
                                                     $accountTypeId,
@@ -185,7 +185,6 @@ class AccountingAccountResource extends Resource
                                 return AccountingSingleAccount::where('account_type_id', $accountTypeId)
                                     ->pluck('name', 'id')
                                     ->toArray();
-
                             })
                             ->nullable()
                             ->inlineLabel()
@@ -280,7 +279,7 @@ class AccountingAccountResource extends Resource
                                 if (!$accountTypeId) {
                                     return [];
                                 }
-                                return AccountSubtype::query()
+                                return AccountSubType::query()
                                     ->where('account_type_id', $accountTypeId)
                                     ->pluck('name', 'id')
                                     ->toArray();
@@ -305,8 +304,8 @@ class AccountingAccountResource extends Resource
                             $indicators[] = __('Account Type') . ': ' . ($accountType->name ?? 'Unknown');
                         }
                         if (!empty($data['account_subtype_id'])) {
-                            $accountSubtype = AccountSubtype::find($data['account_subtype_id']);
-                            $indicators[] = __('Account Subtype') . ': ' . ($accountSubtype->name ?? 'Unknown');
+                            $AccountSubType = AccountSubType::find($data['account_subtype_id']);
+                            $indicators[] = __('Account Subtype') . ': ' . ($AccountSubType->name ?? 'Unknown');
                         }
                         return $indicators;
                     }),

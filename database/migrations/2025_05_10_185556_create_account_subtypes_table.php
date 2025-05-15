@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\AccountSubtype;
+use App\Models\AccountSubType;
 use App\Models\AccountType;
 use App\Models\Company;
 use Illuminate\Database\Migrations\Migration;
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Company::class)->constrained()->onDelete('cascade')->comment('Empresa');
             $table->foreignIdFor(AccountType::class)->constrained()->onDelete('cascade')->comment('Tipo');
-            $table->string('code',4)->comment('Código para formar cuenta contable');
+            $table->string('code', 4)->comment('Código para formar cuenta contable');
             $table->string('name')->comment('Nombre del Subtipo');
             $table->text('description')->nullable()->comment('Descripción');
             $table->timestamps();

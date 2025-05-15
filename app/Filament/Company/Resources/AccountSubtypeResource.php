@@ -4,7 +4,7 @@ namespace App\Filament\Company\Resources;
 
 use App\Filament\Company\Resources\AccountSubtypeResource\Pages;
 use App\Filament\Company\Resources\AccountSubtypeResource\RelationManagers;
-use App\Models\AccountSubtype;
+use App\Models\AccountSubType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AccountSubtypeResource extends Resource
 {
-    protected static ?string $model = AccountSubtype::class;
+    protected static ?string $model = AccountSubType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
@@ -29,7 +29,6 @@ class AccountSubtypeResource extends Resource
     public static function getPluralLabel(): ?string
     {
         return __('Accoount Subtypes');
-
     }
     public static function getModelLabel(): string
     {
@@ -87,7 +86,7 @@ class AccountSubtypeResource extends Resource
                                             ->maxLength(4)
                                             ->extraInputAttributes(['style' => 'background-color: #f3f4f6;']) // Gray background
                                             ->unique(
-                                                table: AccountSubtype::class,
+                                                table: AccountSubType::class,
                                                 column: 'code',
                                                 ignorable: fn($record) => $record,
                                                 modifyRuleUsing: function ($rule, $get) {
@@ -168,6 +167,4 @@ class AccountSubtypeResource extends Resource
             'edit' => Pages\EditAccountSubtype::route('/{record}/edit'),
         ];
     }
-
-
 }
