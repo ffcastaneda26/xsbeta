@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AccountSubtype extends Model
+class AccountSubType extends Model
 {
     protected $table = 'account_subtypes';
 
-    protected $fillable = ['company_id', 'account_type_id','code', 'name', 'description'];
+    protected $fillable = ['company_id', 'account_type_id', 'code', 'name', 'description'];
 
     protected static function boot()
     {
@@ -35,15 +35,15 @@ class AccountSubtype extends Model
 
     public function accountType(): BelongsTo
     {
-        return $this->belongsTo(AccountType::class,'account_type_id');
+        return $this->belongsTo(AccountType::class, 'account_type_id');
     }
     public function Type(): BelongsTo
     {
-        return $this->belongsTo(AccountType::class,'account_type_id');
+        return $this->belongsTo(AccountType::class, 'account_type_id');
     }
-        public function account_type(): BelongsTo
+    public function account_type(): BelongsTo
     {
-       return $this->belongsTo(AccountType::class,'account_type_id');
+        return $this->belongsTo(AccountType::class, 'account_type_id');
     }
 
     public function accounts(): HasMany
