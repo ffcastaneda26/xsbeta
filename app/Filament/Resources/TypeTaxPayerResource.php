@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TaxResource\Pages;
-use App\Filament\Resources\TaxResource\RelationManagers;
-use App\Models\Tax;
+use App\Filament\Resources\TypeTaxPayerResource\Pages;
+use App\Filament\Resources\TypeTaxPayerResource\RelationManagers;
+use App\Models\Country;
+use App\Models\TypeTaxPayer;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,28 +14,29 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TaxResource extends Resource
+class TypeTaxPayerResource extends Resource
 {
-    protected static ?string $model = Tax::class;
+    protected static ?string $model = TypeTaxPayer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-information-circle';
+
+    protected static ?string $navigationIcon = 'heroicon-o-bookmark-square';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 32;
+    protected static ?int $navigationSort = 31;
 
 
     public static function getNavigationLabel(): string
     {
-        return __('Taxes x Country');
+        return __('Types of Taxpayer');
     }
 
     public static function getPluralLabel(): ?string
     {
-        return __('Taxes');
+        return __('Types of Taxpayer');
 
     }
     public static function getModelLabel(): string
     {
-        return __('Tax');
+        return __('Type of Taxpayer');
     }
 
     public static function getNavigationGroup(): string
@@ -46,9 +48,7 @@ class TaxResource extends Resource
     public static function form(Form $form): Form
     {
 
-
-
-         return $form
+        return $form
             ->schema([
                 Forms\Components\Select::make('country_id')
                     ->relationship(name: 'country', titleAttribute: 'name')
@@ -57,18 +57,6 @@ class TaxResource extends Resource
                     ->required()
                     ->maxLength(150)
                     ->translateLabel(),
-                Forms\Components\TextInput::make('min_length')
-                    ->required()
-                    ->numeric()
-                    ->translateLabel(),
-                Forms\Components\TextInput::make('max_length')
-                    ->required()
-                    ->numeric()
-                    ->translateLabel(),
-                Forms\Components\TextInput::make('regex')
-                    ->label(__('Validation Rules'))
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\Textarea::make('description')
                     ->maxLength(255)
                     ->translateLabel(),
@@ -87,27 +75,27 @@ class TaxResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->translateLabel(),
-                Tables\Columns\TextColumn::make('min_length')
-                    ->numeric()
-                    ->sortable()
-                    ->translateLabel(),
-                Tables\Columns\TextColumn::make('max_length')
-                    ->numeric()
-                    ->sortable()
-                    ->translateLabel(),
-                Tables\Columns\TextColumn::make('regex')
-                    ->searchable()
-                    ->label(__('Validation Rules'))
-                    ->translateLabel(),
-
-                    Tables\Columns\TextColumn::make('description')
+                Tables\Columns\TextColumn::make('description')
                     ->searchable()
                     ->translateLabel()
                     ->wrap()
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('country_id')
+                    ->label(__('Country')) // O usa translateLabel() si prefieres
+                    ->options(function () {
+                        return Country::whereHas('typeTaxPayers')
+                            ->pluck('name', 'id')
+                            ->toArray();
+                    })
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->where('country_id', $data['value']);
+                        }
+                    })
+                    ->preload()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->button(),
@@ -119,6 +107,7 @@ class TaxResource extends Resource
             ]);
     }
 
+
     public static function getRelations(): array
     {
         return [
@@ -129,9 +118,9 @@ class TaxResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTaxes::route('/'),
-            'create' => Pages\CreateTax::route('/create'),
-            'edit' => Pages\EditTax::route('/{record}/edit'),
+            'index' => Pages\ListTypeTaxPayers::route('/'),
+            'create' => Pages\CreateTypeTaxPayer::route('/create'),
+            'edit' => Pages\EditTypeTaxPayer::route('/{record}/edit'),
         ];
     }
 }

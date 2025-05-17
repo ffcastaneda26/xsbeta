@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             TimeZoneSeeder::class,
             TaxSeeder::class,
             PlanSeeder::class,
+            TypeTaxPayerSeeder::class,
             CompanySeeder::class,
             AccountTypeSeeder::class,
             AccountSubTypeSeeder::class,

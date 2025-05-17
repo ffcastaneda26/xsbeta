@@ -23,7 +23,7 @@ class TimeZoneResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 32;
+    protected static ?int $navigationSort = 33;
 
 
     public static function getNavigationLabel(): string

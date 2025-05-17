@@ -57,6 +57,11 @@ class Country extends Model
     {
         return $this->hasMany(Company::class);
     }
+
+    public function typeTaxPayers()
+    {
+        return $this->hasMany(TypeTaxPayer::class);
+    }
 }
 
 

@@ -28,7 +28,7 @@ class CompanyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 35;
+    protected static ?int $navigationSort = 36;
 
     public static function getNavigationLabel(): string
     {
