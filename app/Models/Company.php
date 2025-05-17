@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Company extends Model
 {
     protected $fillable = [
+        'type_tax_payer_id',
         'name',
         'short',
         'slug',
@@ -89,6 +90,11 @@ class Company extends Model
     public function tax(): BelongsTo
     {
         return $this->belongsTo(Tax::class);
+    }
+
+        public function typeTaxPayer(): BelongsTo
+    {
+        return $this->belongsTo(TypeTaxPayer::class,'type_tax_payer_id');
     }
     public function timeZone(): BelongsTo
     {

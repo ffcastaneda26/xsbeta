@@ -19,6 +19,7 @@ class CompanySeeder extends Seeder
 
 
         $company = Company::create([
+            'type_tax_payer_id' => 1,
             'name' => 'Empresa de Prueba',
             'short' => 'Empresa Prueba',
             'slug' => 'empresa_prueba',

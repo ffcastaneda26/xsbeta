@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CompanyResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CompanyResource\RelationManagers;
+use App\Models\TypeTaxPayer;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class CompanyResource extends Resource
@@ -49,21 +50,6 @@ class CompanyResource extends Resource
     {
         return __('Catalogs');
     }
-
-    // public static function getEloquentQuery(): Builder
-    // {
-    //     if (Auth::user()->hasRole('Administrador')) {
-    //         return parent::getEloquentQuery();
-    //     }
-
-    //     if (Auth::user()->companies->count() && Auth::user()->hasRole(env('APP_ROL_TO_SUSCRIPTOR', 'Suscriptor'))) {
-    //         return parent::getEloquentQuery()
-    //             ->where('id', Auth::user()->companies->first()->id);
-    //     }
-
-    //     return parent::getEloquentQuery()->where('id', '<', 1);
-
-    // }
 
     public static function form(Form $form): Form
     {
@@ -137,8 +123,11 @@ class CompanyResource extends Resource
                                         ->required()
                                         ->searchable()
                                         ->loadingMessage(__('Loading countries...'))
-                                        ->afterStateUpdated(fn(Set $set) => $set('state_id', null)),
-                                    // ->helperText(new HtmlString(__('If the list does not appear, please reload the page'))),
+                                        ->afterStateUpdated(function (Set $set) {
+                                            $set('state_id', null);
+                                            $set('city_id', null);
+                                            $set('type_tax_payer_id', null);
+                                        }),
                                     Forms\Components\Select::make('state_id')
                                         ->translateLabel()
                                         ->required()
@@ -169,13 +158,35 @@ class CompanyResource extends Resource
                                         ->maxLength(100),
                                     Forms\Components\TextInput::make('colony')
                                         ->translateLabel()
-                                        ->maxLength(100),
+                                        ->inlineLabel()
+                                        ->maxLength(100)->columnSpanFull(),
+
+                                    Forms\Components\Select::make('type_tax_payer_id')
+                                        ->translateLabel()
+                                        ->required(function (Get $get) {
+                                            $countryId = $get('country_id');
+                                            return $countryId && TypeTaxPayer::where('country_id', $countryId)->exists();
+                                        })
+                                        ->reactive()
+                                        ->options(function (callable $get) {
+                                            $countryId = $get('country_id');
+                                            if (!$countryId) {
+                                                return [];
+                                            }
+                                            $options = TypeTaxPayer::where('country_id', $countryId)
+                                                ->orderBy('name')
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                            return $options ?: ['' => __('No tax payer types available for this country')];
+                                        })
+                                        ->searchable()
+                                        ->loadingMessage(__('Loading tax payer types...')),
                                     Forms\Components\TextInput::make('tax_id')
                                         ->translateLabel()
                                         ->label(function (Get $get) {
                                             $countryId = $get('country_id');
                                             $tax = $countryId ? Tax::where('country_id', $countryId)->first() : null;
-                                            return $tax ? $tax->name : __('Tax (Disabled)');
+                                            return $tax ? $tax->name : __('Tax ID (Disabled)');
                                         })
                                         ->required(function (Get $get) {
                                             $countryId = $get('country_id');
@@ -185,6 +196,7 @@ class CompanyResource extends Resource
                                             $countryId = $get('country_id');
                                             return !$countryId || !Tax::where('country_id', $countryId)->exists();
                                         })
+                                        ->reactive()
                                         ->unique(ignoreRecord: true)
                                         ->rules(function (Get $get) {
                                             $countryId = $get('country_id');
@@ -221,6 +233,7 @@ class CompanyResource extends Resource
                                             'max' => __('El :attribute no debe exceder los :max caracteres.', ['attribute' => __('Tax ID')]),
                                             'min' => __('El :attribute debe tener al menos :min caracteres.', ['attribute' => __('Tax ID')]),
                                         ]),
+
                                 ])->columns(2),
                                 // Columna derecha: address, num_ext, num_int, zipcode, timezone_id
                                 Forms\Components\Group::make()->schema([
@@ -237,6 +250,7 @@ class CompanyResource extends Resource
                                     Forms\Components\TextInput::make('zipcode')
                                         ->translateLabel()
                                         ->maxLength(5),
+
                                     Forms\Components\Select::make('timezone_id')
                                         ->relationship('timezone', 'time_zone')
                                         ->translateLabel()
@@ -245,6 +259,7 @@ class CompanyResource extends Resource
                                         ->default(env('APP_DEFAULT_TIME_ZONE_ID', 175))
                                         ->loadingMessage(__('Loading Timezones...'))
                                         ->required(),
+
                                 ])->columns(),
                             ]),
                     ]),
