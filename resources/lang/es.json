@@ -369,6 +369,11 @@
     "Value": "Valor",
     "Labels": "Etiquetas",
     "Label": "Etiqueta",
-
+    "Exercises": "Ejercicios",
+    "Exercise": "Ejercicio",
+    "Periods": "Periodos",
+    "Period": "Período",
+    "Accounting": "Contabilidad",
+    "Year": "Año",
     "Ok": "Aceptar"
 }

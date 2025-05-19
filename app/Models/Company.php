@@ -92,9 +92,9 @@ class Company extends Model
         return $this->belongsTo(Tax::class);
     }
 
-        public function typeTaxPayer(): BelongsTo
+    public function typeTaxPayer(): BelongsTo
     {
-        return $this->belongsTo(TypeTaxPayer::class,'type_tax_payer_id');
+        return $this->belongsTo(TypeTaxPayer::class, 'type_tax_payer_id');
     }
     public function timeZone(): BelongsTo
     {
@@ -139,6 +139,21 @@ class Company extends Model
         return $this->belongsToMany(Label::class, 'company_label');
     }
 
+    public function exercises(): HasMany
+    {
+        return $this->hasMany(AccountingExercise::class);
+    }
+
+    public function accountingExercises(): HasMany
+    {
+        return $this->hasMany(AccountingExercise::class);
+
+    }
+
+    public function periods(): HasMany
+    {
+        return $this->hasMany(AccountingPeriod::class);
+    }
 
 }
 
