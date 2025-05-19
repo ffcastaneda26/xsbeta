@@ -17,7 +17,9 @@ class LabelSeeder extends Seeder
     {
 
         $this->command->warn(PHP_EOL . __('Filling out label catalog by country'));
-        DB::table('labels')->truncate();
+        // DB::table('company_label')->truncate();
+        // DB::table('labels')->truncate();
+
 
         $records = [
             [

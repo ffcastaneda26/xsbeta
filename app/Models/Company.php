@@ -133,4 +133,13 @@ class Company extends Model
     {
         return $this->hasMany(AccountingSingleAccount::class);
     }
+
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class, 'company_label');
+    }
+
+
 }
+
+

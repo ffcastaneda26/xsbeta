@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\CompanyResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CompanyResource\RelationManagers;
+use App\Filament\Resources\CompanyResource\RelationManagers\LabelsRelationManager;
 use App\Models\TypeTaxPayer;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -362,7 +363,7 @@ class CompanyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            LabelsRelationManager::class,
         ];
     }
 
