@@ -13,7 +13,7 @@ class TransactionStatusSeeder extends Seeder
      */
     public function run(): void
     {
-                $this->command->warn(PHP_EOL . __('Filling Out the Transaction statements Catalog'));
+        $this->command->warn(PHP_EOL . __('Filling Out the Transaction statements Catalog'));
         $account_types = [
             [
                 'company_id' => 1,

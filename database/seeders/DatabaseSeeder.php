@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
             'taxes',
             'suscriptions',
             'plans',
+            'labels_by_country',
+            'type_tax_payers',
             'companies',
         ]);
         $this->command->info(__('Tables have been initialized'));
@@ -45,6 +47,7 @@ class DatabaseSeeder extends Seeder
             TaxSeeder::class,
             PlanSeeder::class,
             TypeTaxPayerSeeder::class,
+            LabelByCountrySeeder::class,
             CompanySeeder::class,
             AccountTypeSeeder::class,
             AccountSubTypeSeeder::class,

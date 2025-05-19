@@ -19,7 +19,7 @@ class AccountTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 34;
+    protected static ?int $navigationSort = 36;
 
 
     public static function getNavigationLabel(): string

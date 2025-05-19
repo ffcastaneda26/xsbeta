@@ -360,6 +360,13 @@
     "Loading tax payer types...": "Cargando tipos de contribuyentes",
     "No tax payer types available for this country": "No hay tipos de contribuyente para este país",
     "Type tax payer id": "Tipo de Contribuyente",
+    "Filling out label catalog by country": "Llenando catálogo de Etiquetas x País",
+    "Completed country label catalog": "Catálogo de etiquetas por país llenado",
+    "Country code not found": "No se encontró el país con código",
+    "Labels by Country": "Etiquetas x País",
+    "Label Country": "Etiqueta País",
+    "Use to": "Usar Para",
+    "Value": "Valor",
 
     "Ok": "Aceptar"
 }

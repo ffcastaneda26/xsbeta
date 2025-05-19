@@ -62,6 +62,11 @@ class Country extends Model
     {
         return $this->hasMany(TypeTaxPayer::class);
     }
+
+    public function labels(): HasMany
+    {
+        return $this->hasMany(LabelByCountry::class);
+    }
 }
 
 
