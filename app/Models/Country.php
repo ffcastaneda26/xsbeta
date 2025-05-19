@@ -65,7 +65,7 @@ class Country extends Model
 
     public function labels(): HasMany
     {
-        return $this->hasMany(LabelByCountry::class);
+        return $this->hasMany(Label::class);
     }
 }
 

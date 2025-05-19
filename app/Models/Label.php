@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class LabelByCountry extends Model
+class Label extends Model
 {
-        protected $table = 'labels_by_country';
+        protected $table = 'labels';
     public $timestamps = false;
 
     protected $fillable = [
@@ -23,8 +23,4 @@ class LabelByCountry extends Model
         return $this->belongsTo(Country::class,'country_id','id');
     }
 
-    public function companies():HasMany
-    {
-        return $this->hasMany(Company::class);
-    }
 }

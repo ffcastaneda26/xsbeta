@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             'taxes',
             'suscriptions',
             'plans',
-            'labels_by_country',
+            'labels',
             'type_tax_payers',
             'companies',
         ]);
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
             TaxSeeder::class,
             PlanSeeder::class,
             TypeTaxPayerSeeder::class,
-            LabelByCountrySeeder::class,
+            LabelSeeder::class,
             CompanySeeder::class,
             AccountTypeSeeder::class,
             AccountSubTypeSeeder::class,

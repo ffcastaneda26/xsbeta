@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\LabelByCountryResource\Pages;
-use App\Filament\Resources\LabelByCountryResource\RelationManagers;
+use App\Filament\Resources\LabelResource\Pages;
+use App\Filament\Resources\LabelResource\RelationManagers;
 use App\Models\Country;
-use App\Models\LabelByCountry;
+use App\Models\Label;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,15 +14,13 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class LabelByCountryResource extends Resource
+class LabelResource extends Resource
 {
-    protected static ?string $model = LabelByCountry::class;
+    protected static ?string $model = Label::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+       protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-    protected static ?int $navigationSort = 33;
-
-
+      protected static ?int $navigationSort = 32;
     public static function getNavigationLabel(): string
     {
         return __('Labels by Country');
@@ -133,9 +131,9 @@ class LabelByCountryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLabelByCountries::route('/'),
-            'create' => Pages\CreateLabelByCountry::route('/create'),
-            'edit' => Pages\EditLabelByCountry::route('/{record}/edit'),
+            'index' => Pages\ListLabels::route('/'),
+            'create' => Pages\CreateLabel::route('/create'),
+            'edit' => Pages\EditLabel::route('/{record}/edit'),
         ];
     }
 }

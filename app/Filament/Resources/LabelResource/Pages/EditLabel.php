@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\LabelByCountryResource\Pages;
+namespace App\Filament\Resources\LabelResource\Pages;
 
-use App\Filament\Resources\LabelByCountryResource;
+use App\Filament\Resources\LabelResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditLabelByCountry extends EditRecord
+class EditLabel extends EditRecord
 {
-    protected static string $resource = LabelByCountryResource::class;
+    protected static string $resource = LabelResource::class;
 
     protected function getHeaderActions(): array
     {

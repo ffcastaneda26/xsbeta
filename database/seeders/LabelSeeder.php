@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\Country;
-use App\Models\LabelByCountry;
+use App\Models\Label;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class LabelByCountrySeeder extends Seeder
+class LabelSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,7 +17,7 @@ class LabelByCountrySeeder extends Seeder
     {
 
         $this->command->warn(PHP_EOL . __('Filling out label catalog by country'));
-        DB::table('labels_by_country')->truncate();
+        DB::table('labels')->truncate();
 
         $records = [
             [
@@ -61,7 +61,7 @@ class LabelByCountrySeeder extends Seeder
         foreach ($records as $record) {
             $country = Country::where('iso2', $record['country_code'])->first();
             if ($country) {
-                LabelByCountry::updateOrCreate(
+                Label::updateOrCreate(
                     [
                         'country_id' => $country->id,
                         'use_to' => $record['use_to'],

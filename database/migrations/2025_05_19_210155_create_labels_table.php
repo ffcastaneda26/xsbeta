@@ -11,7 +11,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('labels_by_country', function (Blueprint $table) {
+        Schema::create('labels', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Country::class)->comment('País');
             $table->string('use_to', 20)->comment('Usar Para');
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('labels_by_country');
+        Schema::dropIfExists('labels');
     }
 };
