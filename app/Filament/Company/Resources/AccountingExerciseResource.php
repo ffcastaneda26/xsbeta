@@ -4,6 +4,7 @@ namespace App\Filament\Company\Resources;
 
 use App\Filament\Company\Resources\AccountingExerciseResource\Pages;
 use App\Filament\Company\Resources\AccountingExerciseResource\RelationManagers;
+use App\Filament\Company\Resources\AccountingExerciseResource\RelationManagers\PeriodsRelationManager;
 use App\Models\AccountingExercise;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,7 +22,6 @@ class AccountingExerciseResource extends Resource
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
     protected static ?int $navigationSort = 41;
 
-
     public static function getNavigationLabel(): string
     {
         return __('Exercises');
@@ -30,21 +30,18 @@ class AccountingExerciseResource extends Resource
     public static function getPluralLabel(): ?string
     {
         return __('Exercises');
-
     }
+
     public static function getModelLabel(): string
     {
         return __('Exercise');
     }
-
 
     public static function getNavigationGroup(): string
     {
         return __('Accounting');
     }
 
-
-    // TODO:: Solo dejar un registro activo
     public static function form(Form $form): Form
     {
         return $form
@@ -54,11 +51,21 @@ class AccountingExerciseResource extends Resource
                         ->required()
                         ->translateLabel()
                         ->numeric()
+                        ->unique(
+                            ignoreRecord: true,
+                            table: 'accounting_exercises',
+                            column: 'year',
+                            modifyRuleUsing: function ($rule) {
+                                return $rule->where('company_id', filament()->getTenant()->id);
+                            }
+                        )
+                        ->validationMessages([
+                            'unique' => __('Period Already Exists'),
+                        ])
                         ->minValue(2020)
                         ->maxValue(2099),
                     Forms\Components\Toggle::make('active'),
                 ])->columns(10),
-
             ]);
     }
 
@@ -73,24 +80,32 @@ class AccountingExerciseResource extends Resource
                 Tables\Columns\IconColumn::make('active')
                     ->boolean()
                     ->translateLabel(),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\EditAction::make()->button()->color('warning'),
+                Tables\Actions\Action::make('toggle_active')
+                    ->label(fn($record) => __('Activate'))
+                    ->action(function ($record) {
+                        $record->update(['active' => !$record->active]);
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(fn($record) => __('Activate Exercise'))
+                    ->modalDescription(fn($record) => __('Are you sure you want to activate this exercise? This will deactivate all other exercises for this company.'))
+                    ->modalSubmitActionLabel(__('Activate'))
+                    ->visible(fn($record) => !$record->active)
+                    ->button()
+                    ->color(color: 'danger'),
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+            PeriodsRelationManager::class,
         ];
     }
 

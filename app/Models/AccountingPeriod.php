@@ -31,6 +31,14 @@ class AccountingPeriod extends Model
                 $builder->where('accounting_periods.company_id', filament()->getTenant()->id);
             }
         });
+
+        static::updating(function ($record) {
+            if ($record->active) {
+                AccountingPeriod::where('company_id', filament()->getTenant()->id)
+                    ->where('id', '!=', $record->id)
+                    ->update(['active' => false]);
+            }
+        });
     }
 
     public function company(): BelongsTo
