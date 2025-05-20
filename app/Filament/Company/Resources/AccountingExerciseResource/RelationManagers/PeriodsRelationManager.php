@@ -31,10 +31,6 @@ class PeriodsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('month')
                     ->label(__('Month'))
                     ->sortable()
-                    ->formatStateUsing(fn($state) => date('F', mktime(0, 0, 0, $state, 1))),
-                Tables\Columns\TextColumn::make('month')
-                    ->label(__('Month'))
-                    ->sortable()
                     ->formatStateUsing(function ($state) {
                         if (app()->getLocale() === 'en') {
                             return date('F', mktime(0, 0, 0, $state, 1));
@@ -75,9 +71,10 @@ class PeriodsRelationManager extends RelationManager
                     ->modalHeading(fn($record) => __('Activate Period'))
                     ->modalDescription(fn($record) => __('Are you sure you want to activate this period? This will deactivate all other periods for this exercise.'))
                     ->modalSubmitActionLabel(__('Activate'))
-                    ->visible(fn($record) => !$record->active)
+                    ->visible(fn($record) => !$record->active && $record->exercise->active)
                     ->button()
-                    ->color(color: 'danger'),
+                    ->color(color: 'danger')
+                    ->icon(icon: 'heroicon-o-hand-thumb-up'),
             ]);
     }
 }

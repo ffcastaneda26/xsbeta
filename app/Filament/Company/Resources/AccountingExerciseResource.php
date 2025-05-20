@@ -64,7 +64,14 @@ class AccountingExerciseResource extends Resource
                         ])
                         ->minValue(2020)
                         ->maxValue(2099),
-                    Forms\Components\Toggle::make('active'),
+                    Forms\Components\Toggle::make('active')
+                        ->reactive() // Make the toggle reactive
+                        ->afterStateUpdated(function ($state, $livewire) {
+                            // Dispatch an event to refresh the relation manager
+                            $livewire->dispatch('refreshRelationManager', [
+                                'name' => 'periods', // Target the 'periods' relation manager
+                            ]);
+                        }),
                 ])->columns(10),
             ]);
     }
@@ -80,13 +87,19 @@ class AccountingExerciseResource extends Resource
                 Tables\Columns\IconColumn::make('active')
                     ->boolean()
                     ->translateLabel(),
-
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->button()->color('warning'),
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->color('warning')
+                    ->after(function ($livewire) {
+                        $livewire->dispatch('refreshRelationManager', [
+                            'name' => 'periods',
+                        ]);
+                    }),
                 Tables\Actions\Action::make('toggle_active')
                     ->label(fn($record) => __('Activate'))
                     ->action(function ($record) {

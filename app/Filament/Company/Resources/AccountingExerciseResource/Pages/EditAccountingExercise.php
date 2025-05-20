@@ -17,8 +17,9 @@ class EditAccountingExercise extends EditRecord
         ];
     }
 
-    protected function getRedirectUrl(): string
+
+    protected function afterSave(): void
     {
-        return $this->getResource()::getUrl('index');
+        $this->dispatch('refreshRelationManager', relationManager: 'PeriodsRelationManager');
     }
 }
