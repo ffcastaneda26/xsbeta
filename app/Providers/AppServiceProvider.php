@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('Super Admin') || $user->hasRole('Administrador') ? true : null;
+        });
+
+        Toggle::configureUsing(function (Toggle $toggle): void {
+            $toggle
+                ->translateLabel()
+                ->inline(false)
+                ->onIcon('heroicon-m-check-circle')
+                ->offIcon('heroicon-m-x-circle')
+                ->onColor('success')
+                ->offColor('danger');
+        });
     }
 }

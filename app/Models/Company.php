@@ -147,7 +147,13 @@ class Company extends Model
     public function accountingExercises(): HasMany
     {
         return $this->hasMany(AccountingExercise::class);
+    }
 
+
+
+    public function accountingPeriods(): HasMany
+    {
+        return $this->hasMany(AccountingPeriod::class);
     }
 
     public function periods(): HasMany

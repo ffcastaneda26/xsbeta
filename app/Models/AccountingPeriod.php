@@ -4,19 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AccountingExercise extends Model
+class AccountingPeriod extends Model
 {
-    protected $table = 'accounting_exercises';
+    protected $table = 'accounting_periods';
     public $timestamps = false;
 
     protected $fillable = [
         'company_id',
-        'year',
+        'exercise_id',
+        'month',
         'active'
     ];
-
     protected static function boot()
     {
         parent::boot();
@@ -29,7 +28,7 @@ class AccountingExercise extends Model
 
         static::addGlobalScope('tenant', function ($builder) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
-                $builder->where('accounting_exercises.company_id', filament()->getTenant()->id);
+                $builder->where('accounting_periods.company_id', filament()->getTenant()->id);
             }
         });
     }
@@ -39,9 +38,9 @@ class AccountingExercise extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function periods(): HasMany
+    public function exercise(): BelongsTo
     {
-        return $this->hasMany(AccountingPeriod::class, 'exercise_id');
+        return $this->belongsTo(AccountingExercise::class, 'exercise_id');
     }
 
 }
