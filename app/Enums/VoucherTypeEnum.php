@@ -49,9 +49,9 @@ enum VoucherTypeEnum:string implements HasLabel,HasColor,HasIcon
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::Both => 'heroicon-m-bell-alert',
-            self::IFRS => 'heroicon-m-check',
-            self::TAX => 'heroicon-m-calendar',
+            self::Both => 'heroicon-m-scale',
+            self::IFRS => 'heroicon-m-currency-dollar',
+            self::TAX => 'heroicon-m-banknotes',
 
         };
     }

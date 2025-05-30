@@ -395,6 +395,21 @@
     "October": "Octubre",
     "November": "Noviemtre",
     "December": "Diciembre",
+    "Accounting Movements": "Movimientos Contables",
+    "Accounting Movement": "Movimientos Contable",
+    "Voucher Type": "Tipo de Voucher",
+    "Document type": "Tipo de Documento",
+    "Debit": "Debe",
+    "Credit": "Haber",
+    "Document":"Documento",
+    "created_at": "Creado el",
+    "updated_at": "Actualizado el",
+    "Unbalanced Movement": "Movimiento Descuadrado",
+    "The total debit and credit amounts do not match.": "Total de Debe y Haber no coinciden",
+    "Debit Total: ":"Total Debe",
+    "Credit Total: ":"Total Haber",
+    "Do you want to save the movement as INVALID?": "Desea guardar el movimiento descuadrado?",
+    "Confirm": "Confirmar",
 
     "Ok": "Aceptar"
 }

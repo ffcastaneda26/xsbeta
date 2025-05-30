@@ -36,17 +36,16 @@ enum VoucherDocumentTypeEnum: string implements HasLabel,HasColor,HasIcon
     {
         return match ($this) {
 
-            self::Opening => 'danger',
-            self::Outflow => 'red',
+            self::Opening => 'warning',
+            self::Outflow => 'danger',
             self::Inflow => 'success',
-            self::Transfer => 'green'
-
+            self::Transfer => 'info'
         };
     }
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::Opening => 'heroicon-m-bell-alert',
+            self::Opening => 'heroicon-m-book-open',
             self::Outflow => 'heroicon-m-arrow-left',
             self::Inflow => 'heroicon-m-arrow-long-right',
             self::Transfer => 'heroicon-m-arrows-right-left',

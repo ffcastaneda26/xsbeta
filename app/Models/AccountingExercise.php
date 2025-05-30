@@ -73,6 +73,13 @@ class AccountingExercise extends Model
                 $record->periods()->update(['active' => false]);
             }
         });
+
+        static::addGlobalScope('activeExercise', function ($builder) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                $builder->where('accounting_exercises.company_id', filament()->getTenant()->id)
+                    ->where('accounting_exercises.active', 1);
+            }
+        });
     }
 
 
@@ -84,6 +91,15 @@ class AccountingExercise extends Model
     public function periods(): HasMany
     {
         return $this->hasMany(AccountingPeriod::class, 'exercise_id');
+    }
+
+    public function activeExercise($builder)
+    {
+        if (filament()->getCurrentPanel()->getId() === 'company') {
+            $builder->where('accounting_exercises.company_id', filament()->getTenant()->id)
+                ->where('active', 1)->first();
+        }
+        return $this->where('active', 1)->first();
     }
 
 }

@@ -161,6 +161,11 @@ class Company extends Model
         return $this->hasMany(AccountingPeriod::class);
     }
 
+    public function accountingMovements(): HasMany
+    {
+        return $this->hasMany(AccountingMovement::class);
+    }
+
 }
 
 

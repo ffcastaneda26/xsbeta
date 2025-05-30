@@ -28,6 +28,8 @@ return new class extends Migration {
                 ->default(VoucherTypeEnum::Both->value)
                 ->comment('Tipo de Voucher o Póliza');
             $table->enum('document_type', array_column(VoucherDocumentTypeEnum::cases(), 'value'))
+                ->nullable()
+                ->default(null)
                 ->comment('Tipo de Documento(Apertura, Egreso, Ingreso, Traspaso)');
             $table->string('folio', 15)->comment('Folio');
             $table->date('date')->comment('Fecha de la póliza');
