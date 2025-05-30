@@ -2,6 +2,7 @@
 
 namespace App\Filament\Company\Resources\AccountingMovementResource\Pages;
 
+use App\Enums\VoucherStatusEnum;
 use Filament\Actions;
 use Livewire\Livewire;
 use Filament\Resources\Pages\EditRecord;
@@ -18,5 +19,23 @@ class EditAccountingMovement extends EditRecord
         ];
     }
 
+protected function afterSave(): void
+    {
+        // Get the updated record
+        $record = $this->record;
 
+        // Calculate total debit and credit from related movements
+        $movements = $record->movements()->get();
+
+        $debitTotal = $movements->sum(fn($movement) => (float) ($movement->debit ?? 0));
+        $creditTotal = $movements->sum(fn($movement) => (float) ($movement->credit ?? 0));
+
+        // Update status based on balance
+        $record->status = ($debitTotal == $creditTotal)
+            ? VoucherStatusEnum::PENDING
+            : VoucherStatusEnum::INVALID;
+
+        // Save the updated status
+        $record->save();
+    }
 }

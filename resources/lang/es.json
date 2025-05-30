@@ -410,6 +410,12 @@
     "Credit Total: ":"Total Haber",
     "Do you want to save the movement as INVALID?": "Desea guardar el movimiento descuadrado?",
     "Confirm": "Confirmar",
+    "Movements": "Movimientos",
+    "Accounting account id": "Cuenta",
+    "Total Debit": "Total Debe",
+    "Total Credit": "Total Haber",
+    "Balance Status": "Diferencia",
+    "Unbalanced: Debit and Credit totals do not match": "Descuadrado Debe es diferente al Haber",
 
     "Ok": "Aceptar"
 }

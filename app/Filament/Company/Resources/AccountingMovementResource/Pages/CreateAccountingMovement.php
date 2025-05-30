@@ -16,6 +16,9 @@ class CreateAccountingMovement extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $movements = $data['movements'] ?? [];
+
+
 
         $activeExercise = AccountingExercise::where('active', 1)
             ->where('company_id', filament()->getTenant()->id)
@@ -39,15 +42,29 @@ class CreateAccountingMovement extends CreateRecord
         return $data;
     }
 
-    protected function afterCreate(): void
+protected function afterCreate(): void
     {
         // Get the active tenant
         $tenant = filament()->getTenant();
 
         // Increment the tenant's folio attribute
         $tenant->folio = ($tenant->folio ?? 0) + 1;
-
-        // Save the updated tenant
         $tenant->save();
+
+        // Get the created record
+        $record = $this->record;
+
+        // Calculate total debit and credit from related movements
+        $movements = $record->movements()->get();
+        $debitTotal = $movements->sum(fn($movement) => (float) ($movement->debit ?? 0));
+        $creditTotal = $movements->sum(fn($movement) => (float) ($movement->credit ?? 0));
+
+        // Update status based on balance
+        $record->status = ($debitTotal == $creditTotal)
+            ? VoucherStatusEnum::PENDING
+            : VoucherStatusEnum::INVALID;
+
+        // Save the updated status
+        $record->save();
     }
 }

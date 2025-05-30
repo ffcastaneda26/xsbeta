@@ -18,6 +18,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class AccountingMovementResource extends Resource
 {
@@ -63,36 +64,73 @@ class AccountingMovementResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('Master Data'))
                     ->schema([
-                        Forms\Components\Radio::make('type')
-                            ->translateLabel()
-                            ->options(VoucherTypeEnum::class)
-                            ->inline()
-                            ->required()
-                            ->columnSpanFull(),
-                        Forms\Components\Select::make('document_type')
-                            ->translateLabel()
-                            ->options(VoucherDocumentTypeEnum::class)
-                            ->required(),
-                        Forms\Components\DatePicker::make('date')
-                            ->translateLabel()
-                            ->default(now())
-                            ->maxDate($maxDate)
-                            ->minDate($minDate)
-                            ->format('d-m-Y')
-                            ->required(),
-                        Forms\Components\Textarea::make('glosa')
-                            ->translateLabel()
-                            ->required()
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2),
+                        Forms\Components\Group::make([
+                            Forms\Components\Radio::make('type')
+                                ->translateLabel()
+                                ->options(VoucherTypeEnum::class)
+                                ->inline()
+                                ->required()
+                                ->columnSpanFull(),
+
+                            Forms\Components\Select::make('document_type')
+                                ->translateLabel()
+                                ->options(VoucherDocumentTypeEnum::class)
+                                ->required(),
+                            Forms\Components\DatePicker::make('date')
+                                ->translateLabel()
+                                ->default(now())
+                                ->maxDate($maxDate)
+                                ->minDate($minDate)
+                                ->format('d-m-Y')
+                                ->required(),
+                        ])->columns(2),
+                        Forms\Components\Group::make()->schema([
+                            Forms\Components\Textarea::make('glosa')
+                                ->translateLabel()
+                                ->required()
+                                ->columnSpanFull(),
+                        ]),
+
+                    ])->columns(2),
+                Forms\Components\Section::make()->schema([
+                    Forms\Components\Placeholder::make('debit_total')
+                        ->label(__('Total Debit'))
+                        ->content(function (callable $get) {
+                            $movements = $get('movements') ?? [];
+                            return number_format(collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0)), 2, '.', ',');
+                        }),
+                    Forms\Components\Placeholder::make('credit_total')
+                        ->label(__('Total Credit'))
+                        ->content(function (callable $get) {
+                            $movements = $get('movements') ?? [];
+                            return number_format(collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0)), 2, '.', ',');
+                        }),
+                    Forms\Components\Placeholder::make('balance_status')
+                        ->label(__('Balance Status'))
+                        ->content(function (callable $get) {
+                            $movements = $get('movements') ?? [];
+                            $debitTotal = collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0));
+                            $creditTotal = collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0));
+                            return $debitTotal != $creditTotal ? __('Unbalanced: Debit and Credit totals do not match') : __('Balanced');
+                        })
+                        ->visible(function (callable $get) {
+                            $movements = $get('movements') ?? [];
+                            $debitTotal = collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0));
+                            $creditTotal = collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0));
+                            return $debitTotal != $creditTotal;
+                        })
+                        ->extraAttributes([
+                            'style' => 'background-color: #ff0000; color: #ffffff; font-weight: bold; font-size: 1.0rem; padding: 8px; border-radius: 4px;'
+                        ]),
+                ])->columns(3),
+
                 Forms\Components\Section::make(__('Movements'))
                     ->schema([
                         Forms\Components\Repeater::make('movements')
                             ->relationship('movements')
                             ->schema([
                                 Forms\Components\Select::make('accounting_account_id')
-                                    ->label(__('Account'))
+                                    ->translateLabel()
                                     ->options(AccountingAccount::where('company_id', filament()->getTenant()->id)->pluck('name', 'id'))
                                     ->required()
                                     ->searchable()
@@ -100,12 +138,16 @@ class AccountingMovementResource extends Resource
                                 Forms\Components\Textarea::make('glosa')
                                     ->label(__('Description'))
                                     ->required()
-                                    ->columnSpan(3),
+                                    ->columnSpan(3)
+                                    ->default(function (callable $get) {
+                                        // Get the parent form's 'glosa' value
+                                        return $get('../../glosa');
+                                    }),
                                 Forms\Components\TextInput::make('debit')
-                                    ->label(__('Debit'))
+                                    ->translateLabel()
                                     ->numeric()
                                     ->step(0.01)
-                                    ->reactive()
+                                    ->live(onBlur: True)
                                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                         if ((float) $state > 0) {
                                             $set('credit', 0);
@@ -113,10 +155,10 @@ class AccountingMovementResource extends Resource
                                     })
                                     ->disabled(fn(callable $get) => (float) $get('credit') > 0),
                                 Forms\Components\TextInput::make('credit')
-                                    ->label(__('Credit'))
+                                    ->translateLabel()
                                     ->numeric()
                                     ->step(0.01)
-                                    ->reactive()
+                                    ->live(onBlur: True)
                                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                         if ((float) $state > 0) {
                                             $set('debit', 0);
@@ -141,32 +183,7 @@ class AccountingMovementResource extends Resource
                                 return $data;
                             }),
                     ]),
-                Forms\Components\Placeholder::make('debit_total')
-                    ->label(__('Total Debit'))
-                    ->content(function (callable $get) {
-                        $movements = $get('movements') ?? [];
-                        return number_format(collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0)), 2, '.', ',');
-                    }),
-                Forms\Components\Placeholder::make('credit_total')
-                    ->label(__('Total Credit'))
-                    ->content(function (callable $get) {
-                        $movements = $get('movements') ?? [];
-                        return number_format(collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0)), 2, '.', ',');
-                    }),
-                Forms\Components\Placeholder::make('balance_status')
-                    ->label(__('Balance Status'))
-                    ->content(function (callable $get) {
-                        $movements = $get('movements') ?? [];
-                        $debitTotal = collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0));
-                        $creditTotal = collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0));
-                        return $debitTotal != $creditTotal ? __('Unbalanced: Debit and Credit totals do not match') : __('Balanced');
-                    })
-                    ->visible(function (callable $get) {
-                        $movements = $get('movements') ?? [];
-                        $debitTotal = collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0));
-                        $creditTotal = collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0));
-                        return $debitTotal != $creditTotal;
-                    }),
+
             ]);
     }
 
