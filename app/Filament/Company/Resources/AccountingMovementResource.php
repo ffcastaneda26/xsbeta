@@ -49,49 +49,49 @@ class AccountingMovementResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $activeExercise = AccountingExercise::where('active', 1)
-            ->where('company_id', filament()->getTenant()->id)
-            ->first();
-        $activePeriod = AccountingPeriod::where('active', 1)
-            ->where('exercise_id', $activeExercise?->id)
-            ->where('company_id', filament()->getTenant()->id)
-            ->first();
-
+        $activeExercise = filament()->getTenant()->getActiveExercise();
+        $activePeriod = filament()->getTenant()->getActivePeriod();
         $minDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->startOfMonth() : now()->startOfMonth();
         $maxDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->endOfMonth() : now()->endOfMonth();
-
+        $folio = filament()->getTenant()->getFolioToAccountingMovement();
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Master Data'))
+                Forms\Components\Section::make(__('Folio: ') . $folio)
                     ->schema([
                         Forms\Components\Group::make([
+
                             Forms\Components\Radio::make('type')
                                 ->translateLabel()
                                 ->options(VoucherTypeEnum::class)
                                 ->inline()
                                 ->required()
+                                ->default(VoucherTypeEnum::Both)
                                 ->columnSpanFull(),
-
                             Forms\Components\Select::make('document_type')
                                 ->translateLabel()
                                 ->options(VoucherDocumentTypeEnum::class)
                                 ->required(),
+
                             Forms\Components\DatePicker::make('date')
                                 ->translateLabel()
                                 ->default(now())
                                 ->maxDate($maxDate)
                                 ->minDate($minDate)
                                 ->format('d-m-Y')
+                                ->default(fn() => now()->greaterThan($maxDate) ? $maxDate : now())
                                 ->required(),
                         ])->columns(2),
                         Forms\Components\Group::make()->schema([
                             Forms\Components\Textarea::make('glosa')
                                 ->translateLabel()
                                 ->required()
+                                ->rows(3)
                                 ->columnSpanFull(),
+
                         ]),
 
                     ])->columns(2),
+
                 Forms\Components\Section::make()->schema([
                     Forms\Components\Placeholder::make('debit_total')
                         ->label(__('Total Debit'))
@@ -124,7 +124,7 @@ class AccountingMovementResource extends Resource
                         ]),
                 ])->columns(3),
 
-                Forms\Components\Section::make(__('Movements'))
+                Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Repeater::make('movements')
                             ->relationship('movements')
@@ -140,7 +140,6 @@ class AccountingMovementResource extends Resource
                                     ->required()
                                     ->columnSpan(3)
                                     ->default(function (callable $get) {
-                                        // Get the parent form's 'glosa' value
                                         return $get('../../glosa');
                                     }),
                                 Forms\Components\TextInput::make('debit')
@@ -166,10 +165,14 @@ class AccountingMovementResource extends Resource
                                     })
                                     ->disabled(fn(callable $get) => (float) $get('debit') > 0),
                             ])
+                            ->translateLabel()
                             ->columns(7)
                             ->columnSpanFull()
                             ->required()
-                            ->itemLabel(fn() => null) // Remove individual item labels to show headers only once
+                            ->defaultItems(0)
+                            ->addActionLabel(__('Add Movement'))  // Personaliza la etiqueta del botón
+                            ->addActionAlignment(Alignment::End)
+                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
                                 $data['company_id'] = filament()->getTenant()->id;
                                 $data['debit'] = (float) ($data['debit'] ?? 0);
@@ -222,9 +225,7 @@ class AccountingMovementResource extends Resource
                     ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ','),
                 Tables\Columns\TextColumn::make('balance')
                     ->label(__('Balance'))
-                    ->getStateUsing(fn($record) => number_format($record->balance, 2, '.', ','))
-                    ->html()
-                    ->suffix(fn($record) => $record->balance != 0 ? '<span class="text-danger-600 ml-2">(' . __('Unbalanced') . ')</span>' : ''),
+                    ->getStateUsing(fn($record) => number_format($record->balance, 2, '.', ',')),
                 Tables\Columns\TextColumn::make('status')
                     ->translateLabel()
                     ->color(fn($record) => $record->status_color),

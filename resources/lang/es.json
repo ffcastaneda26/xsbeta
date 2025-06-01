@@ -396,7 +396,7 @@
     "November": "Noviemtre",
     "December": "Diciembre",
     "Accounting Movements": "Movimientos Contables",
-    "Accounting Movement": "Movimientos Contable",
+    "Accounting Movement": "Movimiento Contable",
     "Voucher Type": "Tipo de Voucher",
     "Document type": "Tipo de Documento",
     "Debit": "Debe",
@@ -416,6 +416,7 @@
     "Total Credit": "Total Haber",
     "Balance Status": "Diferencia",
     "Unbalanced: Debit and Credit totals do not match": "Descuadrado Debe es diferente al Haber",
+    "Add Movement": "Agregar Movimiento",
 
     "Ok": "Aceptar"
 }

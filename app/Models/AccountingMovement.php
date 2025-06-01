@@ -49,27 +49,47 @@ class AccountingMovement extends Model
 
         static::creating(function ($record) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
+                $company = filament()->getTenant();
+                $activeExercise = $company->getActiveExercise();
+                $activePeriod = $company->getActivePeriod();
+                $folioString = $company->getFolioToAccountingMovement();
+                // $year = $activeExercise?->year ?? date('Y');
+                // $month = str_pad($activePeriod?->month ?? date('m'), 2, '0', STR_PAD_LEFT);
+                // $folio = str_pad(filament()->getTenant()->folio + 1 ?? 0, 4, '0', STR_PAD_LEFT);
+                // $folioString = $year . $month . $folio;
+
+                // Asigna valores al registro nuevo
                 $record->company_id = filament()->getTenant()->id;
+                $record->accounting_exercise_id = $activeExercise?->id;
+                $record->accounting_period_id = $activePeriod?->id;
+                $record->folio = $folioString;
+                $data['status'] = VoucherStatusEnum::PENDING;
+                $record->user_id = Auth::user()->id;
+
+
             }
-            $record->user_id = Auth::user()->id;
+        });
 
-            $activeExercise = AccountingExercise::where('active', 1)
-                ->where('company_id', filament()->getTenant()->id)
-                ->first();
-            $activePeriod = AccountingPeriod::where('active', 1)
-                ->where('exercise_id', $activeExercise?->id)
-                ->where('company_id', filament()->getTenant()->id)
-                ->first();
 
-            $record->accounting_exercise_id = $activeExercise?->id;
-            $record->accounting_period_id = $activePeriod?->id;
+        static::created(function ($record) {
 
-            $company = filament()->getTenant();
-            $folioNumber = str_pad($company->folio + 1, 4, '0', STR_PAD_LEFT);
-            $record->folio = "{$activeExercise->year}{$activePeriod->month}{$folioNumber}";
+            if (filament()->getCurrentPanel()->getId() === 'company') {
 
-            $company->folio += 1;
-            $company->save();
+                // $movements = $record->movements()->get();
+                // $debitTotal = $movements->sum(fn($movement) => (float) ($movement->debit ?? 0));
+                // $creditTotal = $movements->sum(fn($movement) => (float) ($movement->credit ?? 0));
+                // $record->status = ($debitTotal == $creditTotal)
+                //     ? VoucherStatusEnum::PENDING
+                //     : VoucherStatusEnum::INVALID;
+
+                // $record->debit = $debitTotal;
+                // $record->credit = $creditTotal;
+                // $record->save();
+
+                $company = filament()->getTenant();
+
+                $company->updateFolio();
+            }
         });
 
         static::addGlobalScope('tenant', function ($builder) {
@@ -130,7 +150,7 @@ class AccountingMovement extends Model
         $this->debit = $this->movements->sum('debit');
         $this->credit = $this->movements->sum('credit');
         $this->balance = $this->calculateBalance();
-        $this->status = $this->balance == 0 ? VoucherStatusEnum::PENDING : VoucherStatusEnum::INVALID;
+        $this->save();
     }
 
     public function getTypeLabelAttribute(): string
@@ -216,5 +236,11 @@ class AccountingMovement extends Model
     public function getDocumentTypeIconClassAttribute(): string
     {
         return $this->document_type->getIconClass();
+    }
+
+    public function updateStatus()
+    {
+        $this->status = $this->balance == 0 ? VoucherStatusEnum::PENDING : VoucherStatusEnum::INVALID;
+        $this->save();
     }
 }

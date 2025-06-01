@@ -51,4 +51,5 @@ class AccountingPeriod extends Model
         return $this->belongsTo(AccountingExercise::class, 'exercise_id');
     }
 
+
 }

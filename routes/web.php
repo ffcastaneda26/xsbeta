@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
-
+//
 Route::get('/', function () {
 
     if (auth()->check()) {

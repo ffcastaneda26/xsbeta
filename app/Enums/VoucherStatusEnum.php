@@ -38,10 +38,10 @@ enum VoucherStatusEnum:string implements HasLabel,HasColor,HasIcon
     public function getColor(): array|string|null
     {
         return match ($this) {
-            self::INVALID => 'Danger',
-            self::CURRENT => 'Primary',
-            self::PENDING => 'Warning',
-            self::FINISHED => 'Success',
+            self::INVALID => 'danger',
+            self::CURRENT => 'primary',
+            self::PENDING => 'warning',
+            self::FINISHED => 'success',
         };
     }
 
