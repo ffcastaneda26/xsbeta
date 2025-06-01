@@ -91,6 +91,15 @@ class AccountingMovement extends Model
                 $company->updateFolio();
             }
         });
+        /**
+         *  Eliminar las partidas del movimiento contable
+         */
+        static::deleting(function ($record) {
+
+            $record->movements()->each(function ($item) {
+                $item->delete();
+            });
+        });
 
         static::addGlobalScope('tenant', function ($builder) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
