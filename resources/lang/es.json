@@ -417,6 +417,11 @@
     "Balance Status": "Diferencia",
     "Unbalanced: Debit and Credit totals do not match": "Descuadrado Debe es diferente al Haber",
     "Add Movement": "Agregar Movimiento",
+    "Accounting Items": "Partidas",
+    "Accounting Item": "Partida",
+    "Create Accounting Item": "Crear Partida Contable",
+    "EDIT Accounting Item": "Editar Partida Contable",
+
 
     "Ok": "Aceptar"
 }

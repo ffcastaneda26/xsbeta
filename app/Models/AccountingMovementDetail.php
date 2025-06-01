@@ -37,6 +37,21 @@ class AccountingMovementDetail extends Model
             }
         });
 
+        // static::created(function ($record) {
+        //     $record->movement->calculateTotals();
+        //     $record->movement->updateStatus();
+        // });
+
+        // static::updated(function ($record) {
+        //     $record->movement->calculateTotals();
+        //     $record->movement->updateStatus();
+        // });
+
+        // static::deleted(function ($record) {
+        //     $record->movement->calculateTotals();
+        //     $record->movement->updateStatus();
+        // });
+
         static::addGlobalScope('tenant', function ($builder) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
                 $builder->where('accounting_movement_details.company_id', filament()->getTenant()->id);
@@ -55,7 +70,7 @@ class AccountingMovementDetail extends Model
     }
     public function account(): BelongsTo
     {
-        return $this->belongsTo(AccountingAccount::class);
+        return $this->belongsTo(AccountingAccount::class,'accounting_account_id');
     }
 }
 
