@@ -13,29 +13,16 @@ use Illuminate\Support\Facades\Auth;
 class CreateAccountingMovement extends CreateRecord
 {
     protected static string $resource = AccountingMovementResource::class;
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
+    // protected function getRedirectUrl(): string
+    // {
+    //     return $this->getResource()::getUrl('index');
+    // }
 
     protected function afterCreate(): void
     {
-        $company = filament()->getTenant();
-        $company->updateFolio();
-
-
         $record = $this->record;
-        $movements = $record->movements()->get();
-        $debitTotal = $movements->sum(fn($movement) => (float) ($movement->debit ?? 0));
-        $creditTotal = $movements->sum(fn($movement) => (float) ($movement->credit ?? 0));
+        $record->calculateTotals();
+        $record->updateStatus();
 
-        $record->status = ($debitTotal == $creditTotal)
-            ? VoucherStatusEnum::PENDING
-            : VoucherStatusEnum::INVALID;
-
-        $record->debit = $debitTotal;
-        $record->credit = $creditTotal;
-
-        $record->save();
     }
 }

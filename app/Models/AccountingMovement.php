@@ -74,20 +74,7 @@ class AccountingMovement extends Model
         static::created(function ($record) {
 
             if (filament()->getCurrentPanel()->getId() === 'company') {
-
-                // $movements = $record->movements()->get();
-                // $debitTotal = $movements->sum(fn($movement) => (float) ($movement->debit ?? 0));
-                // $creditTotal = $movements->sum(fn($movement) => (float) ($movement->credit ?? 0));
-                // $record->status = ($debitTotal == $creditTotal)
-                //     ? VoucherStatusEnum::PENDING
-                //     : VoucherStatusEnum::INVALID;
-
-                // $record->debit = $debitTotal;
-                // $record->credit = $creditTotal;
-                // $record->save();
-
                 $company = filament()->getTenant();
-
                 $company->updateFolio();
             }
         });
@@ -96,7 +83,7 @@ class AccountingMovement extends Model
          */
         static::deleting(function ($record) {
 
-            $record->movements()->each(function ($item) {
+            $record->Items()->each(function ($item) {
                 $item->delete();
             });
         });
@@ -132,7 +119,10 @@ class AccountingMovement extends Model
     {
         return $this->hasMany(AccountingMovementDetail::class);
     }
-
+    public function items(): HasMany
+    {
+        return $this->hasMany(AccountingMovementDetail::class);
+    }
     public function setDebitAttribute($value)
     {
         $this->attributes['debit'] = $value;
@@ -156,8 +146,8 @@ class AccountingMovement extends Model
 
     public function calculateTotals()
     {
-        $this->debit = $this->movements->sum('debit');
-        $this->credit = $this->movements->sum('credit');
+        $this->debit = $this->items()->sum('debit');
+        $this->credit = $this->items()->sum('credit');
         $this->balance = $this->calculateBalance();
         $this->save();
     }
@@ -249,7 +239,13 @@ class AccountingMovement extends Model
 
     public function updateStatus()
     {
-        $this->status = $this->balance == 0 ? VoucherStatusEnum::PENDING : VoucherStatusEnum::INVALID;
+        if ($this->items()->count()) {
+            $this->status = $this->balance === 0 && $this->status !=VoucherStatusEnum::FINISHED
+              ? VoucherStatusEnum::PENDING
+              : VoucherStatusEnum::UNBALANCED;
+        }else{
+            $this->status =  VoucherStatusEnum::INVALID;
+        }
         $this->save();
     }
 }

@@ -421,7 +421,11 @@
     "Accounting Item": "Partida",
     "Create Accounting Item": "Crear Partida Contable",
     "EDIT Accounting Item": "Editar Partida Contable",
-
+    "The debit and credit totals do not match.":"Los totales de debe  y haber no coinciden.",
+    "Unbalanced": "Descuadrado",
+    "Checked": "Cuadrado",
+    "Account": "Cuenta",
+    "filament-tables::table.summary.label": "Totales",
 
     "Ok": "Aceptar"
 }

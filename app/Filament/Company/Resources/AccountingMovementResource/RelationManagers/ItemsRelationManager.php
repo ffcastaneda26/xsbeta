@@ -18,9 +18,9 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\Summarizers\Sum;
 
-class MovementsRelationManager extends RelationManager
+class ItemsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'movements';
+    protected static string $relationship = 'items';
 
     public function form(Form $form): Form
     {
@@ -89,8 +89,7 @@ class MovementsRelationManager extends RelationManager
                     ->label(__('Credit'))
                     ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ',')
                     ->alignment(Alignment::End)
-                    ->summarize(Sum::make()->label('')
-                    ->extraAttributes(['class' => 'font-bold'])),
+                    ->summarize(Sum::make()->label('')->extraAttributes(['class' => 'font-bold'])),
             ])
             ->filters([
                 //
@@ -149,9 +148,9 @@ class MovementsRelationManager extends RelationManager
                     }),
             ])
             ->contentFooter(function () {
-                $movements = $this->ownerRecord->movements;
-                $debitTotal = $movements->sum('debit');
-                $creditTotal = $movements->sum('credit');
+                $items = $this->ownerRecord->items;
+                $debitTotal = $items->sum('debit');
+                $creditTotal = $items->sum('credit');
                 $isBalanced = $debitTotal === $creditTotal;
 
                 return !$isBalanced ? view('filament.company.resources.accounting-movement.unbalanced_message', [

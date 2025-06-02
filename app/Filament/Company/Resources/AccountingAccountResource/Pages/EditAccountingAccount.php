@@ -10,6 +10,7 @@ class EditAccountingAccount extends EditRecord
 {
     protected static string $resource = AccountingAccountResource::class;
 
+
     protected function getHeaderActions(): array
     {
         return [
@@ -21,4 +22,6 @@ class EditAccountingAccount extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+
 }

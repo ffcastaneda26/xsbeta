@@ -13,6 +13,7 @@ enum VoucherStatusEnum:string implements HasLabel,HasColor,HasIcon
     case CURRENT = 'Current';
     case PENDING = 'Pending';
     case FINISHED = 'Finished';
+    case UNBALANCED = 'Unbalanced';
 
 
 
@@ -24,13 +25,16 @@ enum VoucherStatusEnum:string implements HasLabel,HasColor,HasIcon
                 self::CURRENT => 'Current',
                 self::PENDING => 'Pending',
                 self::FINISHED => 'Finished',
+                self::UNBALANCED => 'Unbalanced',
+
             };
         }
         return match ($this) {
-            self::INVALID => 'Descuadrado',
+            self::INVALID => 'Inválido',
             self::CURRENT => 'Vigente',
             self::PENDING => 'Pendiente',
             self::FINISHED => 'Finalizado',
+            self::UNBALANCED => 'Descuadrado',
         };
 
     }
@@ -42,16 +46,18 @@ enum VoucherStatusEnum:string implements HasLabel,HasColor,HasIcon
             self::CURRENT => 'primary',
             self::PENDING => 'warning',
             self::FINISHED => 'success',
+            self::UNBALANCED => 'danger',
         };
     }
 
     public function getIcon(): ?string
     {
         return match ($this) {
-            self::INVALID => 'heroicon-m-bell-alert',
+            self::INVALID => 'heroicon-m-exclamation-triangle',
             self::CURRENT => 'heroicon-m-check',
             self::PENDING => 'heroicon-m-check-badge',
             self::FINISHED => 'heroicon-m-scale',
+            self::UNBALANCED=> 'heroicon-m-bell-alert',
         };
     }
 }

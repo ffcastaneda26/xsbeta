@@ -6,6 +6,7 @@ use App\Enums\VoucherDocumentTypeEnum;
 use App\Enums\VoucherTypeEnum;
 use App\Filament\Company\Resources\AccountingMovementResource\Pages;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers;
+use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers\ItemsRelationManager;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers\MovementsRelationManager;
 use App\Models\AccountingAccount;
 use App\Models\AccountingExercise;
@@ -19,7 +20,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use phpDocumentor\Reflection\PseudoTypes\True_;
 
 class AccountingMovementResource extends Resource
 {
@@ -47,149 +47,77 @@ class AccountingMovementResource extends Resource
         return __('Accounting');
     }
 
+    public static function form(Form $form): Form
+    {
+        $activeExercise = filament()->getTenant()->getActiveExercise();
+        $activePeriod = filament()->getTenant()->getActivePeriod();
+        $minDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->startOfMonth() : now()->startOfMonth();
+        $maxDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->endOfMonth() : now()->endOfMonth();
+        $folio = filament()->getTenant()->getFolioToAccountingMovement();
+        $folio = $form->getRecord() ? $form->getRecord()->folio : filament()->getTenant()->getFolioToAccountingMovement();
 
-    // public static function form(Form $form): Form
-    // {
-    //     $activeExercise = filament()->getTenant()->getActiveExercise();
-    //     $activePeriod = filament()->getTenant()->getActivePeriod();
-    //     $minDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->startOfMonth() : now()->startOfMonth();
-    //     $maxDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->endOfMonth() : now()->endOfMonth();
-    //     $folio = filament()->getTenant()->getFolioToAccountingMovement();
-    //     return $form
-    //         ->schema([
-    //             Forms\Components\Section::make(__('Folio: ') . $folio)
-    //                 ->schema([
-    //                     Forms\Components\Group::make([
+        return $form
+            ->schema([
+                Forms\Components\Section::make(__('Folio: ') . $folio)
+                    ->schema([
+                        Forms\Components\Group::make([
+                            Forms\Components\Radio::make('type')
+                                ->translateLabel()
+                                ->options(VoucherTypeEnum::class)
+                                ->inline()
+                                ->required()
+                                ->default(VoucherTypeEnum::Both)
+                                ->columnSpanFull(),
+                            Forms\Components\Select::make('document_type')
+                                ->translateLabel()
+                                ->options(VoucherDocumentTypeEnum::class)
+                                ->required(),
+                            Forms\Components\DatePicker::make('date')
+                                ->translateLabel()
+                                ->default(now())
+                                ->maxDate($maxDate)
+                                ->minDate($minDate)
+                                ->format('d-m-Y')
+                                ->default(fn() => now()->greaterThan($maxDate) ? $maxDate : now())
+                                ->required(),
+                        ])->columns(2),
+                        Forms\Components\Group::make()->schema([
+                            Forms\Components\Textarea::make('glosa')
+                                ->translateLabel()
+                                ->required()
+                                ->rows(3)
+                                ->columnSpanFull(),
+                        ]),
+                    ])->columns(2),
 
-    //                         Forms\Components\Radio::make('type')
-    //                             ->translateLabel()
-    //                             ->options(VoucherTypeEnum::class)
-    //                             ->inline()
-    //                             ->required()
-    //                             ->default(VoucherTypeEnum::Both)
-    //                             ->columnSpanFull(),
-    //                         Forms\Components\Select::make('document_type')
-    //                             ->translateLabel()
-    //                             ->options(VoucherDocumentTypeEnum::class)
-    //                             ->required(),
+                Forms\Components\Section::make()->schema([
+                    Forms\Components\Placeholder::make('debit_total')
+                        ->label(__('Total Debit'))
+                        ->content(function ($record) {
+                            return number_format($record?->movements()->sum('debit') ?? 0, 2, '.', ',');
+                        }),
 
-    //                         Forms\Components\DatePicker::make('date')
-    //                             ->translateLabel()
-    //                             ->default(now())
-    //                             ->maxDate($maxDate)
-    //                             ->minDate($minDate)
-    //                             ->format('d-m-Y')
-    //                             ->default(fn() => now()->greaterThan($maxDate) ? $maxDate : now())
-    //                             ->required(),
-    //                     ])->columns(2),
-    //                     Forms\Components\Group::make()->schema([
-    //                         Forms\Components\Textarea::make('glosa')
-    //                             ->translateLabel()
-    //                             ->required()
-    //                             ->rows(3)
-    //                             ->columnSpanFull(),
+                    Forms\Components\Placeholder::make('credit_total')
+                        ->label(__('Total Credit'))
+                        ->content(function ($record) {
+                            return number_format($record?->movements()->sum('credit') ?? 0, 2, '.', ',');
+                        }),
 
-    //                     ]),
+                    Forms\Components\Placeholder::make('')->content(function ($record) {
+                        $debitTotal = $record?->movements()->sum('debit') ?? 0;
+                        $creditTotal = $record?->movements()->sum('credit') ?? 0;
+                        return view('filament.company.resources.accounting-movement.unbalanced_message', [
+                            'message' => $debitTotal != $creditTotal ? __('Unbalanced Movement') : __('Checked'),
+                            'error' => $debitTotal != $creditTotal,
+                        ]);
+                    }),
+                ])->columns(4)
+                    ->visible(function ($livewire, $record) {
+                        return $livewire instanceof \Filament\Resources\Pages\EditRecord && $record?->movements()->exists();
+                    }),
 
-    //                 ])->columns(2),
-
-    //             Forms\Components\Section::make()->schema([
-    //                 Forms\Components\Placeholder::make('debit_total')
-    //                     ->label(__('Total Debit'))
-    //                     ->content(function (callable $get) {
-    //                         $movements = $get('movements') ?? [];
-    //                         return number_format(collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0)), 2, '.', ',');
-    //                     }),
-    //                 Forms\Components\Placeholder::make('credit_total')
-    //                     ->label(__('Total Credit'))
-    //                     ->content(function (callable $get) {
-    //                         $movements = $get('movements') ?? [];
-    //                         return number_format(collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0)), 2, '.', ',');
-    //                     }),
-    //                 Forms\Components\Placeholder::make('balance_status')
-    //                     ->label(__('Balance Status'))
-    //                     ->content(function (callable $get) {
-    //                         $movements = $get('movements') ?? [];
-    //                         $debitTotal = collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0));
-    //                         $creditTotal = collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0));
-    //                         return $debitTotal != $creditTotal ? __('Unbalanced: Debit and Credit totals do not match') : __('Balanced');
-    //                     })
-    //                     ->visible(function (callable $get) {
-    //                         $movements = $get('movements') ?? [];
-    //                         $debitTotal = collect($movements)->sum(fn($item) => (float) ($item['debit'] ?? 0));
-    //                         $creditTotal = collect($movements)->sum(fn($item) => (float) ($item['credit'] ?? 0));
-    //                         return $debitTotal != $creditTotal;
-    //                     })
-    //                     ->extraAttributes([
-    //                         'style' => 'background-color: #ff0000; color: #ffffff; font-weight: bold; font-size: 1.0rem; padding: 8px; border-radius: 4px;'
-    //                     ]),
-    //             ])->columns(3),
-
-    //             Forms\Components\Section::make()
-    //                 ->schema([
-    //                     Forms\Components\Repeater::make('movements')
-    //                         ->relationship('movements')
-    //                         ->schema([
-    //                             Forms\Components\Select::make('accounting_account_id')
-    //                                 ->translateLabel()
-    //                                 ->options(AccountingAccount::where('company_id', filament()->getTenant()->id)->pluck('name', 'id'))
-    //                                 ->required()
-    //                                 ->searchable()
-    //                                 ->columnSpan(2),
-    //                             Forms\Components\Textarea::make('glosa')
-    //                                 ->label(__('Description'))
-    //                                 ->required()
-    //                                 ->columnSpan(3)
-    //                                 ->default(function (callable $get) {
-    //                                     return $get('../../glosa');
-    //                                 }),
-    //                             Forms\Components\TextInput::make('debit')
-    //                                 ->translateLabel()
-    //                                 ->numeric()
-    //                                 ->step(0.01)
-    //                                 ->live(onBlur: True)
-    //                                 ->afterStateUpdated(function ($state, callable $set, callable $get) {
-    //                                     if ((float) $state > 0) {
-    //                                         $set('credit', 0);
-    //                                     }
-    //                                 })
-    //                                 ->disabled(fn(callable $get) => (float) $get('credit') > 0),
-    //                             Forms\Components\TextInput::make('credit')
-    //                                 ->translateLabel()
-    //                                 ->numeric()
-    //                                 ->step(0.01)
-    //                                 ->live(onBlur: True)
-    //                                 ->afterStateUpdated(function ($state, callable $set, callable $get) {
-    //                                     if ((float) $state > 0) {
-    //                                         $set('debit', 0);
-    //                                     }
-    //                                 })
-    //                                 ->disabled(fn(callable $get) => (float) $get('debit') > 0),
-    //                         ])
-    //                         ->translateLabel()
-    //                         ->columns(7)
-    //                         ->columnSpanFull()
-    //                         ->required()
-    //                         ->defaultItems(0)
-    //                         ->addActionLabel(__('Add Movement'))  // Personaliza la etiqueta del botón
-    //                         ->addActionAlignment(Alignment::End)
-    //                         ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
-    //                         ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
-    //                             $data['company_id'] = filament()->getTenant()->id;
-    //                             $data['debit'] = (float) ($data['debit'] ?? 0);
-    //                             $data['credit'] = (float) ($data['credit'] ?? 0);
-    //                             return $data;
-    //                         })
-    //                         ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
-    //                             $data['company_id'] = filament()->getTenant()->id;
-    //                             $data['debit'] = (float) ($data['debit'] ?? 0);
-    //                             $data['credit'] = (float) ($data['credit'] ?? 0);
-    //                             return $data;
-    //                         }),
-    //                 ]),
-
-    //         ]);
-    // }
+            ]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -259,81 +187,12 @@ class AccountingMovementResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    public static function form(Form $form): Form
-    {
-        $activeExercise = filament()->getTenant()->getActiveExercise();
-        $activePeriod = filament()->getTenant()->getActivePeriod();
-        $minDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->startOfMonth() : now()->startOfMonth();
-        $maxDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->endOfMonth() : now()->endOfMonth();
-        $folio = filament()->getTenant()->getFolioToAccountingMovement();
 
-        return $form
-            ->schema([
-                Forms\Components\Section::make(__('Folio: ') . $folio)
-                    ->schema([
-                        Forms\Components\Group::make([
-                            Forms\Components\Radio::make('type')
-                                ->translateLabel()
-                                ->options(VoucherTypeEnum::class)
-                                ->inline()
-                                ->required()
-                                ->default(VoucherTypeEnum::Both)
-                                ->columnSpanFull(),
-                            Forms\Components\Select::make('document_type')
-                                ->translateLabel()
-                                ->options(VoucherDocumentTypeEnum::class)
-                                ->required(),
-                            Forms\Components\DatePicker::make('date')
-                                ->translateLabel()
-                                ->default(now())
-                                ->maxDate($maxDate)
-                                ->minDate($minDate)
-                                ->format('d-m-Y')
-                                ->default(fn() => now()->greaterThan($maxDate) ? $maxDate : now())
-                                ->required(),
-                        ])->columns(2),
-                        Forms\Components\Group::make()->schema([
-                            Forms\Components\Textarea::make('glosa')
-                                ->translateLabel()
-                                ->required()
-                                ->rows(3)
-                                ->columnSpanFull(),
-                        ]),
-                    ])->columns(2),
-
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\Placeholder::make('debit_total')
-                        ->label(__('Total Debit'))
-                        ->content(function ($record) {
-                            return number_format($record?->movements()->sum('debit') ?? 0, 2, '.', ',');
-                        }),
-                    Forms\Components\Placeholder::make('credit_total')
-                        ->label(__('Total Credit'))
-                        ->content(function ($record) {
-                            return number_format($record?->movements()->sum('credit') ?? 0, 2, '.', ',');
-                        }),
-                    Forms\Components\Placeholder::make('balance_status')
-                        ->label(__('Balance Status'))
-                        ->content(function ($record) {
-                            $debitTotal = $record?->movements()->sum('debit') ?? 0;
-                            $creditTotal = $record?->movements()->sum('credit') ?? 0;
-                            return $debitTotal != $creditTotal ? __('Unbalanced: Debit and Credit totals do not match') : __('Balanced');
-                        })
-                        ->visible(function ($record) {
-                            $debitTotal = $record?->movements()->sum('debit') ?? 0;
-                            $creditTotal = $record?->movements()->sum('credit') ?? 0;
-                            return $debitTotal != $creditTotal;
-                        })
-                        ->extraAttributes([
-                            'style' => 'background-color: #ff0000; color: #ffffff; font-weight: bold; font-size: 1.0rem; padding: 8px; border-radius: 4px;'
-                        ]),
-                ])->columns(3),
-            ]);
-    }
     public static function getRelations(): array
     {
         return [
-            MovementsRelationManager::class,
+                // MovementsRelationManager::class,
+            ItemsRelationManager::class,
         ];
     }
 
