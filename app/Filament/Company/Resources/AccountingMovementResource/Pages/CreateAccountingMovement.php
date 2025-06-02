@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Auth;
 class CreateAccountingMovement extends CreateRecord
 {
     protected static string $resource = AccountingMovementResource::class;
-    // protected function getRedirectUrl(): string
-    // {
-    //     return $this->getResource()::getUrl('index');
-    // }
 
     protected function afterCreate(): void
     {

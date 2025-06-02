@@ -83,4 +83,36 @@ class AccountingAccount extends Model
         return $this->hasMany(AccountingMovementDetail::class);
     }
 
+    public function setDebitAttribute($value)
+    {
+        $this->attributes['debit'] = $value;
+        $this->attributes['balance'] = $this->calculateBalance();
+    }
+
+    public function setCreditAttribute($value)
+    {
+        $this->attributes['credit'] = $value;
+        $this->attributes['balance'] = $this->calculateBalance();
+    }
+
+    public function updateDebit($value)
+    {
+        $this->debit += $value;
+    }
+
+    public function updateCredit($value)
+    {
+        $this->credit += $value;
+    }
+
+    protected function calculateBalance()
+    {
+        return bcsub(
+            $this->attributes['debit'] ?? 0,
+            $this->attributes['credit'] ?? 0,
+            2
+        );
+    }
+
+
 }
