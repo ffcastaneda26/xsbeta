@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class AccountingAccount extends Model
 {
@@ -114,5 +115,26 @@ class AccountingAccount extends Model
         );
     }
 
+    public function update_amount($type, $amount)
+    {
+
+        if ($type != 'debit' && $type != 'credit') {
+            return false;
+        }
+        try {
+            if ($type == 'debit') {
+                $this->debit =+ $amount;
+            }else{
+                $this->credit =+ $amount;
+            }
+            $this->calculateBalance();
+            $this->save();
+        } catch (\Throwable $th) {
+            Log::info('Error al actualizar importe de la cuenta contable');
+        }
+
+
+
+    }
 
 }

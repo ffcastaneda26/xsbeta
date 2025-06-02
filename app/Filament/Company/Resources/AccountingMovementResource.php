@@ -2,24 +2,28 @@
 
 namespace App\Filament\Company\Resources;
 
-use App\Enums\VoucherDocumentTypeEnum;
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use App\Enums\VoucherTypeEnum;
+use App\Models\AccountingPeriod;
+use Filament\Resources\Resource;
+use App\Models\AccountingAccount;
+use App\Models\AccountingExercise;
+use App\Models\AccountingMovement;
+use Filament\Support\Enums\Alignment;
+use App\Enums\VoucherDocumentTypeEnum;
+use App\Enums\VoucherStatusEnum;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Company\Resources\AccountingMovementResource\Pages;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers\ItemsRelationManager;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers\MovementsRelationManager;
-use App\Models\AccountingAccount;
-use App\Models\AccountingExercise;
-use App\Models\AccountingMovement;
-use App\Models\AccountingPeriod;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Support\Enums\Alignment;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 
 class AccountingMovementResource extends Resource
 {
@@ -182,6 +186,33 @@ class AccountingMovementResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('apply')
+                    ->label(__('Apply'))
+                    // ->icon('heroicon-o-check-circle')
+                    // ->icon('heroicon-o-hand-thumb-up')
+                    ->icon('heroicon-o-cloud-arrow-up')
+                    ->color('success')
+                    ->disabled(fn($record) => !$record->canApply())
+                    ->action(function ($record) {
+                        try {
+                            $record->apply();
+                            $record->status = VoucherStatusEnum::FINISHED;
+                            $record->save();
+                            Notification::make()
+                                ->title(__('Movement Applied'))
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title(__('Error Applying Movement'))
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(__('Confirm Apply Movement'))
+                    ->modalDescription(__('Are you sure you want to apply this accounting movement? This will update the account balances.')),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

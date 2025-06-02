@@ -248,4 +248,19 @@ class AccountingMovement extends Model
         }
         $this->save();
     }
+
+    public function canApply(){
+
+       return $this->status ==  VoucherStatusEnum::PENDING && $this->items()->count();
+    }
+
+    public function apply(){
+
+        foreach($this->items as $item){
+            $account = $item->account;
+            $type = $item->debit != 0 ? 'debit' : 'credit';
+            $amount = $item->debit != 0 ? $item->debit : $item->credit;
+            $account->update_amount($type,$amount);
+        }
+    }
 }
