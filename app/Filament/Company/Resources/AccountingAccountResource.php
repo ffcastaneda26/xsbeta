@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -254,7 +255,25 @@ class AccountingAccountResource extends Resource
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
-
+                Tables\Columns\TextColumn::make('debit')
+                    ->translateLabel()
+                    ->searchable()
+                    ->sortable()
+                    ->alignment(Alignment::End)
+                    ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ','),
+                Tables\Columns\TextColumn::make('credit')
+                    ->translateLabel()
+                    ->searchable()
+                    ->sortable()
+                    ->alignment(Alignment::End)
+                    ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ','),
+                Tables\Columns\TextColumn::make('balance')
+                    ->translateLabel()
+                    ->searchable()
+                    ->numeric()
+                    ->sortable(),
+                    // TODO:: Si se desea mostrar el valor absoluto
+                    // ->formatStateUsing(fn ($state) => abs($state)),
                 Tables\Columns\IconColumn::make('is_analysis_code')
                     ->boolean()
                     ->translateLabel()
@@ -308,6 +327,40 @@ class AccountingAccountResource extends Resource
                             $indicators[] = __('Account Subtype') . ': ' . ($AccountSubType->name ?? 'Unknown');
                         }
                         return $indicators;
+                    }),
+                Tables\Filters\Filter::make('has_balance')
+                    ->form([
+                        Forms\Components\Toggle::make('has_balance')
+                            ->label(__('Has Balance'))
+                            ->default(false),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['has_balance']) {
+                            $query->where('balance', '!=', 0);
+                        }
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        if ($data['has_balance']) {
+                            return [__('Accounts with balance')];
+                        }
+                        return [];
+                    }),
+                Tables\Filters\Filter::make('has_movements')
+                    ->form([
+                        Forms\Components\Toggle::make('has_movements')
+                            ->label(__('Has Movements'))
+                            ->default(false),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['has_movements']) {
+                            $query->whereHas('items');
+                        }
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        if ($data['has_movements']) {
+                            return [__('Accounts with movements')];
+                        }
+                        return [];
                     }),
             ])
             ->actions([

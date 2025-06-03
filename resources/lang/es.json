@@ -430,6 +430,8 @@
     "Confirm Apply Movement": "Confirmar la Aplicación del Movimiento",
     "Movement Applied": "Movimiento Aplicado",
     "Are you sure you want to apply this accounting movement? This will update the account balances.": "¿Está seguro de aplicar el movimiento contable? Esto actualizará el sado de la cuenta de cada Partida",
+    "Has Movements": "Tiene Movimientos",
+    "Has Balance": "Con Saldo",
 
     "Ok": "Aceptar"
 }

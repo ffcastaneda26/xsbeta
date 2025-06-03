@@ -83,6 +83,11 @@ class AccountingAccount extends Model
     {
         return $this->hasMany(AccountingMovementDetail::class);
     }
+    public function items(): HasMany
+    {
+        return $this->hasMany(AccountingMovementDetail::class);
+    }
+
 
     public function setDebitAttribute($value)
     {
