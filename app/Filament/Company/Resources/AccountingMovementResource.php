@@ -216,14 +216,15 @@ class AccountingMovementResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading(__('Confirm Apply Movement'))
                     ->modalDescription(__('Are you sure you want to apply this accounting movement? This will update the account balances.')),
-                Tables\Actions\Action::make('copy')
-                    ->label(__('Copy'))
+
+                Tables\Actions\Action::make('duplicate')
+                    ->label(__('Duplicate'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('warning')
                     ->disabled(fn($record) => $record->status == VoucherStatusEnum::UNBALANCED)
                     ->action(function ($record) {
                         try {
-                            $record->apply();
+                            $record->duplicate();
                             Notification::make()
                                 ->title(__('Movement has been copied'))
                                 ->success()
@@ -237,8 +238,8 @@ class AccountingMovementResource extends Resource
                         }
                     })
                     ->requiresConfirmation()
-                    ->modalHeading(__('Confirm Apply Movement'))
-                    ->modalDescription(__('Are you sure you want to copy this accounting movement?')),
+                    ->modalHeading(__('Confirm Duplicate Movement'))
+                    ->modalDescription(__('Are you sure you want to duplicate this accounting entry?')),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

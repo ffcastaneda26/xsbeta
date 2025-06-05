@@ -122,7 +122,6 @@ class AccountingAccount extends Model
 
     public function update_amount($type, $amount)
     {
-
         if ($type != 'debit' && $type != 'credit') {
             return false;
         }

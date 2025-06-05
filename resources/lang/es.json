@@ -437,9 +437,9 @@
     "Copy Movement": "Copiar Movimiento",
     "Movement has been copied": "Movimiento ha sido copiado",
     "Error Copying Movement": "Error al Copiar Movimiento",
-    "Confirm cOPy Movement": "Confirma Copiar el Movmiento",
-    "Are you sure you want to copy this accounting movement?": "¿Estás seguro de que desea copiar este movimiento contable?",
-
+    "Confirm Duplicate Movement": "Confirma Duplicar el Movmiento",
+    "Are you sure you want to duplicate this accounting entry?": "¿Estás seguro de que desea duplicar este movimiento contable?",
+    "Duplicate" : "Duplicar",
 
     "Ok": "Aceptar"
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\VoucherDocumentTypeEnum;
 use App\Enums\VoucherStatusEnum;
 use App\Enums\VoucherTypeEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -65,11 +66,43 @@ class AccountingMovement extends Model
                 $record->folio = $folioString;
                 $data['status'] = VoucherStatusEnum::PENDING;
                 $record->user_id = Auth::user()->id;
+                if ($activeExercise && $activePeriod) {
+                    $year = $activeExercise->year;
+                    $month = $activePeriod->month;
+                    $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+                    $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+                    $movementDate = Carbon::parse($record->date);
 
+                    if ($movementDate->lt($startOfMonth) || $movementDate->gt($endOfMonth)) {
+                        $record->status = VoucherStatusEnum::INVALID;
+                        throw new \Exception("La fecha del movimiento debe estar dentro del rango del mes {$month} y año {$year}.");
+                    }
+                }
 
             }
         });
 
+        static::updating(function ($record) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                $company = filament()->getTenant();
+                $activeExercise = $company->getActiveExercise();
+                $activePeriod = $company->getActivePeriod();
+
+                // Validar la fecha del movimiento
+                if ($activeExercise && $activePeriod) {
+                    $year = $activeExercise->year;
+                    $month = $activePeriod->month;
+                    $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+                    $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+                    $movementDate = Carbon::parse($record->date);
+
+                    if ($movementDate->lt($startOfMonth) || $movementDate->gt($endOfMonth)) {
+                        $record->status = VoucherStatusEnum::INVALID;
+                        throw new \Exception("La fecha del movimiento debe estar dentro del rango del mes {$month} y año {$year}.");
+                    }
+                }
+            }
+        });
 
         static::created(function ($record) {
 
@@ -123,11 +156,13 @@ class AccountingMovement extends Model
     {
         return $this->hasMany(AccountingMovementDetail::class);
     }
-    public function setDebitAttribute($value)
+
+    public function hasItems()
     {
-        $this->attributes['debit'] = $value;
-        $this->attributes['balance'] = $this->calculateBalance();
+        return $this->items->count();
     }
+
+
 
     public function setCreditAttribute($value)
     {
@@ -148,7 +183,7 @@ class AccountingMovement extends Model
     {
         $this->debit = $this->items()->sum('debit');
         $this->credit = $this->items()->sum('credit');
-        $this->balance = $this->debit -  $this->credit;
+        $this->balance = $this->debit - $this->credit;
         $this->save();
     }
 
@@ -242,33 +277,96 @@ class AccountingMovement extends Model
 
         if ($this->items()->count()) {
 
-            $this->status = $this->balance === 0
-              ? VoucherStatusEnum::PENDING
-              : VoucherStatusEnum::UNBALANCED;
-        }else{
-            $this->status =  VoucherStatusEnum::INVALID;
+            $this->status = $this->balance == 0
+                ? VoucherStatusEnum::PENDING
+                : VoucherStatusEnum::UNBALANCED;
+        } else {
+            $this->status = VoucherStatusEnum::INVALID;
         }
         $this->save();
     }
 
-    public function applied(){
-
-       return $this->status ===  VoucherStatusEnum::FINISHED;
-    }
-    public function canApply(){
-
-       return $this->status ==  VoucherStatusEnum::PENDING && $this->items()->count();
+    public function applied()
+    {
+        return $this->status === VoucherStatusEnum::FINISHED;
     }
 
-    public function apply(){
 
-        foreach($this->items as $item){
+    public function validateDate()
+    {
+        $activeExercise = $this->exercise;
+        $activePeriod = $this->period;
+
+        if ($activeExercise && $activePeriod) {
+            $year = $activeExercise->year;
+            $month = $activePeriod->month;
+            $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+            $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+            $movementDate = Carbon::parse($this->date);
+
+            if ($movementDate->lt($startOfMonth) || $movementDate->gt($endOfMonth)) {
+                $this->status = VoucherStatusEnum::INVALID;
+                $this->save();
+                return false;
+            }
+        }
+        return true;
+    }
+
+public function canApply()
+    {
+        if (!$this->validateDate()) {
+            return false;
+        }
+
+        return $this->status == VoucherStatusEnum::PENDING && $this->items()->count();
+    }
+
+    /**
+     * Aplica movimiento
+     * Recorre las partidas y por cada una:
+     * (1) suma al debe o haber según corresponda de la cuenta
+     * (2) Actualiza el saldo de la cuenta
+     * @return void
+     */
+    public function apply()
+    {
+        foreach ($this->items as $item) {
             $account = $item->account;
             $type = $item->debit != 0 ? 'debit' : 'credit';
             $amount = $item->debit != 0 ? $item->debit : $item->credit;
-            $account->update_amount($type,$amount);
+            $account->update_amount($type, $amount);
         }
     }
 
+    /**
+     * Duplica movimiento contable
+     * 1) Copia el registro actualizando: Fechas - Folio - Estado
+     * 2) Copia las partidas del movimiento
+     * @return AccountingMovement
+     */
+    public function duplicate(): self
+    {
+        // Create a new instance with replicated attributes
+        $newMovement = $this->replicate()->fill([
+            'created_at' => now(),
+            'updated_at' => now(),
+            'folio' => $this->company->getFolioToAccountingMovement(),
+            'status' => VoucherStatusEnum::PENDING,
+            'user_id' => Auth::user()->id,
+        ]);
+
+        $newMovement->save();
+
+        foreach ($this->items as $item) {
+            $newItem = $item->replicate();
+            $newItem->accounting_movement_id = $newMovement->id;
+            $newItem->save();
+        }
+        $newMovement->calculateTotals();
+        $newMovement->updateStatus();
+        $this->company->updateFolio();
+        return $newMovement;
+    }
 
 }
