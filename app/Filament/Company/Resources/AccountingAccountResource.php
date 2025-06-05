@@ -271,7 +271,8 @@ class AccountingAccountResource extends Resource
                     ->translateLabel()
                     ->searchable()
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ','),
                     // TODO:: Si se desea mostrar el valor absoluto
                     // ->formatStateUsing(fn ($state) => abs($state)),
                 Tables\Columns\IconColumn::make('is_analysis_code')

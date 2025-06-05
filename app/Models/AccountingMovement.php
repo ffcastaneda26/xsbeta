@@ -341,13 +341,14 @@ public function canApply()
 
     /**
      * Duplica movimiento contable
-     * 1) Copia el registro actualizando: Fechas - Folio - Estado
+     * 1) Copia el registro actualizando:  Folio - Estado
      * 2) Copia las partidas del movimiento
+     * 3) Actualiza folio en la empresa
      * @return AccountingMovement
      */
     public function duplicate(): self
     {
-        // Create a new instance with replicated attributes
+
         $newMovement = $this->replicate()->fill([
             'created_at' => now(),
             'updated_at' => now(),
@@ -363,9 +364,7 @@ public function canApply()
             $newItem->accounting_movement_id = $newMovement->id;
             $newItem->save();
         }
-        $newMovement->calculateTotals();
-        $newMovement->updateStatus();
-        $this->company->updateFolio();
+
         return $newMovement;
     }
 
