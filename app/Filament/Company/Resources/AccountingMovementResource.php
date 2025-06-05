@@ -25,16 +25,26 @@ class AccountingMovementResource extends Resource
 
     public static function getNavigationLabel(): string
     {
+
+        if (filament()->getTenant()->country_id == 44) {
+            return 'Vouchers';
+        }
         return __('Accounting Movements');
     }
 
     public static function getPluralLabel(): ?string
     {
+        if (filament()->getTenant()->country_id == 44) {
+            return 'Vouchers';
+        }
         return __('Accounting Movements');
     }
 
     public static function getModelLabel(): string
     {
+        if (filament()->getTenant()->country_id == 44) {
+            return 'Voucher';
+        }
         return __('Accounting Movement');
     }
 
