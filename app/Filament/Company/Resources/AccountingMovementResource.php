@@ -186,8 +186,9 @@ class AccountingMovementResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->disabled(fn($record) => $record->applied()),
+
+                Tables\Actions\DeleteAction::make()->disabled(fn($record) => $record->applied()),
                 Tables\Actions\Action::make('apply')
                     ->label(__('Apply'))
                     // ->icon('heroicon-o-check-circle')
@@ -215,6 +216,29 @@ class AccountingMovementResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading(__('Confirm Apply Movement'))
                     ->modalDescription(__('Are you sure you want to apply this accounting movement? This will update the account balances.')),
+                Tables\Actions\Action::make('copy')
+                    ->label(__('Copy'))
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('warning')
+                    ->disabled(fn($record) => $record->status == VoucherStatusEnum::UNBALANCED)
+                    ->action(function ($record) {
+                        try {
+                            $record->apply();
+                            Notification::make()
+                                ->title(__('Movement has been copied'))
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title(__('Error Copying Movement'))
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(__('Confirm Apply Movement'))
+                    ->modalDescription(__('Are you sure you want to copy this accounting movement?')),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

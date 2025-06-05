@@ -432,6 +432,14 @@
     "Are you sure you want to apply this accounting movement? This will update the account balances.": "¿Está seguro de aplicar el movimiento contable? Esto actualizará el sado de la cuenta de cada Partida",
     "Has Movements": "Tiene Movimientos",
     "Has Balance": "Con Saldo",
+    "Copy": "Copiar",
+    "Movement Copied": "Movimiento Copiado",
+    "Copy Movement": "Copiar Movimiento",
+    "Movement has been copied": "Movimiento ha sido copiado",
+    "Error Copying Movement": "Error al Copiar Movimiento",
+    "Confirm cOPy Movement": "Confirma Copiar el Movmiento",
+    "Are you sure you want to copy this accounting movement?": "¿Estás seguro de que desea copiar este movimiento contable?",
+
 
     "Ok": "Aceptar"
 }

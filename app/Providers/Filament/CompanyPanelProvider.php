@@ -30,8 +30,9 @@ class CompanyPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Green,
             ])
-            ->tenant(Company::class,ownershipRelationship:'company')
-            // ->topNavigation()
+            ->tenant(Company::class, ownershipRelationship: 'company')
+            // ->sidebarCollapsibleOnDesktop()
+            ->topNavigation()
             ->brandName(__('Company Administrator Panel'))
             ->discoverResources(in: app_path('Filament/Company/Resources'), for: 'App\\Filament\\Company\\Resources')
             ->discoverPages(in: app_path('Filament/Company/Pages'), for: 'App\\Filament\\Company\\Pages')

@@ -44,7 +44,6 @@ class EditAccountingMovement extends EditRecord
         $record = $this->record;
         $record->calculateTotals();
         $record->updateStatus();
-
     }
 
 

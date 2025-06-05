@@ -364,8 +364,8 @@ class AccountingAccountResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->button(),
-                Tables\Actions\DeleteAction::make()->button(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ]);
     }
 

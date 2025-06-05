@@ -148,7 +148,7 @@ class AccountingMovement extends Model
     {
         $this->debit = $this->items()->sum('debit');
         $this->credit = $this->items()->sum('credit');
-        $this->balance = $this->calculateBalance();
+        $this->balance = $this->debit -  $this->credit;
         $this->save();
     }
 
@@ -239,8 +239,10 @@ class AccountingMovement extends Model
 
     public function updateStatus()
     {
+
         if ($this->items()->count()) {
-            $this->status = $this->balance === 0 && $this->status !=VoucherStatusEnum::FINISHED
+
+            $this->status = $this->balance === 0
               ? VoucherStatusEnum::PENDING
               : VoucherStatusEnum::UNBALANCED;
         }else{
@@ -249,6 +251,10 @@ class AccountingMovement extends Model
         $this->save();
     }
 
+    public function applied(){
+
+       return $this->status ===  VoucherStatusEnum::FINISHED;
+    }
     public function canApply(){
 
        return $this->status ==  VoucherStatusEnum::PENDING && $this->items()->count();
@@ -263,4 +269,6 @@ class AccountingMovement extends Model
             $account->update_amount($type,$amount);
         }
     }
+
+
 }
