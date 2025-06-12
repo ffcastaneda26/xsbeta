@@ -15,6 +15,7 @@ use App\Enums\VoucherStatusEnum;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Company\Resources\AccountingMovementResource\Pages;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers\ItemsRelationManager;
+use App\Models\Label;
 use Filament\Notifications\Notification;
 
 class AccountingMovementResource extends Resource
@@ -25,27 +26,38 @@ class AccountingMovementResource extends Resource
 
     public static function getNavigationLabel(): string
     {
+        $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
 
-        if (filament()->getTenant()->country_id == 44) {
-            return 'Vouchers';
-        }
-        return __('Accounting Movements');
+        $label = Label::where('country_id', $countryId)
+            ->where('use_to', 'polizas')
+            ->value('value');
+
+        return $label ?? __('Accounting Movements');
     }
 
     public static function getPluralLabel(): ?string
     {
-        if (filament()->getTenant()->country_id == 44) {
-            return 'Vouchers';
-        }
-        return __('Accounting Movements');
+        $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $label = Label::where('country_id', $countryId)
+            ->where('use_to', 'polizas')
+            ->value('value');
+
+        return $label ?? __('Accounting Movements');
     }
 
     public static function getModelLabel(): string
     {
-        if (filament()->getTenant()->country_id == 44) {
-            return 'Voucher';
-        }
-        return __('Accounting Movement');
+        $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $label = Label::where('country_id', $countryId)
+            ->where('use_to', 'poliza')
+            ->value('value');
+
+        return $label ?? __('Exercises');
     }
 
     public static function getNavigationGroup(): string
