@@ -14,8 +14,9 @@ return new class extends Migration {
         Schema::create('accounting_exercises', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->comment('Empresa');
-            $table->year('year');
-            $table->boolean('active')->default(false);
+            $table->year('year')->comment('Año comercial o fiscal');
+            $table->boolean('processed')->default(false)->comment('¿Ya se procesó');
+            $table->boolean('active')->default(false)->comment('Activo?');
         });
     }
 

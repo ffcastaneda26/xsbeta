@@ -73,7 +73,7 @@ class TypeTaxPayerSeeder extends Seeder
 
                 );
             } else {
-                \Log::warning("No se encontró el país con código {$tax['country_code']} al intentar poblar la tabla taxes.");
+                \Log::warning("No se encontró el país con código {$record['country_code']} al intentar poblar la tabla taxes.");
             }
         }
 

@@ -13,10 +13,12 @@ return new class extends Migration {
     {
         Schema::create('accounting_periods', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('exercise_id');
-            $table->integer('month');
-            $table->boolean('active')->default(false);
+            $table->unsignedBigInteger('company_id')->comment('Empresa');
+            $table->unsignedBigInteger('exercise_id')->comment('Ejercicio');
+            $table->integer('month')->comment('Mes contable');
+            $table->smallInteger('folio')->default(0)->comment('Folio para voucher o póliza');
+            $table->boolean('processed')->default(false)->comment('¿Ya se procesó');
+            $table->boolean('active')->default(false)->comment('¿Activo?');
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('exercise_id')->references('id')->on('accounting_exercises')->onDelete('cascade');
         });

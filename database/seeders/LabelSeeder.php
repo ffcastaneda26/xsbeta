@@ -24,6 +24,16 @@ class LabelSeeder extends Seeder
         $records = [
             [
                 'country_code' => 'CL',
+                'use_to' => 'exercise',
+                'value' => 'Año Comercial',
+            ],
+            [
+                'country_code' => 'CL',
+                'use_to' => 'exercise',
+                'value' => 'Años Comerciales',
+            ],
+            [
+                'country_code' => 'CL',
                 'use_to' => 'poliza',
                 'value' => 'Voucher',
             ],

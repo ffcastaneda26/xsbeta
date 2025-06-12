@@ -37,6 +37,8 @@ class DatabaseSeeder extends Seeder
             'labels',
             'type_tax_payers',
             'companies',
+            'accounting_periods',
+            'accounting_exercises',
         ]);
         $this->command->info(__('Tables have been initialized'));
 
@@ -54,6 +56,7 @@ class DatabaseSeeder extends Seeder
             AccountingCategorySeeder::class,
             AccountingAccountSeeder::class,
             TransactionStatusSeeder::class,
+            ExcerciseSeeder::class,
         ]);
     }
 

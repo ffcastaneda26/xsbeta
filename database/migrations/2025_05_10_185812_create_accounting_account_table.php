@@ -30,7 +30,9 @@ return new class extends Migration {
             $table->boolean('is_cost_center_required')->default(false);
             $table->unsignedBigInteger('parent_id')->nullable()->default(null)->comment('Cuenta padre');
             $table->foreign('parent_id')->references('id')->on('accounting_accounts')->onDelete('set null');
-
+            $table->decimal('debit', 10, 2)->default(0)->comment('Suma del Debe ');
+            $table->decimal('credit', 10, 2)->default(0)->comment('Suma del Haber ');
+            $table->decimal('balance', 10, 2)->default(0)->comment('Saldo');
             $table->timestamps();
         });
     }
