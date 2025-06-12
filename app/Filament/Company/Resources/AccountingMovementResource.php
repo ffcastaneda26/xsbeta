@@ -15,6 +15,7 @@ use App\Enums\VoucherStatusEnum;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Company\Resources\AccountingMovementResource\Pages;
 use App\Filament\Company\Resources\AccountingMovementResource\RelationManagers\ItemsRelationManager;
+use App\Models\AccountingPeriod;
 use App\Models\Label;
 use Filament\Notifications\Notification;
 
@@ -57,7 +58,7 @@ class AccountingMovementResource extends Resource
             ->where('use_to', 'poliza')
             ->value('value');
 
-        return $label ?? __('Exercises');
+        return $label ?? __('Accounting Movements');
     }
 
     public static function getNavigationGroup(): string
@@ -68,72 +69,115 @@ class AccountingMovementResource extends Resource
     public static function form(Form $form): Form
     {
         $activeExercise = filament()->getTenant()->getActiveExercise();
-        $activePeriod = filament()->getTenant()->getActivePeriod();
-        $minDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->startOfMonth() : now()->startOfMonth();
-        $maxDate = $activePeriod ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->endOfMonth() : now()->endOfMonth();
-        $folio = filament()->getTenant()->getFolioToAccountingMovement();
-        $folio = $form->getRecord() ? $form->getRecord()->folio : filament()->getTenant()->getFolioToAccountingMovement();
+        // Obtener el mes de la fecha actual
+        $currentMonth = now()->month;
+        // Usar la relación periods de AccountingExercise para obtener el período activo
+        $activePeriod = $activeExercise->periods()
+            ->where('month', $currentMonth)
+            ->first();
+
+        // Establecer minDate y maxDate basados en el período activo o fecha actual
+        $minDate = $activePeriod
+            ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->startOfMonth()
+            : now()->startOfMonth();
+        $maxDate = $activePeriod
+            ? \Carbon\Carbon::create($activeExercise->year, $activePeriod->month, 1)->endOfMonth()
+            : now()->endOfMonth();
+
+        // Generar el folio inicial
+        $folio = $form->getRecord()
+            ? $form->getRecord()->folio
+            : ($activePeriod
+                ? $activeExercise->year . str_pad($activePeriod->month, 2, '0', STR_PAD_LEFT) . str_pad($activePeriod->folio + 1, 4, '0', STR_PAD_LEFT)
+                : $activeExercise->year . str_pad(now()->month, 2, '0', STR_PAD_LEFT) . '0001');
 
         return $form
             ->schema([
-                Forms\Components\Section::make(__('Folio: ') . $folio)
-                    ->schema([
-                        Forms\Components\Group::make([
-                            Forms\Components\Radio::make('type')
-                                ->translateLabel()
-                                ->options(VoucherTypeEnum::class)
-                                ->inline()
-                                ->required()
-                                ->default(VoucherTypeEnum::Both)
-                                ->columnSpanFull(),
-                            Forms\Components\Select::make('document_type')
-                                ->translateLabel()
-                                ->options(VoucherDocumentTypeEnum::class)
-                                ->required(),
-                            Forms\Components\DatePicker::make('date')
-                                ->translateLabel()
-                                ->default(now())
-                                ->maxDate($maxDate)
-                                ->minDate($minDate)
-                                ->format('d-m-Y')
-                                ->default(fn() => now()->greaterThan($maxDate) ? $maxDate : now())
-                                ->required(),
-                        ])->columns(2),
-                        Forms\Components\Group::make()->schema([
-                            Forms\Components\Textarea::make('glosa')
-                                ->translateLabel()
-                                ->required()
-                                ->rows(3)
-                                ->columnSpanFull(),
-                        ]),
-                    ])->columns(2),
-
                 Forms\Components\Section::make()->schema([
-                    Forms\Components\Placeholder::make('debit_total')
-                        ->label(__('Total Debit'))
-                        ->content(function ($record) {
-                            return number_format($record?->movements()->sum('debit') ?? 0, 2, '.', ',');
+                    Forms\Components\Radio::make('type')
+                        ->translateLabel()
+                        ->options(VoucherTypeEnum::class)
+                        ->required()
+                        ->default(VoucherTypeEnum::Both),
+                    Forms\Components\Select::make('document_type')
+                        ->translateLabel()
+                        ->options(VoucherDocumentTypeEnum::class)
+                        ->required(),
+                    Forms\Components\Select::make('periodo')
+                        ->translateLabel()
+                        ->required()
+                        ->options([
+                            1 => __('January'),
+                            2 => __('February'),
+                            3 => __('March'),
+                            4 => __('April'),
+                            5 => __('May'),
+                            6 => __('June'),
+                            7 => __('July'),
+                            8 => __('August'),
+                            9 => __('September'),
+                            10 => __('October'),
+                            11 => __('November'),
+                            12 => __('December'),
+                        ])
+                        ->default(now()->month)
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, callable $set) use ($activeExercise) {
+                            // Usar la relación periods para buscar el período basado en el mes seleccionado
+                            $period = $activeExercise->periods()
+                                ->where('month', $state)
+                                ->first();
+
+                            if ($period) {
+                                // Calcular minDate y maxDate
+                                $minDate = \Carbon\Carbon::create($activeExercise->year, $period->month, 1)->startOfMonth();
+                                $maxDate = \Carbon\Carbon::create($activeExercise->year, $period->month, 1)->endOfMonth();
+
+                                // Actualizar el campo date
+                                $set('date', [
+                                    'minDate' => $minDate,
+                                    'maxDate' => $maxDate,
+                                    'default' => now()->between($minDate, $maxDate) ? now() : $minDate,
+                                ]);
+
+                                // Generar el folio: año + mes (2 dígitos) + folio+1 (4 dígitos)
+                                $monthPadded = str_pad($period->month, 2, '0', STR_PAD_LEFT);
+                                $newFolio = str_pad($period->folio + 1, 4, '0', STR_PAD_LEFT);
+                                $folio = $activeExercise->year . $monthPadded . $newFolio;
+
+                                // Actualizar el campo folio
+                                $set('folio', $folio);
+                            }
                         }),
-
-                    Forms\Components\Placeholder::make('credit_total')
-                        ->label(__('Total Credit'))
-                        ->content(function ($record) {
-                            return number_format($record?->movements()->sum('credit') ?? 0, 2, '.', ',');
-                        }),
-
-                    Forms\Components\Placeholder::make('')->content(function ($record) {
-                        $debitTotal = $record?->movements()->sum('debit') ?? 0;
-                        $creditTotal = $record?->movements()->sum('credit') ?? 0;
-                        return view('filament.company.resources.accounting-movement.unbalanced_message', [
-                            'message' => $debitTotal != $creditTotal ? __('Unbalanced Movement') : __('Checked'),
-                            'error' => $debitTotal != $creditTotal,
-                        ]);
-                    }),
-                ])->columns(4)
-                    ->visible(function ($livewire, $record) {
-                        return $livewire instanceof \Filament\Resources\Pages\EditRecord && $record?->movements()->exists();
-                    }),
-
+                    Forms\Components\DatePicker::make('date')
+                        ->translateLabel()
+                        ->default(now())
+                        ->minDate(function ($get) use ($activeExercise) {
+                            $selectedMonth = $get('periodo') ?? now()->month;
+                            return \Carbon\Carbon::create($activeExercise->year, $selectedMonth, 1)->startOfMonth();
+                        })
+                        ->maxDate(function ($get) use ($activeExercise) {
+                            $selectedMonth = $get('periodo') ?? now()->month;
+                            return \Carbon\Carbon::create($activeExercise->year, $selectedMonth, 1)->endOfMonth();
+                        })
+                        ->format('d-m-Y')
+                        ->default(fn($get) => now()->greaterThan(
+                            \Carbon\Carbon::create($activeExercise->year, $get('periodo') ?? now()->month, 1)->endOfMonth()
+                        ) ? \Carbon\Carbon::create($activeExercise->year, $get('periodo') ?? now()->month, 1)->endOfMonth() : now())
+                        ->required()
+                        ->dehydrated(true),
+                    Forms\Components\TextInput::make('folio')
+                        ->translateLabel()
+                        ->readOnly()
+                        ->required()
+                        ->default($folio)
+                        ->dehydrated(true),
+                    Forms\Components\Textarea::make('glosa')
+                        ->translateLabel()
+                        ->required()
+                        ->rows(2)
+                        ->columnSpanFull(),
+                ])->columns(5),
             ]);
     }
 

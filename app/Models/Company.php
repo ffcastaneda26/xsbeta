@@ -171,26 +171,8 @@ class Company extends Model
         return $this->exercises->where('active', 1)->first();
     }
 
-    public function getActivePeriod()
-    {
-        $active_exercise = $this->getActiveExercise();
-        return $active_exercise->periods->where('active', 1)->first();
-    }
 
-    public function getFolioToAccountingMovement()
-    {
-        $activeExercise = $this->getActiveExercise();
-        $activePeriod = $this->getActivePeriod();
-        $year = $activeExercise?->year ?? date('Y');
-        $month = str_pad($activePeriod?->month ?? date('m'), 2, '0', STR_PAD_LEFT);
-        $folio = str_pad(filament()->getTenant()->folio + 1 ?? 0, 4, '0', STR_PAD_LEFT);
-        return $year . $month . $folio;
-    }
 
-    public function updateFolio(){
-        $this->folio +=1;
-        $this->save();
-    }
 }
 
 

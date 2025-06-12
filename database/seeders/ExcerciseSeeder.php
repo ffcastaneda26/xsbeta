@@ -24,7 +24,7 @@ class ExcerciseSeeder extends Seeder
 
         $this->command->warn(PHP_EOL . 'Creará los períodos para el ejercicio');
 
-        for ($i=0; $i <12 ; $i++) {
+        for ($i=1; $i <= 12 ; $i++) {
             AccountingPeriod::create([
                 'company_id' => 1,
                 'exercise_id' => $exercise->id,

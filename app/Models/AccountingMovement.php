@@ -48,46 +48,12 @@ class AccountingMovement extends Model
     {
         parent::boot();
 
-        static::creating(function ($record) {
-            if (filament()->getCurrentPanel()->getId() === 'company') {
-                $company = filament()->getTenant();
-                $activeExercise = $company->getActiveExercise();
-                $activePeriod = $company->getActivePeriod();
-                $folioString = $company->getFolioToAccountingMovement();
-                // $year = $activeExercise?->year ?? date('Y');
-                // $month = str_pad($activePeriod?->month ?? date('m'), 2, '0', STR_PAD_LEFT);
-                // $folio = str_pad(filament()->getTenant()->folio + 1 ?? 0, 4, '0', STR_PAD_LEFT);
-                // $folioString = $year . $month . $folio;
-
-                // Asigna valores al registro nuevo
-                $record->company_id = filament()->getTenant()->id;
-                $record->accounting_exercise_id = $activeExercise?->id;
-                $record->accounting_period_id = $activePeriod?->id;
-                $record->folio = $folioString;
-                $data['status'] = VoucherStatusEnum::PENDING;
-                $record->user_id = Auth::user()->id;
-                if ($activeExercise && $activePeriod) {
-                    $year = $activeExercise->year;
-                    $month = $activePeriod->month;
-                    $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
-                    $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
-                    $movementDate = Carbon::parse($record->date);
-
-                    if ($movementDate->lt($startOfMonth) || $movementDate->gt($endOfMonth)) {
-                        $record->status = VoucherStatusEnum::INVALID;
-                        throw new \Exception("La fecha del movimiento debe estar dentro del rango del mes {$month} y año {$year}.");
-                    }
-                }
-
-            }
-        });
-
         static::updating(function ($record) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
+                // -----
                 $company = filament()->getTenant();
                 $activeExercise = $company->getActiveExercise();
-                $activePeriod = $company->getActivePeriod();
-
+                $activePeriod = $activeExercise->periods()->where('month', $record->date->month)->first();
                 // Validar la fecha del movimiento
                 if ($activeExercise && $activePeriod) {
                     $year = $activeExercise->year;
@@ -104,11 +70,39 @@ class AccountingMovement extends Model
             }
         });
 
-        static::created(function ($record) {
-
+        static::creating(function ($record) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
                 $company = filament()->getTenant();
-                $company->updateFolio();
+                $activeExercise = $company->getActiveExercise();
+                $activePeriod = $activeExercise->periods()->where('month', $record->date->month)->first();
+                $folioString = $activePeriod
+                    ? $activeExercise->year . str_pad($record->date->month, 2, '0', STR_PAD_LEFT) . str_pad($activePeriod->folio + 1, 4, '0', STR_PAD_LEFT)
+                    : $activeExercise->year . str_pad($record->date->month, 2, '0', STR_PAD_LEFT) . '0001';
+                // Asigna valores al registro nuevo
+                $record->company_id = filament()->getTenant()->id;
+                $record->accounting_exercise_id = $activeExercise?->id;
+                $record->accounting_period_id = $activePeriod?->id;
+                $record->folio = $folioString;
+                $record->status = VoucherStatusEnum::PENDING;
+                $record->user_id = Auth::user()->id;
+                if ($activeExercise && $activePeriod) {
+                    $year = $activeExercise->year;
+                    $month = $activePeriod->month;
+                    $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+                    $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+                    $movementDate = Carbon::parse($record->date);
+                    if ($movementDate->lt($startOfMonth) || $movementDate->gt($endOfMonth)) {
+                        $record->status = VoucherStatusEnum::INVALID;
+                        throw new \Exception("La fecha del movimiento debe estar dentro del rango del mes {$month} y año {$year}.");
+                    }
+                }
+            }
+        });
+        static::created(function ($record) {
+            if (filament()->getCurrentPanel()->getId() === 'company') {
+                if ($record->period) {
+                    $record->period()->updateFolio();
+                }
             }
         });
         /**
@@ -127,6 +121,7 @@ class AccountingMovement extends Model
             }
         });
     }
+
 
     public function company(): BelongsTo
     {
@@ -313,7 +308,7 @@ class AccountingMovement extends Model
         return true;
     }
 
-public function canApply()
+    public function canApply()
     {
         if (!$this->validateDate()) {
             return false;

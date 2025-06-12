@@ -51,5 +51,8 @@ class AccountingPeriod extends Model
         return $this->belongsTo(AccountingExercise::class, 'exercise_id');
     }
 
-
+    public function updateFolio(){
+        $this->folio +=1;
+        $this->save();
+    }
 }

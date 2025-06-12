@@ -53,6 +53,11 @@ class LabelSeeder extends Seeder
                 'value' => 'Haber',
             ],
             [
+                'country_code' => 'CL',
+                'use_to' => 'glosa',
+                'value' => 'Glosa',
+            ],
+            [
                 'country_code' => 'MX',
                 'use_to' => 'polizas',
                 'value' => 'Pólizas',
@@ -76,6 +81,11 @@ class LabelSeeder extends Seeder
                 'country_code' => 'MX',
                 'use_to' => 'exercises',
                 'value' => 'Ejercicios',
+            ],
+            [
+                'country_code' => 'MX',
+                'use_to' => 'glosa',
+                'value' => 'Concepto',
             ],
         ];
 
