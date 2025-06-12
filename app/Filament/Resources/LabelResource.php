@@ -18,9 +18,9 @@ class LabelResource extends Resource
 {
     protected static ?string $model = Label::class;
 
-       protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
-      protected static ?int $navigationSort = 32;
+    protected static ?int $navigationSort = 32;
     public static function getNavigationLabel(): string
     {
         return __('Labels by Country');
@@ -41,22 +41,9 @@ class LabelResource extends Resource
         return __('Catalogs');
     }
 
-
-
-    // public static function form(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //             //
-    //         ]);
-    // }
-
     public static function form(Form $form): Form
     {
-
-
-
-         return $form
+        return $form
             ->schema([
                 Forms\Components\Select::make('country_id')
                     ->relationship(name: 'country', titleAttribute: 'name')

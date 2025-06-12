@@ -101,7 +101,7 @@ class AccountingMovement extends Model
         static::created(function ($record) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
                 if ($record->period) {
-                    $record->period()->updateFolio();
+                    $record->period->updateFolio();
                 }
             }
         });
@@ -135,7 +135,7 @@ class AccountingMovement extends Model
 
     public function period(): BelongsTo
     {
-        return $this->belongsTo(AccountingPeriod::class);
+        return $this->belongsTo(AccountingPeriod::class,'accounting_period_id');
     }
 
     public function user(): BelongsTo

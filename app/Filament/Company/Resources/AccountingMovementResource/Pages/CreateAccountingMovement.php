@@ -19,6 +19,8 @@ class CreateAccountingMovement extends CreateRecord
         $record = $this->record;
         $record->calculateTotals();
         $record->updateStatus();
-
+        if ($record->period) {
+            $record->period->updateFolio();
+        }
     }
 }

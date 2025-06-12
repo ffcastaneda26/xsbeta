@@ -5,6 +5,7 @@ namespace App\Filament\Company\Resources\AccountingMovementResource\RelationMana
 use App\Enums\VoucherStatusEnum;
 use App\Enums\VoucherTypeEnum;
 use App\Models\AccountingAccount;
+use App\Models\Label;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -24,6 +25,25 @@ class ItemsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
+        // Determina las etiquetas a usar
+      $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $debit_label = Label::where('country_id', $countryId)
+            ->where('use_to', 'debe')
+            ->value('value');
+        $debit_label ?? __('Credit');
+
+
+        $credit_label = Label::where('country_id', $countryId)
+            ->where('use_to', 'haber')
+            ->value('value');
+        $credit_label ?? __('Credit');
+        $glosa_label = Label::where('country_id', $countryId)
+            ->where('use_to', 'glosa')
+            ->value('value');
+        $glosa_label ?? __('Glosa');
+        // Inicia Formulario
         return $form
             ->schema([
                 Forms\Components\Select::make('accounting_account_id')
@@ -33,14 +53,15 @@ class ItemsRelationManager extends RelationManager
                     ->searchable()
                     ->columnSpan(2),
                 Forms\Components\Textarea::make('glosa')
-                    ->label(__('Description'))
+                    ->label(__($glosa_label))
                     ->required()
+                    ->rows(1)
                     ->columnSpan(3)
                     ->default(function () {
                         return $this->ownerRecord->glosa;
                     }),
                 Forms\Components\TextInput::make('debit')
-                    ->label(__('Debit'))
+                    ->label(__($debit_label))
                     ->numeric()
                     ->step(0.01)
                     ->live(onBlur: true)
@@ -52,7 +73,7 @@ class ItemsRelationManager extends RelationManager
                     ->disabled(fn(callable $get) => (float) $get('credit') > 0)
                     ->extraAttributes(['min' => 0]),
                 Forms\Components\TextInput::make('credit')
-                    ->label(__('Credit'))
+                    ->label(__($credit_label))
                     ->numeric()
                     ->step(0.01)
                     ->live(onBlur: true)
@@ -69,6 +90,24 @@ class ItemsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
+        $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $debit_label = Label::where('country_id', $countryId)
+            ->where('use_to', 'debe')
+            ->value('value');
+        $debit_label ?? __('Credit');
+
+
+        $credit_label = Label::where('country_id', $countryId)
+            ->where('use_to', 'haber')
+            ->value('value');
+        $credit_label ?? __('Credit');
+        $glosa_label = Label::where('country_id', $countryId)
+            ->where('use_to', 'glosa')
+            ->value('value');
+        $glosa_label ?? __('Glosa');
+
         return $table
             ->heading(__('Accounting Items'))
             ->columns([
@@ -77,19 +116,21 @@ class ItemsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('glosa')
-                    ->translateLabel()
+                    ->label(__($glosa_label))
                     ->wrap()
                     ->limit(50),
                 Tables\Columns\TextColumn::make('debit')
-                    ->label(__('Debit'))
+                    ->label(__($debit_label))
                     ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ',')
                     ->alignment(Alignment::End)
-                    ->summarize(Sum::make()->label('')->extraAttributes(['class' => 'font-bold'])),
+                    ->summarize(Sum::make()
+                        ->label('')->extraAttributes(['class' => 'font-bold'])),
                 Tables\Columns\TextColumn::make('credit')
-                    ->label(__('Credit'))
+                    ->label(__($credit_label))
                     ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ',')
                     ->alignment(Alignment::End)
-                    ->summarize(Sum::make()->label('')->extraAttributes(['class' => 'font-bold'])),
+                    ->summarize(Sum::make()
+                        ->label('')->extraAttributes(['class' => 'font-bold'])),
             ])
             ->filters([
                 //
@@ -196,4 +237,6 @@ class ItemsRelationManager extends RelationManager
                 ->send();
         }
     }
+
+
 }

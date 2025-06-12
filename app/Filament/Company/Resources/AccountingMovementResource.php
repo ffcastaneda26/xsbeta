@@ -103,7 +103,7 @@ class AccountingMovementResource extends Resource
                         ->translateLabel()
                         ->options(VoucherDocumentTypeEnum::class)
                         ->required(),
-                    Forms\Components\Select::make('periodo')
+                    Forms\Components\Select::make('accounting_period_id')
                         ->translateLabel()
                         ->required()
                         ->options([
@@ -120,7 +120,21 @@ class AccountingMovementResource extends Resource
                             11 => __('November'),
                             12 => __('December'),
                         ])
-                        ->default(now()->month)
+                        ->statePath('accounting_period_id') // Mapear explícitamente al campo del modelo
+                        ->default(function ($component) {
+                            // Obtener el registro desde el contexto del componente
+                            $record = $component->getModelInstance();
+
+                            // Si existe un registro (modo edición), usar accounting_period_id
+                            if ($record) {
+                                \Log::info('Editing record with accounting_period_id: ' . $record->accounting_period_id);
+                                return $record->accounting_period_id ?? now()->month;
+                            }
+
+                            // En modo creación, usar el mes actual
+                            \Log::info('Creating new record, defaulting to current month: ' . now()->month);
+                            return now()->month;
+                        })
                         ->reactive()
                         ->afterStateUpdated(function ($state, callable $set) use ($activeExercise) {
                             // Usar la relación periods para buscar el período basado en el mes seleccionado
@@ -305,7 +319,6 @@ class AccountingMovementResource extends Resource
     public static function getRelations(): array
     {
         return [
-                // MovementsRelationManager::class,
             ItemsRelationManager::class,
         ];
     }
