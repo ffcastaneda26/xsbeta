@@ -29,7 +29,7 @@ class LabelSeeder extends Seeder
             ],
             [
                 'country_code' => 'CL',
-                'use_to' => 'exercise',
+                'use_to' => 'exercises',
                 'value' => 'Años Comerciales',
             ],
             [
@@ -66,6 +66,16 @@ class LabelSeeder extends Seeder
                 'country_code' => 'MX',
                 'use_to' => 'haber',
                 'value' => 'Abono',
+            ],
+            [
+                'country_code' => 'MX',
+                'use_to' => 'exercise',
+                'value' => 'Ejercicio',
+            ],
+            [
+                'country_code' => 'MX',
+                'use_to' => 'exercises',
+                'value' => 'Ejercicios',
             ],
         ];
 
