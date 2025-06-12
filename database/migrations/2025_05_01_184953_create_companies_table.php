@@ -38,6 +38,7 @@ return new class extends Migration
             $table->string('zipcode',5)->nullable()->default(null)->comment('Código Postal');
             $table->string('logo')->nullable()->default(null)->comment('Logotipo');
             $table->foreignIdFor(TimeZone::class)->default(env('APP_DEFAULT_TIME_ZONE_ID',175))->comment('Zona horaria');
+            $table->tinyInteger('decimals_in_amounts')->default(0)->coimment('Decimales en los importes');
             $table->boolean('active')->default(0)->comment('¿Está activa?');
             $table->foreignIdFor(User::class)->comment('Usuario que creó la empresa');
             $table->timestamps();
