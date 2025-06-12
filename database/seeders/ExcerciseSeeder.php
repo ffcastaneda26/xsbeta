@@ -29,6 +29,7 @@ class ExcerciseSeeder extends Seeder
                 'company_id' => 1,
                 'exercise_id' => $exercise->id,
                 'month'     => $i,
+                'active'    => 1,
             ]);
         }
 

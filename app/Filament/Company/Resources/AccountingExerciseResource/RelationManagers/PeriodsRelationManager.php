@@ -48,7 +48,7 @@ class PeriodsRelationManager extends RelationManager
                             10 => 'October',
                             11 => 'November',
                             12 => 'December',
-                        ][$state]);
+                        ][$state+1]);
                     }),
                 Tables\Columns\IconColumn::make('active')
                     ->label(__('Active'))
@@ -60,21 +60,6 @@ class PeriodsRelationManager extends RelationManager
             ])
             ->headerActions([
                 // Tables\Actions\CreateAction::make(),
-            ])
-            ->actions([
-                Tables\Actions\Action::make('toggle_active')
-                    ->label(fn($record) => __('Activate'))
-                    ->action(function ($record) {
-                        $record->update(['active' => !$record->active]);
-                    })
-                    ->requiresConfirmation()
-                    ->modalHeading(fn($record) => __('Activate Period'))
-                    ->modalDescription(fn($record) => __('Are you sure you want to activate this period? This will deactivate all other periods for this exercise.'))
-                    ->modalSubmitActionLabel(__('Activate'))
-                    ->visible(fn($record) => !$record->active && $record->exercise->active)
-                    ->button()
-                    ->color(color: 'danger')
-                    ->icon(icon: 'heroicon-o-hand-thumb-up'),
             ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Filament\Company\Resources\AccountingExerciseResource\Pages;
 use App\Filament\Company\Resources\AccountingExerciseResource\RelationManagers;
 use App\Filament\Company\Resources\AccountingExerciseResource\RelationManagers\PeriodsRelationManager;
 use App\Models\AccountingExercise;
+use App\Models\Label;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -24,17 +25,38 @@ class AccountingExerciseResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('Exercises');
+        $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $label = Label::where('country_id', $countryId)
+            ->where('use_to', 'exercises')
+            ->value('value');
+
+        return $label ?? __('Accounting Movements');
     }
 
     public static function getPluralLabel(): ?string
     {
-        return __('Exercises');
+        $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $label = Label::where('country_id', $countryId)
+            ->where('use_to', 'exercises')
+            ->value('value');
+
+        return $label ?? __('Accounting Movements');
     }
 
     public static function getModelLabel(): string
     {
-        return __('Exercise');
+               $tenant = filament()->getTenant();
+        $countryId = $tenant->country_id;
+
+        $label = Label::where('country_id', $countryId)
+            ->where('use_to', 'exercise')
+            ->value('value');
+
+        return $label ?? __('Exercise');
     }
 
     public static function getNavigationGroup(): string
