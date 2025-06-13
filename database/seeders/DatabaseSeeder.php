@@ -39,6 +39,9 @@ class DatabaseSeeder extends Seeder
             'companies',
             'accounting_periods',
             'accounting_exercises',
+            'cities',
+            'states',
+            'countries',
         ]);
         $this->command->info(__('Tables have been initialized'));
 
