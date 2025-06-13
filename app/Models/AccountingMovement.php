@@ -6,10 +6,12 @@ use App\Enums\VoucherDocumentTypeEnum;
 use App\Enums\VoucherStatusEnum;
 use App\Enums\VoucherTypeEnum;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AccountingMovement extends Model
 {
@@ -135,7 +137,7 @@ class AccountingMovement extends Model
 
     public function period(): BelongsTo
     {
-        return $this->belongsTo(AccountingPeriod::class,'accounting_period_id');
+        return $this->belongsTo(AccountingPeriod::class, 'accounting_period_id');
     }
 
     public function user(): BelongsTo
@@ -343,24 +345,36 @@ class AccountingMovement extends Model
      */
     public function duplicate(): self
     {
+        DB::beginTransaction();
+        try {
+            $period = AccountingPeriod::find($this->accounting_period_id);
+            $folio = $period->folio + 1;
 
-        $newMovement = $this->replicate()->fill([
-            'created_at' => now(),
-            'updated_at' => now(),
-            'folio' => $this->company->getFolioToAccountingMovement(),
-            'status' => VoucherStatusEnum::PENDING,
-            'user_id' => Auth::user()->id,
-        ]);
+            $newMovement = $this->replicate()->fill([
+                'created_at' => now(),
+                'updated_at' => now(),
+                'folio' =>  $folio,
+                'status' => VoucherStatusEnum::PENDING,
+                'user_id' => Auth::user()->id,
+            ]);
 
-        $newMovement->save();
+            $newMovement->save();
 
-        foreach ($this->items as $item) {
-            $newItem = $item->replicate();
-            $newItem->accounting_movement_id = $newMovement->id;
-            $newItem->save();
+            foreach ($this->items as $item) {
+                $newItem = $item->replicate();
+                $newItem->accounting_movement_id = $newMovement->id;
+                $newItem->save();
+            }
+
+            $period->updateFolio();
+            DB::commit();
+            return $newMovement;
+        } catch (\Throwable $e) {
+            DB::rollBack();
         }
 
-        return $newMovement;
+        return $this;
+
     }
 
 }
