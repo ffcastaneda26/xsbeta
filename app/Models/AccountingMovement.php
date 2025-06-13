@@ -377,4 +377,34 @@ class AccountingMovement extends Model
 
     }
 
+    /**
+     * Reversa de los movimientos
+     * Cambia de cargo a abono y viceversa
+     * @return AccountingMovement
+     */
+    public function reverse(): self
+    {
+        DB::beginTransaction();
+        try {
+
+            foreach ($this->items as $item) {
+                if($item->debit > 0){
+                    $item->credit = $item->debit;
+                    $item->debit = 0;
+                }else{
+                    $item->debit = $item->credit;
+                    $item->credit = 0;
+                }
+                $item->save();
+            }
+
+            DB::commit();
+            return $this;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+        }
+
+        return $this;
+
+    }
 }

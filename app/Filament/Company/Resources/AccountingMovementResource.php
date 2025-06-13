@@ -310,6 +310,29 @@ class AccountingMovementResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading(__('Confirm Duplicate Movement'))
                     ->modalDescription(__('Are you sure you want to duplicate this accounting entry?')),
+                Tables\Actions\Action::make('reverse')
+                    ->label(__('Reversar'))
+                    ->icon('heroicon-o-code-bracket-square')
+                    ->color('warning')
+                    ->disabled(fn($record) => $record->status == VoucherStatusEnum::UNBALANCED)
+                    ->action(function ($record) {
+                        try {
+                            $record->reverse();
+                            Notification::make()
+                                ->title(__("The movement's items have been reversed"))
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title(__('Error by reverse movementt'))
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(__('Confirmar Reversar el Movimiento'))
+                    ->modalDescription(__('Are you sure you want to reverse this accounting entry?')),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
