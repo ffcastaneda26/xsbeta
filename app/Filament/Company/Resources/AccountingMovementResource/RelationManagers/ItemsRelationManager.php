@@ -25,24 +25,31 @@ class ItemsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        // Determina las etiquetas a usar
-      $tenant = filament()->getTenant();
+        $tenant = filament()->getTenant();
         $countryId = $tenant->country_id;
+        $decimalsInAmounts = $tenant->decimals_in_amounts ?? 0; // Obtener decimals_in_amounts, por defecto 0
 
         $debit_label = Label::where('country_id', $countryId)
             ->where('use_to', 'debe')
-            ->value('value');
-        $debit_label ?? __('Credit');
-
+            ->value('value') ?? __('Credit');
 
         $credit_label = Label::where('country_id', $countryId)
             ->where('use_to', 'haber')
-            ->value('value');
-        $credit_label ?? __('Credit');
+            ->value('value') ?? __('Credit');
+
         $glosa_label = Label::where('country_id', $countryId)
             ->where('use_to', 'glosa')
-            ->value('value');
-        $glosa_label ?? __('Glosa');
+            ->value('value') ?? __('Glosa');
+
+        // Determinar el step y la validación según decimals_in_amounts
+        $step = $decimalsInAmounts > 0 ? 0.01 : 1;
+        $decimalValidation = $decimalsInAmounts > 0 ? "decimal:0,{$decimalsInAmounts}" : 'integer';
+
+        // Expresión regular para validar el número de decimales
+        $regex = $decimalsInAmounts > 0
+            ? '/^-?\d+(\.\d{1,' . $decimalsInAmounts . '})?$/'
+            : '/^-?\d+$/'; // Solo enteros si decimals_in_amounts es 0 o nulo
+
         // Inicia Formulario
         return $form
             ->schema([
@@ -63,7 +70,13 @@ class ItemsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('debit')
                     ->label(__($debit_label))
                     ->numeric()
-                    ->step(0.01)
+                    ->step($step)
+                    ->rules([
+                        'numeric',
+                        'min:0',
+                        $decimalValidation,
+                        'regex:' . $regex,
+                    ])
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ((float) $state > 0) {
@@ -75,7 +88,13 @@ class ItemsRelationManager extends RelationManager
                 Forms\Components\TextInput::make('credit')
                     ->label(__($credit_label))
                     ->numeric()
-                    ->step(0.01)
+                    ->step($step)
+                    ->rules([
+                        'numeric',
+                        'min:0',
+                        $decimalValidation,
+                        'regex:' . $regex,
+                    ])
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ((float) $state > 0) {

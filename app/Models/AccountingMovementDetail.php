@@ -21,9 +21,9 @@ class AccountingMovementDetail extends Model
     protected function casts(): array
     {
         return [
-            'debit' => 'decimal:2',
-            'credit' => 'decimal:2',
-            'balance' => 'decimal:2',
+            // 'debit' => 'decimal:2',
+            // 'credit' => 'decimal:2',
+            // 'balance' => 'decimal:2',
         ];
     }
 

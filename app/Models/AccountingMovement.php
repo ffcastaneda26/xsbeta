@@ -40,9 +40,9 @@ class AccountingMovement extends Model
             'document_type' => VoucherDocumentTypeEnum::class,
             'status' => VoucherStatusEnum::class,
             'date' => 'date',
-            'debit' => 'decimal:2',
-            'credit' => 'decimal:2',
-            'balance' => 'decimal:2',
+            // 'debit' => 'decimal:2',
+            // 'credit' => 'decimal:2',
+            // 'balance' => 'decimal:2',
         ];
     }
 
