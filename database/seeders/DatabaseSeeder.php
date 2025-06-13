@@ -60,6 +60,7 @@ class DatabaseSeeder extends Seeder
             AccountingAccountSeeder::class,
             TransactionStatusSeeder::class,
             ExcerciseSeeder::class,
+            LabelSeeder::class,
         ]);
     }
 

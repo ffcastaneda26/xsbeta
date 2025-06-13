@@ -76,8 +76,7 @@ class AccountingExercise extends Model
 
         static::addGlobalScope('activeExercise', function ($builder) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
-                $builder->where('accounting_exercises.company_id', filament()->getTenant()->id)
-                    ->where('accounting_exercises.active', 1);
+                $builder->where('accounting_exercises.company_id', filament()->getTenant()->id);
             }
         });
     }

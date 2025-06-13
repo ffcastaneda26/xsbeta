@@ -17,7 +17,8 @@ class ExcerciseSeeder extends Seeder
         $this->command->warn(PHP_EOL . 'Llenando tabla de Ejercicios');
         $exercise = AccountingExercise::create([
             'company_id' => 1,
-            'year' => '2025'
+            'year' => '2025',
+            'active' => 1
         ]);
 
         $this->command->info('Ejercicio Creado');
