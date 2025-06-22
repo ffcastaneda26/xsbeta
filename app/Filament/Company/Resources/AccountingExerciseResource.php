@@ -49,7 +49,7 @@ class AccountingExerciseResource extends Resource
 
     public static function getModelLabel(): string
     {
-               $tenant = filament()->getTenant();
+        $tenant = filament()->getTenant();
         $countryId = $tenant->country_id;
 
         $label = Label::where('country_id', $countryId)

@@ -2,22 +2,23 @@
 
 namespace App\Filament\Company\Resources\AccountingMovementResource\RelationManagers;
 
-use App\Enums\VoucherStatusEnum;
-use App\Enums\VoucherTypeEnum;
-use App\Models\AccountingAccount;
-use App\Models\Label;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use App\Models\Label;
+use Filament\Forms\Form;
+use App\Models\CostCenter;
 use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DeleteAction;
+use App\Enums\VoucherTypeEnum;
+use App\Enums\VoucherStatusEnum;
+use App\Models\AccountingAccount;
 use Filament\Support\Enums\Alignment;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class ItemsRelationManager extends RelationManager
 {
@@ -58,11 +59,25 @@ class ItemsRelationManager extends RelationManager
                     ->required()
                     ->searchable()
                     ->columnSpan(2),
+                Forms\Components\Select::make('cost_center_id')
+                    ->label(__('Cost Center'))
+                    ->options(CostCenter::where('company_id', filament()->getTenant()->id)->pluck('name', 'id'))
+                    ->required(function (callable $get) {
+                        $accountId = $get('accounting_account_id');
+                        if ($accountId) {
+                            return AccountingAccount::where('id', $accountId)
+                                ->where('company_id', filament()->getTenant()->id)
+                                ->value('is_cost_center_required') ?? false;
+                        }
+                        return false;
+                    })
+                    ->searchable()
+                    ->columnSpan(2),
                 Forms\Components\Textarea::make('glosa')
                     ->label(__($glosa_label))
                     ->required()
                     ->rows(1)
-                    ->columnSpan(3)
+                    ->columnSpan(2)
                     ->default(function () {
                         return $this->ownerRecord->glosa;
                     }),
@@ -115,7 +130,7 @@ class ItemsRelationManager extends RelationManager
                     ->disabled(fn(callable $get) => (float) $get('debit') > 0)
                     ->extraAttributes(['min' => 0]),
             ])
-            ->columns(7);
+            ->columns(8);
     }
 
     public function table(Table $table): Table
@@ -147,6 +162,10 @@ class ItemsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('account.name')
+                    ->translateLabel()
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('costCenter.name')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
