@@ -171,8 +171,10 @@ class Company extends Model
         return $this->exercises->where('active', 1)->first();
     }
 
+    public function costCenters(): HasMany
+    {
+        return $this->hasMany(CostCenter::class);
+    }
 
 
 }
-
-

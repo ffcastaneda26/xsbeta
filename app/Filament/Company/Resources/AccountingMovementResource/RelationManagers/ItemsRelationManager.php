@@ -31,7 +31,7 @@ class ItemsRelationManager extends RelationManager
 
         $debit_label = Label::where('country_id', $countryId)
             ->where('use_to', 'debe')
-            ->value('value') ?? __('Credit');
+            ->value('value') ?? __('Debit');
 
         $credit_label = Label::where('country_id', $countryId)
             ->where('use_to', 'haber')
@@ -42,15 +42,14 @@ class ItemsRelationManager extends RelationManager
             ->value('value') ?? __('Glosa');
 
         // Determinar el step y la validación según decimals_in_amounts
-        $step = $decimalsInAmounts > 0 ? 0.01 : 1;
+        $step = $decimalsInAmounts > 0 ? pow(10, -$decimalsInAmounts) : 1; // Ej: 0.01 para 2 decimales
         $decimalValidation = $decimalsInAmounts > 0 ? "decimal:0,{$decimalsInAmounts}" : 'integer';
 
         // Expresión regular para validar el número de decimales
         $regex = $decimalsInAmounts > 0
             ? '/^-?\d+(\.\d{1,' . $decimalsInAmounts . '})?$/'
-            : '/^-?\d+$/'; // Solo enteros si decimals_in_amounts es 0 o nulo
+            : '/^-?\d+$/'; // Solo enteros si decimals_in_amounts es 0
 
-        // Inicia Formulario
         return $form
             ->schema([
                 Forms\Components\Select::make('accounting_account_id')
@@ -77,6 +76,12 @@ class ItemsRelationManager extends RelationManager
                         $decimalValidation,
                         'regex:' . $regex,
                     ])
+                    ->formatStateUsing(function ($state) use ($decimalsInAmounts) {
+                        return $state !== null ? number_format($state, $decimalsInAmounts, '.', '') : null;
+                    })
+                    ->dehydrateStateUsing(function ($state) use ($decimalsInAmounts) {
+                        return $state !== null ? round((float) $state, $decimalsInAmounts) : 0;
+                    })
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ((float) $state > 0) {
@@ -95,6 +100,12 @@ class ItemsRelationManager extends RelationManager
                         $decimalValidation,
                         'regex:' . $regex,
                     ])
+                    ->formatStateUsing(function ($state) use ($decimalsInAmounts) {
+                        return $state !== null ? number_format($state, $decimalsInAmounts, '.', '') : null;
+                    })
+                    ->dehydrateStateUsing(function ($state) use ($decimalsInAmounts) {
+                        return $state !== null ? round((float) $state, $decimalsInAmounts) : 0;
+                    })
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ((float) $state > 0) {
@@ -111,6 +122,7 @@ class ItemsRelationManager extends RelationManager
     {
         $tenant = filament()->getTenant();
         $countryId = $tenant->country_id;
+        $decimalsInAmounts = $tenant->decimals_in_amounts ?? 0; // Obtener decimals_in_amounts, por defecto 0
 
         $debit_label = Label::where('country_id', $countryId)
             ->where('use_to', 'debe')
@@ -134,19 +146,23 @@ class ItemsRelationManager extends RelationManager
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('account.name')
+                    ->translateLabel()
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('glosa')
                     ->label(__($glosa_label))
                     ->wrap()
                     ->limit(50),
                 Tables\Columns\TextColumn::make('debit')
                     ->label(__($debit_label))
-                    ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ',')
+                    ->numeric(decimalPlaces: $decimalsInAmounts, decimalSeparator: '.', thousandsSeparator: ',')
                     ->alignment(Alignment::End)
                     ->summarize(Sum::make()
                         ->label('')->extraAttributes(['class' => 'font-bold'])),
                 Tables\Columns\TextColumn::make('credit')
                     ->label(__($credit_label))
-                    ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ',')
+                    ->numeric(decimalPlaces: $decimalsInAmounts, decimalSeparator: '.', thousandsSeparator: ',')
                     ->alignment(Alignment::End)
                     ->summarize(Sum::make()
                         ->label('')->extraAttributes(['class' => 'font-bold'])),

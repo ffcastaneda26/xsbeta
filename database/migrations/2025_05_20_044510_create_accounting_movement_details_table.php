@@ -3,6 +3,7 @@
 use App\Models\AccountingAccount;
 use App\Models\AccountingMovement;
 use App\Models\Company;
+use App\Models\CostCenter;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,6 +20,12 @@ return new class extends Migration {
             $table->foreignIdFor(Company::class)->comment('Empresa');
             $table->foreignIdFor(AccountingMovement::class)->comment('Movimiento Contable');
             $table->foreignIdFor(AccountingAccount::class)->comment('Cuenta Contable');
+            $table->foreignIdFor(CostCenter::class)
+                ->nullable()
+                ->constrained('cost_centers')
+                ->onDelete('set null')
+                ->after('accounting_account_id')
+                ->comment('Centro de costo');
             $table->text('glosa')->nullable()->comment('Concepto');
             $table->decimal('debit', 15, 2)->default(0.00)->comment('Debe');
             $table->decimal('credit', 15, 2)->default(0.00)->comment('Haber');

@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Filament\Company\Resources\CostCenterResource\Pages;
+
+use App\Filament\Company\Resources\CostCenterResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditCostCenter extends EditRecord
+{
+    protected static string $resource = CostCenterResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            // Actions\DeleteAction::make(),
+        ];
+    }
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+}

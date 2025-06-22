@@ -127,9 +127,9 @@ class AccountingAccount extends Model
         }
         try {
             if ($type == 'debit') {
-                $this->debit =+ $amount;
-            }else{
-                $this->credit =+ $amount;
+                $this->debit = +$amount;
+            } else {
+                $this->credit = +$amount;
             }
             $this->calculateBalance();
             $this->save();

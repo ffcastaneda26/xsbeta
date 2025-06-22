@@ -13,6 +13,7 @@ class AccountingMovementDetail extends Model
         'company_id',
         'accounting_movement_id',
         'accounting_account_id',
+        'cost_center_id',
         'glosa',
         'debit',
         'credit'
@@ -55,8 +56,12 @@ class AccountingMovementDetail extends Model
     }
     public function account(): BelongsTo
     {
-        return $this->belongsTo(AccountingAccount::class,'accounting_account_id');
+        return $this->belongsTo(AccountingAccount::class, 'accounting_account_id');
+    }
+
+    public function costCenter(): BelongsTo
+    {
+        return $this->belongsTo(CostCenter::class, 'cost_center_id');
     }
 
 }
-

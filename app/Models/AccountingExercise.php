@@ -27,12 +27,13 @@ class AccountingExercise extends Model
         static::creating(function ($record) {
             if (filament()->getCurrentPanel()->getId() === 'company') {
                 $record->company_id = filament()->getTenant()->id;
+                if ($record->active) {
+                    AccountingExercise::where('company_id', filament()->getTenant()->id)
+                        ->where('id', '!=', $record->id)
+                        ->update(['active' => false]);
+                }
             }
-            if ($record->active) {
-                AccountingExercise::where('company_id', filament()->getTenant()->id)
-                    ->where('id', '!=', $record->id)
-                    ->update(['active' => false]);
-            }
+
         });
 
         // Cuando se crea un ejercicio contable, se crean los periodos contables
