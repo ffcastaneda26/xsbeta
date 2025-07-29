@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-                $this->truncateTables([
+        $this->truncateTables([
             'user_roles',
             'role_permissions',
             'user_permissions',
@@ -39,7 +39,8 @@ class DatabaseSeeder extends Seeder
         $this->call(BlogSeeder::class);
     }
 
-    protected function truncateTables(array $tables) {
+    protected function truncateTables(array $tables)
+    {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0;'); // Desactivamos la revisión de claves foráneas
         foreach ($tables as $table) {
             DB::table($table)->truncate();
