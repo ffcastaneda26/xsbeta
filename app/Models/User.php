@@ -34,7 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    Use UserTrait;
+    use UserTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -96,9 +96,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
      */
 
     //  TODO: Configurar de otra manera el control no con datos fijos
-     public function canAccessPanel(Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
-        if(!Auth::check()){
+        if (!Auth::check()) {
             redirect('/');
         }
 
@@ -109,8 +109,9 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
             }
         }
 
+        // TODO:: // Validar si el usuario tiene acceso al panel
         if ($panel->getId() === 'admin') {
-            return Auth::user()->email === 'admin@contuvo.com';
+            return Auth::user()->email === 'admin@xsbeta.com';
         }
 
         if ($panel->getId() === 'company') {
@@ -141,6 +142,11 @@ class User extends Authenticatable implements MustVerifyEmail, HasTenants, Filam
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles', 'model_id', 'role_id');
+    }
+
+    public function scopeName($query, $name)
+    {
+        return $query->where('name', 'like', '%' . $name . '%');
     }
 
 }

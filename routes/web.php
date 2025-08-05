@@ -4,7 +4,12 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-//
+
+Route::get('victor/{name}', function ($name) {
+    $users = User::name($name)->get();
+    dd($users);
+});
+
 Route::get('/', function () {
 
     if (auth()->check()) {
@@ -21,12 +26,12 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', function () {
 
-        if(Auth::user()->isAdministrator()){
+        if (Auth::user()->isAdministrator()) {
             return redirect()->to('/admin');
         }
 
 
-        if(Auth::user()->isCompanyManager()){
+        if (Auth::user()->isCompanyManager()) {
             return redirect()->to('/company');
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\Enums\SuscriptionStatusEnum;
 use App\Filament\Resources\SuscriptionResource\Pages;
 use App\Filament\Resources\SuscriptionResource\RelationManagers;
 use App\Models\Suscription;
@@ -67,9 +68,10 @@ class SuscriptionResource extends Resource
                     Forms\Components\DatePicker::make('bill_date')
                         ->required()
                         ->translateLabel(),
-                    Forms\Components\TextInput::make('status')
+                    Forms\Components\Select::make('status')
                         ->required()
-                        ->translateLabel(),
+                        ->translateLabel()
+                        ->options(SuscriptionStatusEnum::class),
                 ])->columns(2),
 
 

@@ -19,22 +19,22 @@ class CompanySeeder extends Seeder
 
 
         $company = Company::create([
-            'type_tax_payer_id' => 1,
             'name' => 'Empresa de Prueba',
             'short' => 'Empresa Prueba',
             'slug' => 'empresa_prueba',
             'url_company' => 'empresa_prueba',
-            'tax_id' => '77.755.210-4',
+            'RFC' => 'XAXX010101000',
             'phone' => '5555555555',
             'address' => 'Calle de la Compañia',
             'num_ext' => '123',
             'num_int' => '456',
             'colony' => 'Colonia de la Compañia',
             'zipcode' => '12345',
-            'email' => 'ffcastaneda@gmail.com',
-            'country_id' => env('APP_DEFAULT_COUNTRY', 44),
-            'state_id' => env('APP_DEFAULT_STATE', 2824),
-            'city' => 'Santiago',
+            'email' => 'empresa1@correo.com',
+            'country_id' => env('APP_DEFAULT_COUNTRY', 142),
+            'state_id' => env('APP_DEFAULT_STATE', 3455),
+            'city_id' => env('APP_DEFAULT_CITY_ID', 73025),
+            'city' => 'Querétaro',
             'user_id' => 1,
         ]);
 
@@ -44,7 +44,7 @@ class CompanySeeder extends Seeder
 
         $user = User::factory()->withPersonalTeam()->create([
             'name' => 'Administrador Empresa de Prueba',
-            'email' => 'admin_empresa1@contuvo.com',
+            'email' => 'admin_empresa1@correo.com',
             "password" => bcrypt("password"),
         ]);
 

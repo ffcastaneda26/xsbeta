@@ -19,14 +19,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Company extends Model
 {
     protected $fillable = [
-        'type_tax_payer_id',
         'name',
         'short',
         'slug',
-        'tax_id',
+        'rfc',
         'url_company',
         'email',
-        'account_structure',
         'phone',
         'address',
         'num_ext',
@@ -38,7 +36,6 @@ class Company extends Model
         'colony',
         'zipcode',
         'logo',
-        'time_zone_id',
         'active',
         'user_id'
     ];
@@ -58,10 +55,7 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'company_user');
     }
 
-    public function accountingAccounts(): HasMany
-    {
-        return $this->hasMany(AccountingAccount::class);
-    }
+
     public function roles(): HasMany
     {
         return $this->hasMany(related: Role::class);
@@ -87,18 +81,14 @@ class Company extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function tax(): BelongsTo
+    public function authors(): BelongsTo
     {
-        return $this->belongsTo(Tax::class);
+        return $this->belongsTo(Author::class);
     }
 
-    public function typeTaxPayer(): BelongsTo
+    public function blogs(): BelongsTo
     {
-        return $this->belongsTo(TypeTaxPayer::class, 'type_tax_payer_id');
-    }
-    public function timeZone(): BelongsTo
-    {
-        return $this->belongsTo(TimeZone::class);
+        return $this->belongsTo(Blog::class);
     }
 
     /** Funciones de apoyo */
@@ -122,58 +112,6 @@ class Company extends Model
     public function scopeUrlCompany($query, $url_company)
     {
         return $query->where('url_company', $url_company);
-    }
-
-    public function accountSubtypes(): HasMany
-    {
-        return $this->hasMany(AccountSubType::class);
-    }
-
-    public function accountingSingleAccounts(): HasMany
-    {
-        return $this->hasMany(AccountingSingleAccount::class);
-    }
-
-    public function labels(): BelongsToMany
-    {
-        return $this->belongsToMany(Label::class, 'company_label');
-    }
-
-    public function exercises(): HasMany
-    {
-        return $this->hasMany(AccountingExercise::class);
-    }
-
-    public function accountingExercises(): HasMany
-    {
-        return $this->hasMany(AccountingExercise::class);
-    }
-
-
-
-    public function accountingPeriods(): HasMany
-    {
-        return $this->hasMany(AccountingPeriod::class);
-    }
-
-    public function periods(): HasMany
-    {
-        return $this->hasMany(AccountingPeriod::class);
-    }
-
-    public function accountingMovements(): HasMany
-    {
-        return $this->hasMany(AccountingMovement::class);
-    }
-
-    public function getActiveExercise()
-    {
-        return $this->exercises->where('active', 1)->first();
-    }
-
-    public function costCenters(): HasMany
-    {
-        return $this->hasMany(CostCenter::class);
     }
 
 

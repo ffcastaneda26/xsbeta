@@ -13,17 +13,20 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class CompanyPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+
         return $panel
             ->id('company')
             ->path('company')
@@ -33,6 +36,14 @@ class CompanyPanelProvider extends PanelProvider
             ->tenant(Company::class, ownershipRelationship: 'company')
             ->sidebarCollapsibleOnDesktop()
             // ->topNavigation()
+            ->brandLogo(function () {
+                $company = filament()->getTenant();
+                if ($company?->logo) {
+                   return Storage::url($company->logo);
+                }
+
+                return asset('images/default-logo.svg');
+            })
             ->brandName(__('Company Administrator Panel'))
             ->discoverResources(in: app_path('Filament/Company/Resources'), for: 'App\\Filament\\Company\\Resources')
             ->discoverPages(in: app_path('Filament/Company/Pages'), for: 'App\\Filament\\Company\\Pages')

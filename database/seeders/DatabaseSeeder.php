@@ -21,46 +21,22 @@ class DatabaseSeeder extends Seeder
             'role_permissions',
             'user_permissions',
             'company_user',
-            'accounting_accounts',
-            'accounting_single_accounts',
-            'accounting_categories',
-            'account_subtypes',
-            'account_types',
-            'transaction_statuses',
             'users',
             'roles',
             'permissions',
-            'time_zones',
-            'taxes',
             'suscriptions',
             'plans',
-            'labels',
-            'type_tax_payers',
-            'companies',
-            'accounting_periods',
-            'accounting_exercises',
             'cities',
             'states',
             'countries',
+            'companies',
         ]);
         $this->command->info(__('Tables have been initialized'));
 
-
         $this->call([
             AdminUserSeeder::class,
-            TimeZoneSeeder::class,
-            TaxSeeder::class,
             PlanSeeder::class,
-            TypeTaxPayerSeeder::class,
-            LabelSeeder::class,
             CompanySeeder::class,
-            AccountTypeSeeder::class,
-            AccountSubTypeSeeder::class,
-            AccountingCategorySeeder::class,
-            AccountingAccountSeeder::class,
-            TransactionStatusSeeder::class,
-            ExcerciseSeeder::class,
-            LabelSeeder::class,
         ]);
     }
 

@@ -23,16 +23,15 @@ class UserResource extends Resource
 
     protected static ?string $model = User::class;
     protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
 
     protected static ?int $navigationSort = 1;
 
     public static function shouldRegisterNavigation(): bool
     {
-
         if (filament()->getCurrentPanel()->getId() === 'admin') {
-           return true;
+            return true;
         }
-
 
         return Auth::user()->companies->contains(Filament::getTenant());
     }
@@ -59,7 +58,7 @@ class UserResource extends Resource
         $tenant = Filament::getTenant();
 
         if ($tenant) {
-            return static::getModel()::whereHas('companies',function(Builder $query) use($tenant){
+            return static::getModel()::whereHas('companies', function (Builder $query) use ($tenant) {
                 $query->where('companies.id', $tenant->id);
             })->count();
         }
@@ -94,16 +93,16 @@ class UserResource extends Resource
                 Forms\Components\Group::make()->schema([
                     Forms\Components\Group::make()->schema([
                         Forms\Components\TextInput::make('name')
-                        ->required()
-                        ->minLength(length: 5)
-                        ->maxLength(100)
-                        ->translateLabel(),
-                    Forms\Components\TextInput::make('email')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->translateLabel()
-                        ->maxLength(100)
-                        ->minLength(5),
+                            ->required()
+                            ->minLength(length: 5)
+                            ->maxLength(100)
+                            ->translateLabel(),
+                        Forms\Components\TextInput::make('email')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->translateLabel()
+                            ->maxLength(100)
+                            ->minLength(5),
                     ]),
                 ]),
 
@@ -111,15 +110,15 @@ class UserResource extends Resource
                 Forms\Components\Group::make()->schema([
 
                     Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->revealable()
-                    ->translateLabel()
-                    ->maxLength(30)
-                    ->minLength(8)
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create'),
-                Forms\Components\Toggle::make('active'),
+                        ->password()
+                        ->revealable()
+                        ->translateLabel()
+                        ->maxLength(30)
+                        ->minLength(8)
+                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                        ->dehydrated(fn($state) => filled($state))
+                        ->required(fn(string $context): bool => $context === 'create'),
+                    Forms\Components\Toggle::make('active'),
                 ]),
             ]);
     }

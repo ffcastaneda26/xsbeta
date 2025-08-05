@@ -16,8 +16,10 @@ class AdminUserSeeder extends Seeder
         $this->command->warn(PHP_EOL . __('Creating Admin User') );
         User::factory()->withPersonalTeam()->create([
             'name' => 'Administrador General',
-            'email' => 'admin@contuvo.com',
-            "password"  => bcrypt("admincontuvo"),
+            'email' => 'admin@xsbeta.com',
+            "password"  => bcrypt("adminxsbeta"),
         ]);
+
+        $this->command->warn(PHP_EOL . __('Admin User was created') );
     }
 }
