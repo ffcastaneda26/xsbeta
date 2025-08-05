@@ -21,6 +21,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\HtmlString;
 
 class CompanyPanelProvider extends PanelProvider
 {
@@ -36,13 +37,23 @@ class CompanyPanelProvider extends PanelProvider
             ->tenant(Company::class, ownershipRelationship: 'company')
             ->sidebarCollapsibleOnDesktop()
             // ->topNavigation()
+
             ->brandLogo(function () {
                 $company = filament()->getTenant();
+
+                // Contenedor para centrar la imagen
+                $containerStyle = 'display: flex; justify-content: center; align-items: center; padding: 10px;';
+
                 if ($company?->logo) {
-                   return Storage::url($company->logo);
+                    $logoUrl = Storage::url($company->logo);
+                    $imgTag = '<img src="' . $logoUrl . '" alt="Logo" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;" />';
+                    return new HtmlString('<div style="' . $containerStyle . '">' . $imgTag . '</div>');
                 }
 
-                return asset('images/default-logo.svg');
+                $defaultLogoUrl = asset('images/default-logo.jpg');
+                $imgTag = '<img src="' . $defaultLogoUrl . '" alt="Logo" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;" />';
+
+                return new HtmlString('<div style="' . $containerStyle . '">' . $imgTag . '</div>');
             })
             ->brandName(__('Company Administrator Panel'))
             ->discoverResources(in: app_path('Filament/Company/Resources'), for: 'App\\Filament\\Company\\Resources')
