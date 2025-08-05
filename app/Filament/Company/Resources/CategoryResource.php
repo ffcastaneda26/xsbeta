@@ -7,18 +7,20 @@ use App\Filament\Company\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Str;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
-        protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
+    protected static ?string $activeNavigationIcon = 'heroicon-s-shield-check';
     protected static ?string $tenantOwnershipRelationship = 'company';
     protected static ?int $navigationSort = 12;
 
@@ -61,7 +63,16 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->minLength(5)
+                    ->maxLength(60)
+                    ->translateLabel()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                Forms\Components\TextInput::make('slug')
+                    ->translateLabel()
+                    ->readOnly()
             ]);
     }
 
@@ -69,7 +80,14 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
+                Tables\Columns\TextColumn::make('slug')
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
             ])
             ->filters([
                 //

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Company;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,9 +13,9 @@ return new class extends Migration {
     {
         Schema::create('authors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete()->comment('Empresas');
-            $table->string('name')->comment('Nombre');
-            $table->string('email')->comment('Correo Electrónico');
+            $table->foreignIdFor(Company::class)->commpent('Empresa');
+            $table->string('name',60)->comment('Nombre');
+            $table->string('email',100)->comment('Correo Electrónico');
         });
     }
 

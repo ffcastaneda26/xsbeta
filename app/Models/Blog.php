@@ -56,11 +56,12 @@ class Blog extends Model
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Author::class);
     }
 
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
     }
+
 }

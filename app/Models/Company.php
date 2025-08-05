@@ -81,14 +81,19 @@ class Company extends Model
         return $this->belongsTo(City::class);
     }
 
-    public function authors(): BelongsTo
+    public function authors(): HasMany
     {
-        return $this->belongsTo(Author::class);
+        return $this->hasMany(Author::class);
     }
 
-    public function blogs(): BelongsTo
+    public function blogs(): HasMany
     {
-        return $this->belongsTo(Blog::class);
+        return $this->hasMany(Blog::class);
+    }
+
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
     }
 
     /** Funciones de apoyo */

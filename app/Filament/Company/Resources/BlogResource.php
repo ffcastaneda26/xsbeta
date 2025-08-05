@@ -99,7 +99,14 @@ class BlogResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
+                Tables\Columns\TextColumn::make('author.name')
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
             ])
             ->filters([
                 //

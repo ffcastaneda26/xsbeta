@@ -62,12 +62,14 @@ class AuthorResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(255),
+                    ->minLength(5)
+                    ->maxLength(60)
+                    ->translateLabel(),
                 Forms\Components\TextInput::make('email')
                     ->email()
-                    ->unique(ignoreRecord: true)
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(100)
+                    ->translateLabel(),
             ]);
     }
 
@@ -76,20 +78,19 @@ class AuthorResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->sortable()
+                    ->searchable()
+                    ->translateLabel(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

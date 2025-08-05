@@ -14,9 +14,9 @@ return new class extends Migration {
     {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete()->comment('Empresa');
-            $table->foreignId('author_id')->constrained('authors')->cascadeOnDelete()->comment('Author');
-            $table->string('title')->comment('Título');
+            $table->foreignIdFor(Company::class)->comment('Empresa');
+            $table->foreignIdFor(Author::class)->comment('Autor');
+            $table->string('title',150)->comment('Título');
             $table->string('slug')->unique()->comment('Slug');
             $table->mediumText('description')->nullable()->comment('Descripción');
             $table->mediumText('content')->comment('Contenido');

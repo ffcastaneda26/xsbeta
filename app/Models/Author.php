@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Author extends Model
 {
+    use HasFactory;
     protected $table = 'authors';
     public $timestamps = false;
 
@@ -32,6 +34,11 @@ class Author extends Model
                 $builder->where('authors.company_id', filament()->getTenant()->id);
             }
         });
+    }
+
+    public function setEmailAttribute(string $value): void
+    {
+        $this->attributes['email'] = strtolower($value);
     }
 
     public function company(): BelongsTo

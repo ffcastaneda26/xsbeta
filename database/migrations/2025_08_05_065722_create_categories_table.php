@@ -14,7 +14,7 @@ return new class extends Migration {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Company::class)->comment('Empresa');
-            $table->string('name')->unique()->comment('Categoría');
+            $table->string('name',50)->unique()->comment('Categoría');
             $table->string('slug')->unique()->comment('Slug');
         });
     }
