@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
+
 
 class BlogResource extends Resource
 {
@@ -60,38 +62,58 @@ class BlogResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('author_id')
-                    ->relationship('author', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-                Forms\Components\RichEditor::make('content')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->directory('blog-images')
-                    ->nullable(),
-                Forms\Components\Toggle::make('is_published')
-                    ->label('Publicar')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('published_at')
-                    ->label('Fecha de publicación')
-                    ->nullable(),
-                Forms\Components\Select::make('categories')
-                    ->relationship('categories', 'name')
-                    ->multiple()
-                    ->preload(),
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\Select::make('author_id')
+                        ->relationship('author', 'name')
+                        ->required()
+                        ->translateLabel(),
+                    Forms\Components\TextInput::make('title')
+                        ->required()
+                        ->maxLength(255)
+                        ->live(onBlur: true)
+                        ->translateLabel()
+                        ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                    Forms\Components\TextInput::make('slug')
+                        ->required()
+                        ->unique(ignoreRecord: true)
+                        ->maxLength(255)
+                        ->readOnly(),
+
+
+                        Forms\Components\Select::make('categories')
+                            ->relationship('categories', 'name')
+                            ->multiple()
+                            ->preload(),
+
+                        Forms\Components\Toggle::make('is_published')
+                            ->label('Publicar')
+                            ->required(),
+                        Forms\Components\DateTimePicker::make('published_at')
+                            ->label('Fecha de publicación')
+                            ->nullable(),
+                        Forms\Components\FileUpload::make('image')
+                            ->image()
+                            ->translateLabel()
+                            ->directory('blog-images')
+                            ->nullable()
+                            ->columnSpanFull()
+
+
+                ])->columns(2),
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\RichEditor::make('description')
+                        ->maxLength(65535)
+                        ->translateLabel()
+                        ->columnSpanFull(),
+                    Forms\Components\RichEditor::make('content')
+                        ->required()
+                        ->translateLabel()
+                        ->columnSpanFull(),
+                ]),
+
+
+
+
             ]);
     }
 

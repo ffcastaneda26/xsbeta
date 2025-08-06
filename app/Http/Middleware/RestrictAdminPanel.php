@@ -11,7 +11,7 @@ class RestrictAdminPanel
     public function handle(Request $request, Closure $next)
     {
 
-        if (Auth::check() && Auth::user()->email === 'admin@contuvo.com') {
+        if (Auth::check() && Auth::user()->email === 'admin@xsbeta.com') {
             return $next($request);
         }
 
