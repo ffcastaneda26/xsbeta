@@ -18,16 +18,21 @@ class UsersTableSeeder extends Seeder
             'email' => 'super_admin@xsbeta.mx',
             "password" => bcrypt("superadminxsbeta"),
              "active" => 1,
-        ])->assignRole('Super Admin');
+        ])->assignRole('cd');
 
 
         User::create([
-            "name" => "Administrador",
+            "name" => "Administrador del Sistema",
             "email" => "admin@xsbeta.com",
             "password" => bcrypt("password"),
             "active" => 1,
         ])->assignRole('Administrador');
 
-
+        User::create([
+            "name" => "Usuario General",
+            "email" => "general@xsbeta.com",
+            "password" => bcrypt("password"),
+            "active" => 1,
+        ]);
     }
 }

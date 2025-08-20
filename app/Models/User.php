@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Filament\Panel;
 use Illuminate\Support\Facades\Auth;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
@@ -79,9 +80,9 @@ class User extends Authenticatable
 
         // TODO:: Habilitar para usuario Administrador cuando ya estén todos los panes por rol
         if ($panel->getId() === 'admin') {
-            return $this->hasAnyRole(['Super Admin', 'Administrador']) && $this->active;
-        }
 
+            return $this->isAdmin();
+        }
 
         return false;
     }
@@ -91,7 +92,18 @@ class User extends Authenticatable
         parent::boot();
 
         static::created(function ($user) {
-            $user->assignRole('Administrador');
+            if($this->isAdmin()){
+                $user->assignRole('Administrador');
+            }
         });
+    }
+
+    public function isAdmin(): bool
+    {
+        if (Auth::check()) {
+            return Auth::user()->hasAnyRole('Administrador', 'Super Admin') ?? Auth::user()->active;
+        }
+
+        return false;
     }
 }

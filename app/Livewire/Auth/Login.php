@@ -21,7 +21,7 @@ class Login extends Component
     #[Validate('required|string')]
     public string $password = '';
 
-    public bool $remember = false;
+    public bool $remember = true;
 
     /**
      * Handle an incoming authentication request.
@@ -41,8 +41,18 @@ class Login extends Component
         }
 
         RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
+        if(!Auth::user()->active) {
+            Auth::logout();
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
 
+
+        Session::regenerate();
+        if (Auth::user()->isAdmin()) {
+            $this->redirect('/admin');
+        }
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 

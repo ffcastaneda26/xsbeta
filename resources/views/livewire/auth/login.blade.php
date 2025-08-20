@@ -27,16 +27,16 @@
                 :placeholder="__('Password')"
                 viewable
             />
-
-            @if (Route::has('password.request'))
+            {{-- Todo:: Para Recuperar contraseña --}}
+            {{-- @if (Route::has('password.request'))
                 <flux:link class="absolute end-0 top-0 text-sm" :href="route('password.request')" wire:navigate>
                     {{ __('Forgot your password?') }}
                 </flux:link>
-            @endif
+            @endif --}}
         </div>
 
         <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" :label="__('Remember me')" />
+        <flux:checkbox wire:model="remember"  hidden />
 
         <div class="flex items-center justify-end">
             <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
