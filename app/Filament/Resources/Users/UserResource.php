@@ -51,10 +51,10 @@ class UserResource extends Resource
         }
 
         return parent::getEloquentQuery()
-            ->where('id','!=', Auth::user()->id)
             ->whereHas('roles', function ($query) {
                 $query->where('name', 'not like', '%super%');
-            });
+            })
+            ->orWhereDoesntHave('roles');
     }
 
 

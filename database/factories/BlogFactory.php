@@ -24,7 +24,6 @@ class BlogFactory extends Factory
             'slug' => Str::slug($title),
             'description' => $this->faker->paragraph,
             'content' => $this->faker->text(2000),
-            'image' => $this->faker->imageUrl(),
             'is_published' => $published,
             'published_at' => $published ? $this->faker->dateTimeThisYear : null,
         ];

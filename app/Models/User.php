@@ -87,17 +87,6 @@ class User extends Authenticatable implements FilamentUser
         return false;
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function ($user) {
-            if($this->isAdmin()){
-                $user->assignRole('Administrador');
-            }
-        });
-    }
-
     public function isAdmin(): bool
     {
         if (Auth::check()) {

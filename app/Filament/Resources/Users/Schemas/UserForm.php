@@ -34,7 +34,6 @@ class UserForm
 
                 ])->columns(2),
                 Group::make()->schema([
-
                     TextInput::make('password')
                         ->label('Contraseña')
                         ->password()
@@ -44,6 +43,14 @@ class UserForm
                         ->dehydrateStateUsing(fn($state) => Hash::make($state))
                         ->dehydrated(fn($state) => filled($state))
                         ->required(fn(string $context): bool => $context === 'create'),
+
+                ])->columns(2),
+                Group::make()->schema([
+                    Select::make('roles')
+                        ->relationship('roles', 'name', fn (Builder $query) => $query->where('name', '!=', 'Super Admin'))
+                        ->preload()
+                        ->searchable()
+                        ->label('Roles'),
                     Toggle::make('active')->label('¿Activo?'),
 
                 ])->columns(2),
