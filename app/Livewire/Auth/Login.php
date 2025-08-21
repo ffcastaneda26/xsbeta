@@ -41,19 +41,19 @@ class Login extends Component
         }
 
         RateLimiter::clear($this->throttleKey());
-        if(!Auth::user()->active) {
+        if (!Auth::user()->active) {
             Auth::logout();
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
 
-
         Session::regenerate();
         if (Auth::user()->isAdmin()) {
-            $this->redirect('/admin');
+            redirect('/admin'); // Asegúrate de que esta línea esté después de Session::regenerate()
+        } else {
+            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
         }
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 
     /**
@@ -82,6 +82,6 @@ class Login extends Component
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }

@@ -18,10 +18,9 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     if (Auth::check()) {
         if (Auth::user()->isAdmin()) {
-            return redirect('/admin');
+            return redirect()->to('/admin');
         }
     }
-
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

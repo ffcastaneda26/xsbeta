@@ -89,10 +89,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function isAdmin(): bool
     {
-        if (Auth::check()) {
-            return Auth::user()->hasAnyRole('Administrador', 'Super Admin') ?? Auth::user()->active;
-        }
-
-        return false;
+        return $this->hasAnyRole(['Administrador', 'Super Admin']) && $this->active;
     }
 }

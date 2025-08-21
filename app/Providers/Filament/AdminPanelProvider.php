@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->homeUrl(fn (): string => Dashboard::getUrl());
     }
 }
