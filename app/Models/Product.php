@@ -26,8 +26,21 @@ class Product extends Model
         return $this->belongsToMany(ProductCategory::class, 'category_product', 'product_id', 'product_category_id');
     }
 
+
+
     public function images(): HasMany
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function getFilamentTitle(): string
+    {
+        return $this->name;
+    }
+
+    // Opcionalmente, puedes usar este método
+    public function getFilamentName(): string
+    {
+        return $this->name;
     }
 }
