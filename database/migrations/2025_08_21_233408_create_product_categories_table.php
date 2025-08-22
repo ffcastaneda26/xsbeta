@@ -16,9 +16,6 @@ return new class extends Migration
             $table->string('name')->comment('Nombre');
             $table->string('slug')->unique();
             $table->boolean('is_active')->default(true)->comment('¿Activo?');
-            $table->unsignedBigInteger('parent_id')->nullable()->comment('ID categoría padre, si existe');
-            $table->timestamps();
-            $table->foreign('parent_id')->references('id')->on('product_categories')->onDelete('cascade');
         });
     }
 

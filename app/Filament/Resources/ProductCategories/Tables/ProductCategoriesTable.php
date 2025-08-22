@@ -25,21 +25,9 @@ class ProductCategoriesTable
                     ->sortable()
                     ->searchable()
                     ->boolean(),
-                TextColumn::make('parent.name')
-                    ->label('Categoría Padre')
-                    ->numeric()
-                    ->sortable(),
                 TextColumn::make('products_count')
                     ->counts('products')
                     ->label('Productos'),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ProductCategory extends Model
 {
     use HasFactory;
+    protected $table = 'product_categories';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'name',
         'slug',
         'is_active',
-        'parent_id',
     ];
 
     public function products(): BelongsToMany
@@ -23,13 +25,5 @@ class ProductCategory extends Model
         return $this->belongsToMany(Product::class, 'category_product', 'product_category_id', 'product_id');
     }
 
-    public function childrens(): HasMany
-    {
-        return $this->hasMany(ProductCategory::class, 'parent_id');
-    }
 
-    public function parent()
-    {
-        return $this->belongsTo(ProductCategory::class, 'parent_id');
-    }
 }

@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CategorySeeder::class);
         $this->call(AuthorSeeder::class);
         $this->call(BlogSeeder::class);
+
+
         $productCategories = ProductCategory::factory(5)->create();
 
         $products = Product::factory(20)

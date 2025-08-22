@@ -16,7 +16,7 @@ class EditProductCategory extends EditRecord
         return [
             ViewAction::make(),
             DeleteAction::make()
-            ->visible(fn($record) =>  $record->childrens()->count() === 0 && $record->products()->count() === 0),
+            ->visible(fn($record) =>  $record->products()->count() === 0),
         ];
     }
 

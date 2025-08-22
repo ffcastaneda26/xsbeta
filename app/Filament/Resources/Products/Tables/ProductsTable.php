@@ -38,6 +38,7 @@ class ProductsTable
                     ->alignEnd(),
                 TextColumn::make('images_count')
                     ->counts('images')
+                    ->alignCenter()
                     ->label('Imágenes'),
                 IconColumn::make('is_active')
                     ->label('¿Activo?')

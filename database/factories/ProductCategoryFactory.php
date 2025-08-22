@@ -22,7 +22,6 @@ class ProductCategoryFactory extends Factory
             'name' => $name,
             'slug' => Str::slug($name),
             'is_active' => fake()->boolean(90),
-            'parent_id' => null,
         ];
     }
 }
