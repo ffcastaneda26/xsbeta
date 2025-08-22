@@ -18,7 +18,6 @@ class CategoryForm
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->live(onBlur: true)
-                    ->reactive()
                     ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                 TextInput::make('slug')

@@ -33,7 +33,7 @@ class CategoryResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Categorías';
+        return 'Categorías de Blogs';
     }
     public static function getModelLabel(): string
     {

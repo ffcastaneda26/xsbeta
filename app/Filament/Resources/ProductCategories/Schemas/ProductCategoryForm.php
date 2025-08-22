@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Filament\Resources\ProductCategories\Schemas;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
+
+class ProductCategoryForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Group::make()->schema([
+                    TextInput::make('name')
+                        ->required()
+                        ->unique(ignoreRecord: true)
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+
+                    TextInput::make('slug')
+                        ->required()
+                        ->unique(ignoreRecord: true)
+                        ->readOnly(),
+                ]),
+
+                Group::make()->schema([
+                    Select::make('parent_id')
+                        ->label('Categoría Padre')
+                        ->relationship('parent', 'name')
+                        ->nullable()
+                        ->searchable()
+                        ->preload(),
+                    Toggle::make('is_active')
+                        ->label('¿Activo?')
+                        ->required(),
+                ]),
+
+            ]);
+    }
+}
