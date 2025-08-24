@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('short_description')->nullable()->comment('Descripción corta');
             $table->decimal('price', 10, 2)->comment('Precio');
             $table->unsignedInteger('stock')->default(0)->comment('Existencia');
+            $table->json('images')->nullable()->comment('Imágenes');
             $table->boolean('is_active')->default(true)->comment('¿Activo?');
             $table->timestamps();
         });

@@ -13,6 +13,8 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->warn(PHP_EOL . __('Creando Categorías para Blogs'));
+
         Category::factory()->count(5)->create();
     }
 }

@@ -15,6 +15,8 @@ class BlogSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->warn(PHP_EOL . __('Creando Blogs'));
+
         $authors = Author::all();
         $categories = Category::all();
 

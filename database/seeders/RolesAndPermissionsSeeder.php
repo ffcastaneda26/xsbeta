@@ -11,6 +11,7 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->command->warn(PHP_EOL . __('Creando Roles - Permisos'));
 
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();

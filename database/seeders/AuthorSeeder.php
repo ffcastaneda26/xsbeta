@@ -13,6 +13,8 @@ class AuthorSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->warn(PHP_EOL . __('Creando Autores'));
+
          Author::factory()->count(10)->create();
     }
 }

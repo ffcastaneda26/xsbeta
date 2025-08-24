@@ -18,7 +18,12 @@ class Product extends Model
         'short_description',
         'price',
         'stock',
+        'images',
         'is_active',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function categories(): BelongsToMany
@@ -27,20 +32,14 @@ class Product extends Model
     }
 
 
+    // public function getFilamentTitle(): string
+    // {
+    //     return $this->name;
+    // }
 
-    public function images(): HasMany
-    {
-        return $this->hasMany(ProductImage::class);
-    }
-
-    public function getFilamentTitle(): string
-    {
-        return $this->name;
-    }
-
-    // Opcionalmente, puedes usar este método
-    public function getFilamentName(): string
-    {
-        return $this->name;
-    }
+    // // Opcionalmente, puedes usar este método
+    // public function getFilamentName(): string
+    // {
+    //     return $this->name;
+    // }
 }

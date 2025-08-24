@@ -13,6 +13,8 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->warn(PHP_EOL . __('Creando Usuarios'));
+
         User::factory()->create([
             'name' => 'Administrador General',
             'email' => 'super_admin@xsbeta.mx',

@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->info(PHP_EOL . __('Depurando Tablas.....'));
+
         $this->truncateTables([
             'user_roles',
             'role_permissions',
@@ -28,30 +30,23 @@ class DatabaseSeeder extends Seeder
             'authors',
             'category_product',
             'product_categories',
-            'products',
-            'product_images',
+            'products'
         ]);
 
-        $this->command->warn(PHP_EOL . __('Creando Roles - Permisos y  Usuarios'));
+        $this->command->info(PHP_EOL . __('Tablas depuradas...'));
+
+        $this->command->warn(PHP_EOL . __('Inicia la creación de datos de prueba...'));
 
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(AuthorSeeder::class);
         $this->call(BlogSeeder::class);
+        $this->call(ProductCategorySeeder::class);
+        $this->call(ProductSeeder::class);
 
+        $this->command->info(PHP_EOL . __('Se han cargado datos de prueba...'));
 
-        $productCategories = ProductCategory::factory(5)->create();
-
-        $products = Product::factory(20)
-            ->hasImages(fake()->numberBetween(1, 4))
-            ->create();
-
-        $products->each(function ($product) use ($productCategories) {
-            $product->categories()->attach(
-                $productCategories->random(fake()->numberBetween(1, 3))->pluck('id')
-            );
-        });
     }
 
     protected function truncateTables(array $tables)
