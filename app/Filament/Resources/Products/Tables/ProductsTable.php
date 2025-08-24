@@ -7,10 +7,11 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsTable
 {
@@ -18,6 +19,10 @@ class ProductsTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('Id')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable()
@@ -32,14 +37,25 @@ class ProductsTable
                     ->label('Precio')
                     ->searchable()
                     ->numeric(decimalPlaces: 2, decimalSeparator: '.', thousandsSeparator: ','),
-                TextColumn::make('stock')
-                    ->label('Existencia')
-                    ->numeric()
-                    ->alignEnd(),
-                TextColumn::make('images_count')
-                    ->counts('images')
-                    ->alignCenter()
-                    ->label('Imágenes'),
+                // TextColumn::make('stock')
+                //     ->label('Existencia')
+                //     ->numeric()
+                //     ->alignEnd(),
+                ImageColumn::make('images')
+                    ->label('Imágenes')
+                    ->getStateUsing(function ($record) {
+                        if (!is_null($record->images) && is_array($record->images)) {
+                            return collect($record->images)->map(function ($imagePath) {
+                                return Storage::disk('public')->url($imagePath);
+                            })->filter()->toArray(); // Filtra valores nulos o vacíos
+                        }
+                        return [];
+                    })
+                    ->stacked()
+                    ->circular()
+                    ->limit(3)
+                    ->limitedRemainingText(),
+
                 IconColumn::make('is_active')
                     ->label('¿Activo?')
                     ->alignCenter()

@@ -15,8 +15,7 @@ class EditProduct extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make()
-            ->visible(fn($record) => $record->images()->count() === 0),
+            DeleteAction::make(),
         ];
     }
 

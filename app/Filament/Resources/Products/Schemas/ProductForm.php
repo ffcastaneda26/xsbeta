@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ProductForm
 {
@@ -41,9 +43,24 @@ class ProductForm
                     ->required()
                     ->numeric()
                     ->default(0),
+
                 Toggle::make('is_active')
                     ->label('¿Activo?')
                     ->required(),
+
+                FileUpload::make('images')
+                    ->label('Imágenes')
+                    ->multiple()
+                    ->reorderable()
+                    ->image()
+                    ->acceptedFileTypes(['image/*'])
+                    ->disk('public')
+                    ->directory('products')
+                    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+                        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                        $extension = $file->getClientOriginalExtension();
+                        return time() . '_' . $originalName . '.' . $extension;
+                    }),
             ]);
     }
 }

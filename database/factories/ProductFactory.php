@@ -27,7 +27,7 @@ class ProductFactory extends Factory
 
         // Genera el array de imágenes de forma programática.
         $imagesList = [];
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $imagesList[] = 'products/example-' . $i . '.jpg';
         }
 
