@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use App\Http\Responses\LogoutResponse;
+use App\Models\Product;
+use App\Observers\ProductObserver;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
@@ -23,12 +25,14 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-   public function boot(): void
+    public function boot(): void
     {
+
         Gate::before(function ($user, $ability) {
             return $user->hasRole('Super Admin') ? true : null;
         });
 
+        Product::observe(ProductObserver::class);
 
         Toggle::configureUsing(function (Toggle $toggle): void {
             $toggle
@@ -55,6 +59,5 @@ class AppServiceProvider extends ServiceProvider
             'escolares_rechazado' => Color::rgb('rgb(199, 54,26)'),
         ]);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
-
     }
 }
