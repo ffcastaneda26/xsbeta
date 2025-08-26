@@ -28,7 +28,7 @@ class BlogResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return 'Operación';
+        return 'Blogs';
     }
 
     public static function getNavigationLabel(): string

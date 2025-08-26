@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Products;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -14,6 +15,8 @@ Route::get('/', function () {
 //     ->middleware(['auth', 'verified'])
 //     ->name('dashboard');
 
+
+Route::get('/', Products::class)->name('products');
 
 Route::get('/dashboard', function () {
     if (Auth::check()) {

@@ -28,7 +28,7 @@ class ProductResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return 'Catálogos';
+        return 'Productos';
     }
 
     public static function getNavigationLabel(): string
