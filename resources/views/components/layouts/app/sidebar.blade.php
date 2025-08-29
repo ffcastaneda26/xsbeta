@@ -12,7 +12,7 @@
         <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
             <x-app-logo />
         </a>
-
+{{--
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="__('Menú Principal')" class="grid">
                 <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
@@ -20,7 +20,7 @@
             </flux:navlist.group>
         </flux:navlist>
 
-        <flux:spacer />
+        <flux:spacer /> --}}
 
         {{-- <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">

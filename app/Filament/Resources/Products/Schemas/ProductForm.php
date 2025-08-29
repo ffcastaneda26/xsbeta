@@ -12,6 +12,8 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
+use function Laravel\Prompts\textarea;
+
 class ProductForm
 {
     public static function configure(Schema $schema): Schema
@@ -28,9 +30,13 @@ class ProductForm
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->readOnly(),
-                RichEditor::make('description')
-                    ->label('Descripción')
-                    ->columnSpanFull(),
+   RichEditor::make('description')
+    ->label('Descripción')
+    ->columnSpanFull()
+    ->extraAttributes([
+        'style' => 'height: 200px; overflow-y: auto;',
+    ]),
+
                 TextInput::make('short_description')
                     ->label('Descripción Corta'),
                 TextInput::make('price')

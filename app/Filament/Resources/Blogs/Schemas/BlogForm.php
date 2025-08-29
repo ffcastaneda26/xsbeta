@@ -68,8 +68,10 @@ class BlogForm
 
                     RichEditor::make('content')
                         ->label('Contenido')
-                        ->required()
-                        ->columnSpanFull(),
+                        ->columnSpanFull()
+                        ->extraAttributes([
+                            'style' => 'height: 200px; overflow-y: auto;',
+                        ]),
                 ]),
 
 
