@@ -17,7 +17,7 @@ Route::get('/', function () {
 //     ->name('dashboard');
 
 
-// Route::get('/', Products::class)->name('products');
+ Route::get('/productos', Products::class)->name('products');
 
 Route::get('/dashboard', function () {
 
